@@ -1,582 +1,367 @@
-/* =========================================================
-   JOSSELL - MA GESTION
-   Fichier JavaScript révisé & compatible Mobile/PC
-========================================================= */
+/* ==========================================================================
+   JOSSELL - MA GESTION (Style Global)
+   ========================================================================== */
 
-/* ---------------------------------------------------------
-   1. DONNÉES & STOCKAGE LOCAL
---------------------------------------------------------- */
-let groupes = JSON.parse(localStorage.getItem("jossell_groupes")) || [];
-let calculs = JSON.parse(localStorage.getItem("jossell_calculs")) || [];
-
-/* ---------------------------------------------------------
-   2. INITIALISATION LORS DU CHARGEMENT
---------------------------------------------------------- */
-document.addEventListener("DOMContentLoaded", function () {
-
-    // Masquer l'écran de chargement
-    setTimeout(function () {
-        const loadingScreen = document.getElementById("loadingScreen");
-        if (loadingScreen) {
-            loadingScreen.style.display = "none";
-        }
-    }, 400);
-
-    // Initialisations
-    initialiserNavigation();
-    initialiserDate();
-    remplirSelectGroupes();
-    afficherGroupes();
-    afficherCategoriesCalcul();
-    afficherHistorique();
-    mettreAJourRapports();
-    initialiserFormulaires();
-});
-
-/* ---------------------------------------------------------
-   3. NAVIGATION (GESTION CLIC COMMENCER & MENUS)
---------------------------------------------------------- */
-function initialiserNavigation() {
-    // Écouteur global pour intercepter tous les clics sur les éléments [data-page]
-    document.addEventListener("click", function (event) {
-        const cible = event.target.closest("[data-page]");
-        if (cible) {
-            event.preventDefault();
-            const pageCible = cible.getAttribute("data-page");
-            afficherPage(pageCible);
-        }
-    });
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --accent: #f59e0b;
+  --bg-color: #f1f5f9;
+  --card-bg: rgba(255, 255, 255, 0.94);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --success: #10b981;
+  --danger: #ef4444;
+  --radius: 16px;
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 25px -5px rgba(37, 99, 235, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
-function afficherPage(nomPage) {
-    if (!nomPage) return;
-
-    // Masquer toutes les pages
-    const toutesLesPages = document.querySelectorAll(".page");
-    toutesLesPages.forEach(function (page) {
-        page.classList.remove("active-page");
-    });
-
-    // Afficher la page demandée
-    const pageAffichee = document.getElementById("page-" + nomPage);
-    if (pageAffichee) {
-        pageAffichee.classList.add("active-page");
-    } else {
-        console.warn("Page introuvable : page-" + nomPage);
-    }
-
-    // Mettre à jour l'état visuel des boutons de menu
-    const boutonsNav = document.querySelectorAll(".nav-item");
-    boutonsNav.forEach(function (bouton) {
-        if (bouton.getAttribute("data-page") === nomPage) {
-            bouton.classList.add("active");
-        } else {
-            bouton.classList.remove("active");
-        }
-    });
-
-    // Remonter en haut de la page
-    window.scrollTo({ top: 0, behavior: "smooth" });
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ---------------------------------------------------------
-   4. GESTION DES DATES AUTOMATIQUES
---------------------------------------------------------- */
-function initialiserDate() {
-    const maintenant = new Date();
-    const annee = maintenant.getFullYear();
-    const mois = String(maintenant.getMonth() + 1).padStart(2, "0");
-    const jour = String(maintenant.getDate()).padStart(2, "0");
-
-    const dateAujourdhui = `${annee}-${mois}-${jour}`;
-
-    // Remplir le champ date du formulaire
-    const saleDateInput = document.getElementById("saleDate");
-    if (saleDateInput) {
-        saleDateInput.value = dateAujourdhui;
-        mettreAJourNomJour(dateAujourdhui);
-
-        saleDateInput.addEventListener("change", function (e) {
-            mettreAJourNomJour(e.target.value);
-        });
-    }
-
-    // Afficher la date formatée sur l'accueil
-    const currentDateSpan = document.getElementById("currentDate");
-    if (currentDateSpan) {
-        currentDateSpan.textContent = maintenant.toLocaleDateString("fr-FR", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        });
-    }
+body {
+  /* Photo de fond globale avec voile léger pour garantir la lisibilité */
+  background: linear-gradient(rgba(241, 245, 249, 0.92), rgba(241, 245, 249, 0.92)),
+              url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=1600&auto=format&fit=crop') center/cover fixed no-repeat;
+  color: var(--text-main);
+  line-height: 1.5;
+  padding-bottom: 40px;
 }
 
-function mettreAJourNomJour(dateString) {
-    const saleDayInput = document.getElementById("saleDay");
-    if (!saleDayInput || !dateString) return;
-
-    const date = new Date(dateString + "T00:00:00");
-    const jours = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-    saleDayInput.value = jours[date.getDay()];
+/* Conteneur principal */
+.app-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
-/* ---------------------------------------------------------
-   5. ÉCOUTEURS DES FORMULAIRES & CALCULS
---------------------------------------------------------- */
-function initialiserFormulaires() {
-    // Formulaire Groupe
-    const groupeForm = document.getElementById("articleGroupForm");
-    if (groupeForm) {
-        groupeForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            ajouterGroupe();
-        });
-    }
-
-    // Formulaire Article
-    const articleForm = document.getElementById("articleForm");
-    if (articleForm) {
-        articleForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            ajouterArticle();
-        });
-    }
-
-    // Formulaire Calcul Journalier
-    const dailyForm = document.getElementById("dailyForm");
-    if (dailyForm) {
-        dailyForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            enregistrerCalcul();
-        });
-    }
-
-    // Calcul automatique en temps réel
-    document.addEventListener("input", function (e) {
-        if (e.target.classList.contains("expense-input") || e.target.id === "dailySales") {
-            calculerTotal();
-        }
-    });
+/* Écran de chargement */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: var(--primary);
+  gap: 12px;
 }
 
-/* ---------------------------------------------------------
-   6. GESTION DES GROUPES ET ARTICLES
---------------------------------------------------------- */
-function ajouterGroupe() {
-    const nomInput = document.getElementById("groupName");
-    const descInput = document.getElementById("groupDescription");
-
-    const nom = nomInput ? nomInput.value.trim() : "";
-    const description = descInput ? descInput.value.trim() : "";
-
-    if (!nom) {
-        afficherNotification("Veuillez saisir un nom de groupe.", "error");
-        return;
-    }
-
-    const existe = groupes.some(g => g.nom.toLowerCase() === nom.toLowerCase());
-    if (existe) {
-        afficherNotification("Ce groupe existe déjà.", "error");
-        return;
-    }
-
-    const nouveauGroupe = {
-        id: Date.now(),
-        nom: nom,
-        description: description,
-        articles: []
-    };
-
-    groupes.push(nouveauGroupe);
-    sauvegarderGroupes();
-    afficherGroupes();
-    remplirSelectGroupes();
-    afficherCategoriesCalcul();
-
-    nomInput.value = "";
-    if (descInput) descInput.value = "";
-
-    afficherNotification("Groupe ajouté avec succès !", "success");
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
-function ajouterArticle() {
-    const groupeSelect = document.getElementById("articleGroupSelect");
-    const nomInput = document.getElementById("articleName");
-    const qteInput = document.getElementById("articleQuantity");
-    const prixInput = document.getElementById("articlePrice");
-
-    const groupeId = Number(groupeSelect.value);
-    const nom = nomInput ? nomInput.value.trim() : "";
-    const quantite = Number(qteInput ? qteInput.value : 0) || 0;
-    const prix = Number(prixInput ? prixInput.value : 0) || 0;
-
-    if (!groupeId) {
-        afficherNotification("Veuillez choisir un groupe.", "error");
-        return;
-    }
-
-    if (!nom) {
-        afficherNotification("Veuillez saisir un nom d'article.", "error");
-        return;
-    }
-
-    const groupe = groupes.find(g => g.id === groupeId);
-    if (groupe) {
-        groupe.articles.push({
-            id: Date.now(),
-            nom: nom,
-            quantite: quantite,
-            prix: prix
-        });
-
-        sauvegarderGroupes();
-        afficherGroupes();
-
-        nomInput.value = "";
-        if (qteInput) qteInput.value = "";
-        if (prixInput) prixInput.value = "";
-
-        afficherNotification("Article ajouté au groupe !", "success");
-    }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-function remplirSelectGroupes() {
-    const select = document.getElementById("articleGroupSelect");
-    if (!select) return;
-
-    select.innerHTML = '<option value="">-- Sélectionner un groupe --</option>';
-    groupes.forEach(function (g) {
-        const opt = document.createElement("option");
-        opt.value = g.id;
-        opt.textContent = g.nom;
-        select.appendChild(opt);
-    });
+/* En-tête & Navigation */
+.header {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-function afficherGroupes() {
-    const container = document.getElementById("articlesList");
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    if (groupes.length === 0) {
-        container.innerHTML = "<p style='color: var(--text-muted); text-align: center; font-size: 0.9rem;'>Aucun groupe créé pour le moment.</p>";
-        return;
-    }
-
-    groupes.forEach(function (groupe) {
-        const card = document.createElement("div");
-        card.className = "article-group-card";
-
-        let htmlArticles = "";
-        if (groupe.articles.length > 0) {
-            groupe.articles.forEach(function (art) {
-                htmlArticles += `
-                    <div class="article-item">
-                        <div>
-                            <strong>${echapperHTML(art.nom)}</strong>
-                            <small style="display:block; color: var(--text-muted);">Qté: ${art.quantite}</small>
-                        </div>
-                        <div><strong>${formaterMontant(art.prix)} FC</strong></div>
-                    </div>
-                `;
-            });
-        } else {
-            htmlArticles = "<p style='font-size: 0.85rem; color: var(--text-muted); padding: 6px 0;'>Aucun article dans ce groupe.</p>";
-        }
-
-        card.innerHTML = `
-            <div class="group-header">
-                <div>
-                    <h4 style="font-size: 1rem; color: var(--text-main);">${echapperHTML(groupe.nom)}</h4>
-                    <small style="color: var(--text-muted);">${echapperHTML(groupe.description || "Sans description")}</small>
-                </div>
-                <button type="button" class="delete-button" onclick="supprimerGroupe(${groupe.id})">Supprimer</button>
-            </div>
-            <div>${htmlArticles}</div>
-        `;
-
-        container.appendChild(card);
-    });
+.header h1 {
+  font-size: 1.3rem;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-function supprimerGroupe(id) {
-    if (!confirm("Voulez-vous supprimer ce groupe et ses articles ?")) return;
-    groupes = groupes.filter(g => g.id !== id);
-    sauvegarderGroupes();
-    afficherGroupes();
-    remplirSelectGroupes();
-    afficherCategoriesCalcul();
-    afficherNotification("Groupe supprimé.", "success");
+.main-nav {
+  display: flex;
+  gap: 6px;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 12px;
 }
 
-/* ---------------------------------------------------------
-   7. DÉPENSES DYNAMIQUES & CALCULS
---------------------------------------------------------- */
-function afficherCategoriesCalcul() {
-    const container = document.getElementById("dynamicExpenses");
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    if (groupes.length === 0) {
-        container.innerHTML = "<p style='font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;'>Ajoutez des groupes dans la section 'Groupes & Articles' pour ventiler vos dépenses.</p>";
-    } else {
-        groupes.forEach(function (groupe) {
-            const row = document.createElement("div");
-            row.className = "expense-row";
-            row.innerHTML = `
-                <div class="expense-label">
-                    <span>📁</span>
-                    <span>${echapperHTML(groupe.nom)}</span>
-                </div>
-                <input type="number" min="0" class="expense-input" data-category="groupe-${groupe.id}" placeholder="0">
-                <span class="currency">FC</span>
-            `;
-            container.appendChild(row);
-        });
-    }
-
-    calculerTotal();
+.nav-item {
+  border: none;
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-function calculerTotal() {
-    const inputsDepenses = document.querySelectorAll(".expense-input");
-    let totalAchats = 0;
-
-    inputsDepenses.forEach(function (input) {
-        totalAchats += Number(input.value) || 0;
-    });
-
-    const ventesInput = document.getElementById("dailySales");
-    const totalVentes = Number(ventesInput ? ventesInput.value : 0) || 0;
-    const solde = totalVentes - totalAchats;
-
-    const elemTotalAchats = document.getElementById("totalPurchases");
-    const elemSoldeCalcul = document.getElementById("calculatedBalance");
-
-    if (elemTotalAchats) elemTotalAchats.textContent = formaterMontant(totalAchats) + " FC";
-    if (elemSoldeCalcul) {
-        elemSoldeCalcul.textContent = formaterMontant(solde) + " FC";
-        elemSoldeCalcul.style.color = solde >= 0 ? "var(--success)" : "var(--danger)";
-    }
-
-    return { achats: totalAchats, ventes: totalVentes, solde: solde };
+.nav-item:hover {
+  color: var(--primary);
 }
 
-/* ---------------------------------------------------------
-   8. ENREGISTREMENT ET HISTORIQUE
---------------------------------------------------------- */
-function enregistrerCalcul() {
-    const dateInput = document.getElementById("saleDate");
-    const jourInput = document.getElementById("saleDay");
-
-    if (!dateInput || !dateInput.value) {
-        afficherNotification("Veuillez sélectionner une date valide.", "error");
-        return;
-    }
-
-    const res = calculerTotal();
-
-    const nouveauCalcul = {
-        id: Date.now(),
-        date: dateInput.value,
-        jour: jourInput ? jourInput.value : "",
-        ventes: res.ventes,
-        achats: res.achats,
-        solde: res.solde
-    };
-
-    calculs.push(nouveauCalcul);
-    sauvegarderCalculs();
-    afficherHistorique();
-    mettreAJourRapports();
-
-    // Reinitialiser les champs de saisie
-    document.querySelectorAll(".expense-input").forEach(i => i.value = "");
-    const salesInput = document.getElementById("dailySales");
-    if (salesInput) salesInput.value = "";
-    calculerTotal();
-
-    afficherNotification("Journée enregistrée avec succès !", "success");
+.nav-item.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
 }
 
-function afficherHistorique() {
-    const container = document.getElementById("dailyHistory");
-    if (!container) return;
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 14px;
+    align-items: stretch;
+    text-align: center;
+  }
 
-    container.innerHTML = "";
+  .main-nav {
+    overflow-x: auto;
+    white-space: nowrap;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+  }
 
-    if (calculs.length === 0) {
-        container.innerHTML = "<p style='color: var(--text-muted); text-align: center; font-size: 0.9rem;'>Aucun enregistrement disponible.</p>";
-        return;
-    }
-
-    const calculsTries = [...calculs].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    calculsTries.forEach(function (item) {
-        const card = document.createElement("div");
-        card.className = "history-card";
-
-        card.innerHTML = `
-            <div class="card-heading">
-                <div>
-                    <strong>${echapperHTML(item.jour)}</strong>
-                    <small style="display:block; color: var(--text-muted);">${formaterDate(item.date)}</small>
-                </div>
-                <button type="button" class="delete-button" onclick="supprimerCalcul(${item.id})">Supprimer</button>
-            </div>
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <span>Ventes</span>
-                    <strong>${formaterMontant(item.ventes)} FC</strong>
-                </div>
-                <div class="summary-card">
-                    <span>Achats</span>
-                    <strong>${formaterMontant(item.achats)} FC</strong>
-                </div>
-                <div class="summary-card">
-                    <span>Solde</span>
-                    <strong class="${item.solde >= 0 ? 'positive' : 'negative'}">${formaterMontant(item.solde)} FC</strong>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(card);
-    });
+  .nav-item {
+    flex: 0 0 auto;
+  }
 }
 
-function supprimerCalcul(id) {
-    if (!confirm("Voulez-vous supprimer cet enregistrement ?")) return;
-
-    calculs = calculs.filter(c => c.id !== id);
-    sauvegarderCalculs();
-    afficherHistorique();
-    mettreAJourRapports();
-    afficherNotification("Enregistrement supprimé.", "success");
+/* Structure des Pages */
+.page {
+  display: none !important;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* ---------------------------------------------------------
-   9. MISE À JOUR DES RAPPORTS & TABLEAU DE BORD
---------------------------------------------------------- */
-function mettreAJourRapports() {
-    const maintenant = new Date();
-    const dateTodayStr = maintenant.toISOString().split("T")[0];
-
-    let ventesJour = 0;
-    let achatsJour = 0;
-
-    calculs.forEach(function (c) {
-        if (c.date === dateTodayStr) {
-            ventesJour += Number(c.ventes) || 0;
-            achatsJour += Number(c.achats) || 0;
-        }
-    });
-
-    const soldeJour = ventesJour - achatsJour;
-
-    // Mise à jour page d'accueil
-    remplirTexte("dailySalesSummary", formaterMontant(ventesJour) + " FC");
-    remplirTexte("dailyPurchaseSummary", formaterMontant(achatsJour) + " FC");
-    
-    const elemSoldeJour = document.getElementById("dailyBalanceSummary");
-    if (elemSoldeJour) {
-        elemSoldeJour.textContent = formaterMontant(soldeJour) + " FC";
-        elemSoldeJour.className = soldeJour >= 0 ? "positive" : "negative";
-    }
-
-    // Calculs de la semaine et du mois
-    calculerTotauxSemaineEtMois();
+.page.active-page {
+  display: block !important;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-function calculerTotauxSemaineEtMois() {
-    const maintenant = new Date();
-    const moisActuel = maintenant.getMonth();
-    const anneeActuelle = maintenant.getFullYear();
-
-    let totalMois = 0;
-    let totalSemaine = 0;
-
-    // Début de semaine (Lundi)
-    const jourSemaine = maintenant.getDay();
-    const diff = jourSemaine === 0 ? 6 : jourSemaine - 1;
-    const debutSemaine = new Date(maintenant);
-    debutSemaine.setDate(maintenant.getDate() - diff);
-    debutSemaine.setHours(0, 0, 0, 0);
-
-    calculs.forEach(function (c) {
-        const d = new Date(c.date + "T00:00:00");
-
-        // Cumul du mois
-        if (d.getMonth() === moisActuel && d.getFullYear() === anneeActuelle) {
-            totalMois += Number(c.solde) || 0;
-        }
-
-        // Cumul de la semaine
-        if (d >= debutSemaine && d <= maintenant) {
-            totalSemaine += Number(c.solde) || 0;
-        }
-    });
-
-    remplirTexte("weeklyTotal", formaterMontant(totalSemaine) + " FC");
-    remplirTexte("monthlyTotal", formaterMontant(totalMois) + " FC");
+/* Cartes & Modules */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ---------------------------------------------------------
-   10. FONCTIONS UTILITAIRES & SAUVEGARDE
---------------------------------------------------------- */
-function sauvegarderGroupes() {
-    localStorage.setItem("jossell_groupes", JSON.stringify(groupes));
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-main);
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-function sauvegarderCalculs() {
-    localStorage.setItem("jossell_calculs", JSON.stringify(calculs));
+/* Bannière d'accueil HD */
+.hero-banner {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 50px 20px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75), rgba(37, 99, 235, 0.85)),
+              url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
+  color: white;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-lg);
 }
 
-function formaterMontant(nombre) {
-    return Number(nombre || 0).toLocaleString("fr-FR", { maximumFractionDigits: 0 });
+.hero-banner h2 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-function formaterDate(dateStr) {
-    if (!dateStr) return "";
-    const parts = dateStr.split("-");
-    if (parts.length === 3) {
-        return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }
-    return dateStr;
+.hero-banner p {
+  opacity: 0.95;
+  margin-bottom: 24px;
+  font-size: 1rem;
 }
 
-function remplirTexte(id, valeur) {
-    const elem = document.getElementById(id);
-    if (elem) elem.textContent = valeur;
+/* Formulaires & Champs */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
 }
 
-function echapperHTML(texte) {
-    const d = document.createElement("div");
-    d.textContent = texte == null ? "" : String(texte);
-    return d.innerHTML;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
 }
 
-function afficherNotification(message, type) {
-    let container = document.getElementById("notificationContainer");
-    if (!container) return;
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
 
-    const notif = document.createElement("div");
-    notif.style.padding = "10px 16px";
-    notif.style.marginBottom = "10px";
-    notif.style.borderRadius = "8px";
-    notif.style.fontWeight = "600";
-    notif.style.fontSize = "0.9rem";
-    notif.style.color = "#ffffff";
-    notif.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-    notif.style.background = type === "success" ? "var(--success)" : "var(--danger)";
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
 
-    notif.textContent = message;
-    container.appendChild(notif);
+input:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
 
-    setTimeout(function () {
-        notif.remove();
-    }, 3000);
+/* Boutons */
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #ffffff;
+  border: none;
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.delete-button {
+  background-color: #fee2e2;
+  color: var(--danger);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.delete-button:hover {
+  background-color: #fca5a5;
+}
+
+/* Lignes de Dépenses Dynamiques */
+.expense-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.expense-input {
+  max-width: 120px;
+  text-align: right;
+}
+
+/* Blocs de Résumé */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 480px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-card {
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-card span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.summary-card strong {
+  font-size: 1.05rem;
+}
+
+.positive { color: var(--success); }
+.negative { color: var(--danger); }
+
+/* Section Aide */
+.help-item {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.help-item h4 {
+  color: var(--primary);
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.help-item p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
 }

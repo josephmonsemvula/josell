@@ -5,329 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>JOSSELL - MA GESTION</title>
 
-  <!-- CSS Révisé Intégré (Desktop & Mobile) -->
-  <style>
-    :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --bg-color: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --success: #10b981;
-      --danger: #ef4444;
-      --radius: 12px;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
+  <!-- Configuration PWA & Icône Écran d'accueil -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Jossell">
+  <link rel="apple-touch-icon" href="logo.png">
+  <meta name="theme-color" content="#2563eb">
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      line-height: 1.5;
-      padding-bottom: 40px;
-    }
-
-    /* Conteneur principal */
-    .app-container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    /* En-tête / Barre supérieure */
-    .header {
-      background: var(--card-bg);
-      padding: 16px 20px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      border: 1px solid var(--border-color);
-    }
-
-    .header h1 {
-      font-size: 1.3rem;
-      color: var(--primary);
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    /* Navigation */
-    .main-nav {
-      display: flex;
-      gap: 8px;
-      background: #f1f5f9;
-      padding: 6px;
-      border-radius: 10px;
-    }
-
-    .nav-item {
-      border: none;
-      background: transparent;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .nav-item.active {
-      background: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-    }
-
-    /* Adaptation Mobile de l'en-tête */
-    @media (max-width: 768px) {
-      .header {
-        flex-direction: column;
-        gap: 14px;
-        align-items: stretch;
-        text-align: center;
-        padding: 16px 12px;
-      }
-
-      .main-nav {
-        overflow-x: auto;
-        white-space: nowrap;
-        justify-content: flex-start;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .nav-item {
-        flex: 0 0 auto;
-        padding: 8px 14px;
-        font-size: 0.85rem;
-      }
-    }
-
-    /* Gestion des Pages */
-    .page {
-      display: none !important;
-      opacity: 0;
-      transition: opacity 0.25s ease-in-out;
-    }
-
-    .page.active-page {
-      display: block !important;
-      opacity: 1;
-    }
-
-    /* Cartes & Formulaires */
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: var(--text-main);
-      border-bottom: 2px solid var(--bg-color);
-      padding-bottom: 8px;
-    }
-
-    /* Grille flexible : 2/3 colonnes sur PC, 1 colonne sur téléphone */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
-    .form-group label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    input[type="text"],
-    input[type="number"],
-    input[type="date"],
-    select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 0.95rem;
-      background-color: #f8fafc;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--primary);
-      background-color: #ffffff;
-    }
-
-    /* Boutons */
-    .btn-primary {
-      width: 100%;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 14px 20px;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .btn-primary:active {
-      transform: scale(0.98);
-      background: var(--primary-dark);
-    }
-
-    .delete-button {
-      background-color: #fee2e2;
-      color: var(--danger);
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* Lignes de Dépenses */
-    .expense-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .expense-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .expense-input {
-      max-width: 120px;
-      text-align: right;
-    }
-
-    .currency {
-      font-weight: 600;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    /* Cartes Résumé & Historique */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    @media (max-width: 480px) {
-      .summary-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .summary-card {
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      border: 1px solid var(--border-color);
-    }
-
-    .summary-card span {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .summary-card strong {
-      font-size: 1rem;
-    }
-
-    .positive { color: var(--success); }
-    .negative { color: var(--danger); }
-
-    .article-group-card, .history-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .group-header, .card-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .article-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px dashed var(--border-color);
-      font-size: 0.9rem;
-    }
-
-    .hero-banner {
-      text-align: center;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-      color: white;
-      border-radius: var(--radius);
-      margin-bottom: 20px;
-    }
-
-    .hero-banner h2 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-    }
-
-    .hero-banner p {
-      opacity: 0.9;
-      margin-bottom: 20px;
-    }
-  </style>
+  <!-- Fichier CSS Externe -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="app-container">
 
     <!-- Écran de chargement -->
-    <div id="loadingScreen" style="position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex; justify-content: center; align-items: center; font-weight: bold; color: var(--primary);">
-      Chargement de Jossell...
+    <div id="loadingScreen">
+      <div class="spinner"></div>
+      <span>Chargement de Jossell...</span>
     </div>
 
     <!-- En-tête principal & Navigation -->
@@ -338,24 +34,25 @@
         <button class="nav-item" data-page="calculator">Calculateur</button>
         <button class="nav-item" data-page="groups">Groupes & Articles</button>
         <button class="nav-item" data-page="reports">Rapports</button>
+        <button class="nav-item" data-page="help">Aide ❓</button>
       </nav>
     </header>
 
-    <!-- Notification Conteneur -->
-    <div id="notificationContainer"></div>
+    <!-- Notifications -->
+    <div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
 
     <!-- ================= PAGE 1 : ACCUEIL ================= -->
     <section id="page-home" class="page active-page">
       <div class="hero-banner">
         <h2>Bienvenue sur Jossell</h2>
         <p>Gérez facilement vos recettes, dépenses et bénéfices journaliers.</p>
-        <button type="button" class="btn-primary" data-page="calculator" style="max-width: 250px; margin: 0 auto; display: block; background: #ffffff; color: var(--primary);">
-          Commencer
+        <button type="button" class="btn-primary" data-page="calculator" style="max-width: 220px; margin: 0 auto; display: block; background: #ffffff; color: var(--primary);">
+          Commencer 🚀
         </button>
       </div>
 
       <div class="card">
-        <h3 class="card-title">Aujourd'hui : <span id="currentDate">--/--/----</span></h3>
+        <h3 class="card-title">📅 Aujourd'hui : <span id="currentDate">--/--/----</span></h3>
         <div class="summary-grid">
           <div class="summary-card">
             <span>Ventes du jour</span>
@@ -376,7 +73,7 @@
     <!-- ================= PAGE 2 : CALCULATEUR ================= -->
     <section id="page-calculator" class="page">
       <div class="card">
-        <h3 class="card-title">Enregistrer la journée</h3>
+        <h3 class="card-title">📝 Enregistrer la journée</h3>
 
         <form id="dailyForm">
           <div class="form-grid">
@@ -395,13 +92,12 @@
             <input type="number" id="dailySales" min="0" placeholder="0">
           </div>
 
-          <h4 style="margin: 16px 0 10px 0; font-size: 0.95rem; color: var(--text-muted);">Achats & Dépenses par catégorie :</h4>
+          <h4 style="margin: 18px 0 10px 0; font-size: 0.95rem; color: var(--text-muted);">Achats & Dépenses par catégorie :</h4>
 
-          <!-- Catégories dynamiques injectées par JS -->
           <div id="dynamicExpenses"></div>
 
-          <div style="margin-top: 20px; background: #f1f5f9; padding: 14px; border-radius: 8px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <div style="margin-top: 20px; background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); padding: 16px; border-radius: 12px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
               <span>Total Achats :</span>
               <strong id="totalPurchases">0 FC</strong>
             </div>
@@ -411,13 +107,12 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-primary" style="margin-top: 16px;">Enregistrer la journée</button>
+          <button type="submit" class="btn-primary" style="margin-top: 18px;">Enregistrer la journée</button>
         </form>
       </div>
 
-      <!-- Historique récent -->
       <div class="card">
-        <h3 class="card-title">Historique des enregistrements</h3>
+        <h3 class="card-title">📜 Historique des enregistrements</h3>
         <div id="dailyHistory"></div>
       </div>
     </section>
@@ -425,9 +120,8 @@
     <!-- ================= PAGE 3 : GROUPES & ARTICLES ================= -->
     <section id="page-groups" class="page">
       <div class="form-grid">
-        <!-- Formulaire Ajouter Groupe -->
         <div class="card">
-          <h3 class="card-title">Créer un groupe d'articles</h3>
+          <h3 class="card-title">📁 Créer un groupe d'articles</h3>
           <form id="articleGroupForm">
             <div class="form-group">
               <label for="groupName">Nom du groupe</label>
@@ -441,9 +135,8 @@
           </form>
         </div>
 
-        <!-- Formulaire Ajouter Article -->
         <div class="card">
-          <h3 class="card-title">Ajouter un article</h3>
+          <h3 class="card-title">🛒 Ajouter un article</h3>
           <form id="articleForm">
             <div class="form-group">
               <label for="articleGroupSelect">Groupe parent</label>
@@ -470,9 +163,8 @@
         </div>
       </div>
 
-      <!-- Liste des groupes -->
       <div class="card">
-        <h3 class="card-title">Vos Groupes et Articles</h3>
+        <h3 class="card-title">📦 Vos Groupes et Articles</h3>
         <div id="articlesList"></div>
       </div>
     </section>
@@ -480,7 +172,7 @@
     <!-- ================= PAGE 4 : RAPPORTS ================= -->
     <section id="page-reports" class="page">
       <div class="card">
-        <h3 class="card-title">Résumé Général</h3>
+        <h3 class="card-title">📊 Résumé Général</h3>
         <div class="summary-grid">
           <div class="summary-card">
             <span>Bénéfice de la semaine</span>
@@ -494,9 +186,36 @@
       </div>
     </section>
 
+    <!-- ================= PAGE 5 : AIDE ================= -->
+    <section id="page-help" class="page">
+      <div class="card">
+        <h3 class="card-title">❓ Guide d'utilisation</h3>
+
+        <div class="help-item">
+          <h4>🚀 Comment démarrer ?</h4>
+          <p>Cliquez sur le bouton <strong>Commencer</strong> depuis l'accueil ou utilisez l'onglet <strong>Calculateur</strong> pour enregistrer vos recettes et dépenses journalières.</p>
+        </div>
+
+        <div class="help-item">
+          <h4>📦 Créer des catégories de dépenses</h4>
+          <p>Dans la section <strong>Groupes & Articles</strong>, ajoutez des groupes (ex: <i>Nourriture, Transport, Divers</i>). Ils apparaîtront automatiquement sous forme de catégories dans le Calculateur.</p>
+        </div>
+
+        <div class="help-item">
+          <h4>🧮 Comment le solde est-il calculé ?</h4>
+          <p>Le solde est calculé automatiquement selon la formule :<br><strong>Solde = Total Recettes (Ventes) - Total Achats (Dépenses)</strong>.</p>
+        </div>
+
+        <div class="help-item">
+          <h4>💾 Vos données sont-elles conservées ?</h4>
+          <p>Oui ! Vos données sont automatiquement enregistrées dans la mémoire locale de votre navigateur. Vous pouvez fermer et rouvrir la page à tout moment sans rien perdre.</p>
+        </div>
+      </div>
+    </section>
+
   </div>
 
-  <!-- Inscription du script JS externe -->
+  <!-- Fichier JS Externe -->
   <script src="script.js"></script>
 </body>
 </html>
