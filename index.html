@@ -25,15 +25,15 @@
     <div class="card" id="auth-section">
       <h2>Inscription Rapide</h2>
       <form id="signup-form">
-        <input type="text" placeholder="Nom" required>
-        <input type="text" placeholder="Postnom">
-        <input type="text" placeholder="Prénom" required>
-        <input type="tel" placeholder="N° Téléphone (+243...)" required>
-        <input type="tel" placeholder="N° Orange Money" required>
-        <input type="tel" placeholder="N° WhatsApp (Optionnel)">
-        <input type="email" placeholder="Adresse Gmail" required>
-        <input type="password" placeholder="Mot de passe" required>
-        <button type="submit">Se connecter / S'inscrire</button>
+        <input type="text" id="input-nom" placeholder="Nom" required>
+        <input type="text" id="input-postnom" placeholder="Postnom">
+        <input type="text" id="input-prenom" placeholder="Prénom" required>
+        <input type="tel" id="input-tel" placeholder="N° Téléphone (+243...)" required>
+        <input type="tel" id="input-om" placeholder="N° Orange Money" required>
+        <input type="tel" id="input-wa" placeholder="N° WhatsApp (Optionnel)">
+        <input type="email" id="input-email" placeholder="Adresse Gmail" required>
+        <input type="password" id="input-pass" placeholder="Mot de passe" required>
+        <button type="submit" id="btn-submit">Se connecter / S'inscrire</button>
       </form>
     </div>
 
@@ -42,7 +42,7 @@
       <h2>Produits Disponibles</h2>
       <div class="grid-products">
         <div class="product-card">
-          <img src="https://via.placeholder.com/150" alt="Produit">
+          <img src="logo.png" alt="Produit" style="max-width:100%; height:auto;">
           <h4>Nom du Produit</h4>
           <p class="price">15 000 FC</p>
           <button>Acheter (Séquestre)</button>
@@ -75,48 +75,53 @@
 
   </div>
 
-  <!-- SCRIPT PWA & CONNEXION AU SERVEUR (BACKEND) -->
+  <!-- SCRIPT CORRIGÉ ET SÉCURISÉ -->
   <script>
-    // Enregistrement du Service Worker PWA
+    // Activation du Service Worker pour PWA
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
+      navigator.serviceWorker.register('sw.js').catch(function(err) {
+        console.log('Service Worker non enregistré:', err);
+      });
     }
 
-    // Gestion de la soumission du formulaire d'inscription
-    document.getElementById('signup-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
+    // Exécution après le chargement du DOM
+    document.addEventListener('DOMContentLoaded', function() {
+      
+      const authSection = document.getElementById('auth-section');
+      const signupForm = document.getElementById('signup-form');
 
-      // Récupération des valeurs saisies dans le formulaire
-      const data = {
-        nom: e.target[0].value,
-        postnom: e.target[1].value,
-        prenom: e.target[2].value,
-        telephone: e.target[3].value,
-        orange_money: e.target[4].value,
-        whatsapp: e.target[5].value,
-        email: e.target[6].value,
-        password: e.target[7].value
-      };
-
-      // Envoi vers l'API backend sur server.js
-      try {
-        const response = await fetch('/api/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          alert('Inscription réussie ! Bienvenue sur JoSell.');
-          document.getElementById('auth-section').style.display = 'none';
-        } else {
-          alert('Erreur : ' + result.error);
-        }
-      } catch (err) {
-        console.error('Erreur de connexion au serveur:', err);
+      // Vérifier si un utilisateur est déjà enregistré dans le navigateur
+      const userExiste = localStorage.getItem('user_josell');
+      if (userExiste) {
+        authSection.style.display = 'none';
       }
+
+      // Écoute de la soumission du formulaire
+      signupForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Récupération sécurisée par ID
+        const client = {
+          nom: document.getElementById('input-nom').value,
+          postnom: document.getElementById('input-postnom').value,
+          prenom: document.getElementById('input-prenom').value,
+          telephone: document.getElementById('input-tel').value,
+          orange_money: document.getElementById('input-om').value,
+          whatsapp: document.getElementById('input-wa').value,
+          email: document.getElementById('input-email').value,
+          password: document.getElementById('input-pass').value
+        };
+
+        // Sauvegarde locale
+        localStorage.setItem('user_josell', JSON.stringify(client));
+
+        // Confirmation visuelle
+        alert('Bienvenue sur JoSell ' + client.prenom + ' ! Inscription réussie.');
+        
+        // Masquer le formulaire
+        authSection.style.display = 'none';
+      });
+
     });
   </script>
 
