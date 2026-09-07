@@ -1,435 +1,502 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#071a33">
-    <meta name="description" content="JOSSELL - MA GESTION">
-    <title>JOSSELL - MA GESTION</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JOSSELL - MA GESTION</title>
 
-    <!-- POLICES -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Révisé Intégré (Desktop & Mobile) -->
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+      --radius: 12px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+
+    /* Conteneur principal */
+    .app-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* En-tête / Barre supérieure */
+    .header {
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header h1 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    /* Navigation */
+    .main-nav {
+      display: flex;
+      gap: 8px;
+      background: #f1f5f9;
+      padding: 6px;
+      border-radius: 10px;
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Adaptation Mobile de l'en-tête */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 14px;
+        align-items: stretch;
+        text-align: center;
+        padding: 16px 12px;
+      }
+
+      .main-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .nav-item {
+        flex: 0 0 auto;
+        padding: 8px 14px;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Gestion des Pages */
+    .page {
+      display: none !important;
+      opacity: 0;
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    .page.active-page {
+      display: block !important;
+      opacity: 1;
+    }
+
+    /* Cartes & Formulaires */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--bg-color);
+      padding-bottom: 8px;
+    }
+
+    /* Grille flexible : 2/3 colonnes sur PC, 1 colonne sur téléphone */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background-color: #f8fafc;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      background-color: #ffffff;
+    }
+
+    /* Boutons */
+    .btn-primary {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+      background: var(--primary-dark);
+    }
+
+    .delete-button {
+      background-color: #fee2e2;
+      color: var(--danger);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Lignes de Dépenses */
+    .expense-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .expense-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .expense-input {
+      max-width: 120px;
+      text-align: right;
+    }
+
+    .currency {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Cartes Résumé & Historique */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .summary-card {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .summary-card span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .summary-card strong {
+      font-size: 1rem;
+    }
+
+    .positive { color: var(--success); }
+    .negative { color: var(--danger); }
+
+    .article-group-card, .history-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .group-header, .card-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .article-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    .hero-banner {
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      border-radius: var(--radius);
+      margin-bottom: 20px;
+    }
+
+    .hero-banner h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .hero-banner p {
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
-
 <body>
 
-    <!-- ============================= -->
-    <!-- ÉCRAN DE CHARGEMENT -->
-    <!-- ============================= -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="loading-logo">
-            <div class="logo-circle">J</div>
-            <h1>JOSSELL</h1>
-            <p>MA GESTION</p>
+  <div class="app-container">
+
+    <!-- Écran de chargement -->
+    <div id="loadingScreen" style="position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex; justify-content: center; align-items: center; font-weight: bold; color: var(--primary);">
+      Chargement de Jossell...
+    </div>
+
+    <!-- En-tête principal & Navigation -->
+    <header class="header">
+      <h1>JOSSELL - MA GESTION</h1>
+      <nav class="main-nav" id="mainNavigation">
+        <button class="nav-item active" data-page="home">Accueil</button>
+        <button class="nav-item" data-page="calculator">Calculateur</button>
+        <button class="nav-item" data-page="groups">Groupes & Articles</button>
+        <button class="nav-item" data-page="reports">Rapports</button>
+      </nav>
+    </header>
+
+    <!-- Notification Conteneur -->
+    <div id="notificationContainer"></div>
+
+    <!-- ================= PAGE 1 : ACCUEIL ================= -->
+    <section id="page-home" class="page active-page">
+      <div class="hero-banner">
+        <h2>Bienvenue sur Jossell</h2>
+        <p>Gérez facilement vos recettes, dépenses et bénéfices journaliers.</p>
+        <button type="button" class="btn-primary" data-page="calculator" style="max-width: 250px; margin: 0 auto; display: block; background: #ffffff; color: var(--primary);">
+          Commencer
+        </button>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">Aujourd'hui : <span id="currentDate">--/--/----</span></h3>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <span>Ventes du jour</span>
+            <strong id="dailySalesSummary">0 FC</strong>
+          </div>
+          <div class="summary-card">
+            <span>Achats du jour</span>
+            <strong id="dailyPurchaseSummary">0 FC</strong>
+          </div>
+          <div class="summary-card">
+            <span>Solde du jour</span>
+            <strong id="dailyBalanceSummary" class="positive">0 FC</strong>
+          </div>
         </div>
-        <div class="loader"></div>
-    </div>
+      </div>
+    </section>
 
-    <!-- ============================= -->
-    <!-- APPLICATION -->
-    <!-- ============================= -->
-    <div id="app" class="app">
+    <!-- ================= PAGE 2 : CALCULATEUR ================= -->
+    <section id="page-calculator" class="page">
+      <div class="card">
+        <h3 class="card-title">Enregistrer la journée</h3>
 
-        <!-- ============================= -->
-        <!-- HEADER -->
-        <!-- ============================= -->
-        <header class="top-header">
-            <div class="brand">
-                <div class="brand-icon">J</div>
-                <div class="brand-text">
-                    <strong>JOSSELL</strong>
-                    <span>MA GESTION</span>
-                </div>
+        <form id="dailyForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="saleDate">Date</label>
+              <input type="date" id="saleDate" required>
             </div>
+            <div class="form-group">
+              <label for="saleDay">Jour</label>
+              <input type="text" id="saleDay" readonly placeholder="Jour de la semaine">
+            </div>
+          </div>
 
-            <button type="button" class="menu-button" id="menuButton">
-                ☰
-            </button>
-        </header>
+          <div class="form-group">
+            <label for="dailySales">Total des Ventes / Recettes (FC)</label>
+            <input type="number" id="dailySales" min="0" placeholder="0">
+          </div>
 
-        <!-- ============================= -->
-        <!-- MENU NAVIGATION -->
-        <!-- ============================= -->
-        <nav class="main-navigation" id="mainNavigation">
-            <button type="button" class="nav-item active" data-page="accueil">
-                <span class="nav-icon">⌂</span>
-                <span>Accueil</span>
-            </button>
+          <h4 style="margin: 16px 0 10px 0; font-size: 0.95rem; color: var(--text-muted);">Achats & Dépenses par catégorie :</h4>
 
-            <button type="button" class="nav-item" data-page="calculs">
-                <span class="nav-icon">▣</span>
-                <span>Mes calculs</span>
-            </button>
+          <!-- Catégories dynamiques injectées par JS -->
+          <div id="dynamicExpenses"></div>
 
-            <button type="button" class="nav-item" data-page="articles">
-                <span class="nav-icon">🛒</span>
-                <span>Articles</span>
-            </button>
+          <div style="margin-top: 20px; background: #f1f5f9; padding: 14px; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Total Achats :</span>
+              <strong id="totalPurchases">0 FC</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 1.1rem; color: var(--primary);">
+              <span>Solde calculé :</span>
+              <strong id="calculatedBalance">0 FC</strong>
+            </div>
+          </div>
 
-            <button type="button" class="nav-item" data-page="rapports">
-                <span class="nav-icon">▤</span>
-                <span>Rapports</span>
-            </button>
+          <button type="submit" class="btn-primary" style="margin-top: 16px;">Enregistrer la journée</button>
+        </form>
+      </div>
 
-            <button type="button" class="nav-item" data-page="aide">
-                <span class="nav-icon">?</span>
-                <span>Aide</span>
-            </button>
-        </nav>
+      <!-- Historique récent -->
+      <div class="card">
+        <h3 class="card-title">Historique des enregistrements</h3>
+        <div id="dailyHistory"></div>
+      </div>
+    </section>
 
-        <!-- ============================= -->
-        <!-- CONTENU PRINCIPAL -->
-        <!-- ============================= -->
-        <main class="main-content">
+    <!-- ================= PAGE 3 : GROUPES & ARTICLES ================= -->
+    <section id="page-groups" class="page">
+      <div class="form-grid">
+        <!-- Formulaire Ajouter Groupe -->
+        <div class="card">
+          <h3 class="card-title">Créer un groupe d'articles</h3>
+          <form id="articleGroupForm">
+            <div class="form-group">
+              <label for="groupName">Nom du groupe</label>
+              <input type="text" id="groupName" placeholder="Ex: Vivre frais, Boissons..." required>
+            </div>
+            <div class="form-group">
+              <label for="groupDescription">Description (optionnelle)</label>
+              <input type="text" id="groupDescription" placeholder="Détails du groupe">
+            </div>
+            <button type="submit" class="btn-primary">Ajouter le groupe</button>
+          </form>
+        </div>
 
-            <!-- PAGE ACCUEIL -->
-            <section id="page-accueil" class="page active-page">
-                <div class="welcome-hero">
-                    <div class="hero-overlay"></div>
-                    <div class="hero-content">
-                        <div class="welcome-badge">✦ Bienvenue dans votre espace</div>
-                        <h1>Gérez votre activité <br><span>simplement et intelligemment.</span></h1>
-                        <p>Avec <strong>MA GESTION</strong>, vous pouvez enregistrer vos ventes, suivre vos achats, connaître votre solde et consulter vos rapports journaliers, hebdomadaires et mensuels.</p>
-                        <!-- ID AJOUTÉ POUR LE BOUTON COMMENCER -->
-                        <button type="button" class="primary-button start-button" id="btnCommencer" data-page="calculs">
-                            Commencer <span>→</span>
-                        </button>
-                    </div>
-                </div>
+        <!-- Formulaire Ajouter Article -->
+        <div class="card">
+          <h3 class="card-title">Ajouter un article</h3>
+          <form id="articleForm">
+            <div class="form-group">
+              <label for="articleGroupSelect">Groupe parent</label>
+              <select id="articleGroupSelect" required>
+                <option value="">-- Sélectionner un groupe --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="articleName">Nom de l'article</label>
+              <input type="text" id="articleName" placeholder="Ex: Sac de riz" required>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="articleQuantity">Quantité</label>
+                <input type="number" id="articleQuantity" min="0" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="articlePrice">Prix unitaire (FC)</label>
+                <input type="number" id="articlePrice" min="0" placeholder="0">
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">Ajouter l'article</button>
+          </form>
+        </div>
+      </div>
 
-                <div class="section-title">
-                    <span>MA GESTION</span>
-                    <h2>Tout votre commerce au même endroit</h2>
-                    <p>Une gestion simple, rapide et adaptée à votre activité quotidienne.</p>
-                </div>
+      <!-- Liste des groupes -->
+      <div class="card">
+        <h3 class="card-title">Vos Groupes et Articles</h3>
+        <div id="articlesList"></div>
+      </div>
+    </section>
 
-                <div class="feature-grid">
-                    <article class="feature-card">
-                        <div class="feature-icon">📊</div>
-                        <h3>Mes calculs</h3>
-                        <p>Enregistrez vos ventes et vos dépenses chaque jour et consultez votre solde.</p>
-                    </article>
+    <!-- ================= PAGE 4 : RAPPORTS ================= -->
+    <section id="page-reports" class="page">
+      <div class="card">
+        <h3 class="card-title">Résumé Général</h3>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <span>Bénéfice de la semaine</span>
+            <strong id="weeklyTotal" class="positive">0 FC</strong>
+          </div>
+          <div class="summary-card">
+            <span>Bénéfice du mois</span>
+            <strong id="monthlyTotal" class="positive">0 FC</strong>
+          </div>
+        </div>
+      </div>
+    </section>
 
-                    <article class="feature-card">
-                        <div class="feature-icon">🛒</div>
-                        <h3>Mes articles</h3>
-                        <p>Ajoutez vos catégories et groupes d'articles pour les utiliser dans vos calculs.</p>
-                    </article>
+  </div>
 
-                    <article class="feature-card">
-                        <div class="feature-icon">📅</div>
-                        <h3>Rapports</h3>
-                        <p>Retrouvez automatiquement vos résultats de la semaine et du mois.</p>
-                    </article>
-
-                    <article class="feature-card">
-                        <div class="feature-icon">🔐</div>
-                        <h3>Données protégées</h3>
-                        <p>Vos informations seront enregistrées dans une base de données en ligne.</p>
-                    </article>
-                </div>
-
-                <div class="welcome-message">
-                    <div class="message-icon">💡</div>
-                    <div>
-                        <h3>Une gestion pensée pour vous</h3>
-                        <p>Pas besoin de calculer manuellement chaque semaine ou chaque mois. MA GESTION regroupera automatiquement vos informations.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PAGE MES CALCULS -->
-            <section id="page-calculs" class="page">
-                <div class="page-heading">
-                    <div>
-                        <span class="small-title">SUIVI QUOTIDIEN</span>
-                        <h1>Mes calculs</h1>
-                        <p>Enregistrez vos résultats à la fin de chaque journée.</p>
-                    </div>
-                    <div class="today-card">
-                        <span>Aujourd'hui</span>
-                        <strong id="currentDate">--/--/----</strong>
-                    </div>
-                </div>
-
-                <div class="summary-grid">
-                    <div class="summary-card">
-                        <span>🛒 Achats du jour</span>
-                        <strong><span id="dailyPurchaseSummary">0</span> FC</strong>
-                    </div>
-                    <div class="summary-card">
-                        <span>💰 Vente du jour</span>
-                        <strong><span id="dailySalesSummary">0</span> FC</strong>
-                    </div>
-                    <div class="summary-card">
-                        <span>💵 Solde</span>
-                        <strong><span id="dailyBalanceSummary">0</span> FC</strong>
-                    </div>
-                </div>
-
-                <div class="form-card">
-                    <div class="card-heading">
-                        <div>
-                            <h2>Enregistrement du jour</h2>
-                            <p>Remplissez les informations de votre journée.</p>
-                        </div>
-                        <span class="status-badge">Journalier</span>
-                    </div>
-
-                    <form id="dailyForm">
-                        <div class="form-group">
-                            <label for="saleDate">Date</label>
-                            <input type="date" id="saleDate" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="saleDay">Jour</label>
-                            <input type="text" id="saleDay" placeholder="Le jour sera automatique" readonly>
-                        </div>
-
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <div>
-                                    <h3>Montant des achats</h3>
-                                    <p>Vos catégories d'achat.</p>
-                                </div>
-                            </div>
-
-                            <div class="expense-row">
-                                <div class="expense-label">
-                                    <span class="expense-icon">📦</span>
-                                    <div>
-                                        <strong>Divers</strong>
-                                        <small>Dépenses diverses</small>
-                                    </div>
-                                </div>
-                                <input type="number" min="0" class="expense-input" name="divers" placeholder="0">
-                                <span class="currency">FC</span>
-                            </div>
-
-                            <div class="expense-row">
-                                <div class="expense-label">
-                                    <span class="expense-icon">🏠</span>
-                                    <div>
-                                        <strong>Vivre frais</strong>
-                                        <small>Dépenses courantes</small>
-                                    </div>
-                                </div>
-                                <input type="number" min="0" class="expense-input" name="vivreFrais" placeholder="0">
-                                <span class="currency">FC</span>
-                            </div>
-
-                            <div id="dynamicExpenses" class="dynamic-expenses"></div>
-
-                            <div class="total-row">
-                                <span>Total des achats</span>
-                                <strong><span id="totalPurchases">0</span> FC</strong>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <div class="form-section-title">
-                                <div>
-                                    <h3>Total des ventes</h3>
-                                    <p>Montant total vendu aujourd'hui.</p>
-                                </div>
-                            </div>
-                            <div class="money-input">
-                                <input type="number" id="dailySales" min="0" placeholder="Ex : 150000" required>
-                                <span>FC</span>
-                            </div>
-                        </div>
-
-                        <div class="balance-box">
-                            <div>
-                                <span>Solde calculé</span>
-                                <small>Ventes - achats</small>
-                            </div>
-                            <strong><span id="calculatedBalance">0</span> FC</strong>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="reset" class="secondary-button">Effacer</button>
-                            <button type="submit" class="primary-button">
-                                Enregistrer la journée <span>✓</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="history-card">
-                    <div class="card-heading">
-                        <div>
-                            <h2>Dernières journées</h2>
-                            <p>Vos dernières saisies.</p>
-                        </div>
-                    </div>
-                    <div id="dailyHistory" class="history-list">
-                        <div class="empty-state">
-                            <span>📋</span>
-                            <h3>Aucun enregistrement</h3>
-                            <p>Vos journées apparaîtront ici.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PAGE ARTICLES -->
-            <section id="page-articles" class="page">
-                <div class="page-heading">
-                    <div>
-                        <span class="small-title">ORGANISATION</span>
-                        <h1>Articles & achats</h1>
-                        <p>Ajoutez ici vos groupes et articles.</p>
-                    </div>
-                </div>
-
-                <div class="info-banner">
-                    <div class="info-banner-icon">💡</div>
-                    <div>
-                        <strong>Comment ça fonctionne ?</strong>
-                        <p>Ajoutez ici les articles que vous achetez. Ils seront ensuite disponibles automatiquement dans vos calculs.</p>
-                    </div>
-                </div>
-
-                <!-- GROUPE -->
-                <div class="form-card">
-                    <div class="card-heading">
-                        <div>
-                            <h2>Ajouter un groupe d'articles</h2>
-                            <p>Exemple : boissons, alimentation, vêtements, accessoires...</p>
-                        </div>
-                    </div>
-
-                    <form id="articleGroupForm">
-                        <div class="form-group">
-                            <label for="groupName">Nom du groupe</label>
-                            <input type="text" id="groupName" placeholder="Ex : Alimentation" required>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="primary-button">Ajouter le groupe</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- ARTICLE -->
-                <div class="form-card">
-                    <div class="card-heading">
-                        <div>
-                            <h2>Ajouter un article</h2>
-                            <p>Associez un article à un groupe existant.</p>
-                        </div>
-                    </div>
-
-                    <form id="articleForm">
-                        <div class="form-group">
-                            <label for="articleGroupSelect">Groupe</label>
-                            <select id="articleGroupSelect" required>
-                                <option value="">-- Sélectionner un groupe --</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="articleName">Nom de l'article</label>
-                            <input type="text" id="articleName" placeholder="Ex : Sac de riz" required>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="primary-button">Ajouter l'article</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- LISTE DES ARTICLES/GROUPES -->
-                <div class="history-card">
-                    <div class="card-heading">
-                        <div>
-                            <h2>Mes groupes & articles</h2>
-                            <p>Liste de vos catégories d'articles enregistrées.</p>
-                        </div>
-                    </div>
-                    <div id="articlesList" class="history-list">
-                        <div class="empty-state">
-                            <span>🛒</span>
-                            <h3>Aucun groupe enregistré</h3>
-                            <p>Créez votre premier groupe ci-dessus.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PAGE RAPPORTS -->
-            <section id="page-rapports" class="page">
-                <div class="page-heading">
-                    <div>
-                        <span class="small-title">ANALYSE</span>
-                        <h1>Rapports</h1>
-                        <p>Consultez vos bilans hebdomadaires et mensuels.</p>
-                    </div>
-                </div>
-
-                <div class="summary-grid">
-                    <div class="summary-card">
-                        <span>📅 Total Semaine</span>
-                        <strong><span id="weeklyTotal">0</span> FC</strong>
-                    </div>
-                    <div class="summary-card">
-                        <span>📆 Total Mois</span>
-                        <strong><span id="monthlyTotal">0</span> FC</strong>
-                    </div>
-                </div>
-
-                <div class="history-card">
-                    <div class="card-heading">
-                        <div>
-                            <h2>Historique complet</h2>
-                            <p>Synthèse de vos opérations enregistrées.</p>
-                        </div>
-                    </div>
-                    <div id="reportsHistory" class="history-list">
-                        <div class="empty-state">
-                            <span>📊</span>
-                            <h3>Aucun rapport disponible</h3>
-                            <p>Saisissez des journées dans "Mes calculs" pour générer des rapports.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PAGE AIDE -->
-            <section id="page-aide" class="page">
-                <div class="page-heading">
-                    <div>
-                        <span class="small-title">SUPPORT</span>
-                        <h1>Aide & Guide</h1>
-                        <p>Besoin d'aide pour prendre en main l'application ?</p>
-                    </div>
-                </div>
-
-                <div class="form-card">
-                    <div class="card-heading">
-                        <div>
-                            <h2>Guide rapide</h2>
-                        </div>
-                    </div>
-                    <!-- BALISES HTML CORRIGÉES (LISTE UL / LI CONFORME) -->
-                    <ul style="padding-left: 20px; line-height: 1.8;">
-                        <li><strong>1. Mes Articles :</strong> Commencez par créer vos catégories et articles de commerce.</li>
-                        <li><strong>2. Mes Calculs :</strong> À la fin de chaque journée, entrez vos dépenses (achats) et le total des ventes.</li>
-                        <li><strong>3. Rapports :</strong> Obtenez une vue globale de la rentabilité de votre commerce.</li>
-                    </ul>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- JS -->
-    <script src="script.js"></script>
+  <!-- Inscription du script JS externe -->
+  <script src="script.js"></script>
 </body>
-
 </html>
