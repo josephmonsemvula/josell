@@ -1,129 +1,435 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>JoSell - Achat, Vente & Sécurité</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#071a33">
+    <meta name="description" content="JOSSELL - MA GESTION">
+    <title>JOSSELL - MA GESTION</title>
 
-  <!-- Configuration PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0a3d62">
+    <!-- POLICES -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Liaison avec le fichier CSS -->
-  <link rel="stylesheet" href="style.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <!-- Conteneur Mobile -->
-  <div class="app-container">
-
-    <header>
-      <h1>JoSell</h1>
-    </header>
-
-    <!-- 1. FORMULAIRE D'INSCRIPTION / CONNEXION CLIENT -->
-    <div class="card" id="auth-section">
-      <h2>Inscription Rapide</h2>
-      <form id="signup-form">
-        <input type="text" id="input-nom" placeholder="Nom" required>
-        <input type="text" id="input-postnom" placeholder="Postnom">
-        <input type="text" id="input-prenom" placeholder="Prénom" required>
-        <input type="tel" id="input-tel" placeholder="N° Téléphone (+243...)" required>
-        <input type="tel" id="input-om" placeholder="N° Orange Money" required>
-        <input type="tel" id="input-wa" placeholder="N° WhatsApp (Optionnel)">
-        <input type="email" id="input-email" placeholder="Adresse Gmail" required>
-        <input type="password" id="input-pass" placeholder="Mot de passe" required>
-        <button type="submit" id="btn-submit">Se connecter / S'inscrire</button>
-      </form>
-    </div>
-
-    <!-- 2. CATALOGUE PRODUITS (VUE CLIENT) -->
-    <div class="card">
-      <h2>Produits Disponibles</h2>
-      <div class="grid-products">
-        <div class="product-card">
-          <img src="logo.png" alt="Produit" style="max-width:100%; height:auto;">
-          <h4>Nom du Produit</h4>
-          <p class="price">15 000 FC</p>
-          <button>Acheter (Séquestre)</button>
+    <!-- ============================= -->
+    <!-- ÉCRAN DE CHARGEMENT -->
+    <!-- ============================= -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-logo">
+            <div class="logo-circle">J</div>
+            <h1>JOSSELL</h1>
+            <p>MA GESTION</p>
         </div>
-      </div>
+        <div class="loader"></div>
     </div>
 
-    <!-- 3. ESPACE VENDEUR (MARKETING & WALLET) -->
-    <div class="card">
-      <h2>Espace Vendeur</h2>
-      <p>Solde Séquestre : <strong>0 FC</strong></p>
-      <p>Solde Disponible : <strong>0 FC</strong></p>
-      <button style="margin-top:10px;">Ajouter un Produit</button>
-      <button class="btn-wa" style="margin-top:10px;">Partager ma Boutique sur WhatsApp</button>
+    <!-- ============================= -->
+    <!-- APPLICATION -->
+    <!-- ============================= -->
+    <div id="app" class="app">
+
+        <!-- ============================= -->
+        <!-- HEADER -->
+        <!-- ============================= -->
+        <header class="top-header">
+            <div class="brand">
+                <div class="brand-icon">J</div>
+                <div class="brand-text">
+                    <strong>JOSSELL</strong>
+                    <span>MA GESTION</span>
+                </div>
+            </div>
+
+            <button type="button" class="menu-button" id="menuButton">
+                ☰
+            </button>
+        </header>
+
+        <!-- ============================= -->
+        <!-- MENU NAVIGATION -->
+        <!-- ============================= -->
+        <nav class="main-navigation" id="mainNavigation">
+            <button type="button" class="nav-item active" data-page="accueil">
+                <span class="nav-icon">⌂</span>
+                <span>Accueil</span>
+            </button>
+
+            <button type="button" class="nav-item" data-page="calculs">
+                <span class="nav-icon">▣</span>
+                <span>Mes calculs</span>
+            </button>
+
+            <button type="button" class="nav-item" data-page="articles">
+                <span class="nav-icon">🛒</span>
+                <span>Articles</span>
+            </button>
+
+            <button type="button" class="nav-item" data-page="rapports">
+                <span class="nav-icon">▤</span>
+                <span>Rapports</span>
+            </button>
+
+            <button type="button" class="nav-item" data-page="aide">
+                <span class="nav-icon">?</span>
+                <span>Aide</span>
+            </button>
+        </nav>
+
+        <!-- ============================= -->
+        <!-- CONTENU PRINCIPAL -->
+        <!-- ============================= -->
+        <main class="main-content">
+
+            <!-- PAGE ACCUEIL -->
+            <section id="page-accueil" class="page active-page">
+                <div class="welcome-hero">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <div class="welcome-badge">✦ Bienvenue dans votre espace</div>
+                        <h1>Gérez votre activité <br><span>simplement et intelligemment.</span></h1>
+                        <p>Avec <strong>MA GESTION</strong>, vous pouvez enregistrer vos ventes, suivre vos achats, connaître votre solde et consulter vos rapports journaliers, hebdomadaires et mensuels.</p>
+                        <!-- ID AJOUTÉ POUR LE BOUTON COMMENCER -->
+                        <button type="button" class="primary-button start-button" id="btnCommencer" data-page="calculs">
+                            Commencer <span>→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <span>MA GESTION</span>
+                    <h2>Tout votre commerce au même endroit</h2>
+                    <p>Une gestion simple, rapide et adaptée à votre activité quotidienne.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Mes calculs</h3>
+                        <p>Enregistrez vos ventes et vos dépenses chaque jour et consultez votre solde.</p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">🛒</div>
+                        <h3>Mes articles</h3>
+                        <p>Ajoutez vos catégories et groupes d'articles pour les utiliser dans vos calculs.</p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">📅</div>
+                        <h3>Rapports</h3>
+                        <p>Retrouvez automatiquement vos résultats de la semaine et du mois.</p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <h3>Données protégées</h3>
+                        <p>Vos informations seront enregistrées dans une base de données en ligne.</p>
+                    </article>
+                </div>
+
+                <div class="welcome-message">
+                    <div class="message-icon">💡</div>
+                    <div>
+                        <h3>Une gestion pensée pour vous</h3>
+                        <p>Pas besoin de calculer manuellement chaque semaine ou chaque mois. MA GESTION regroupera automatiquement vos informations.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE MES CALCULS -->
+            <section id="page-calculs" class="page">
+                <div class="page-heading">
+                    <div>
+                        <span class="small-title">SUIVI QUOTIDIEN</span>
+                        <h1>Mes calculs</h1>
+                        <p>Enregistrez vos résultats à la fin de chaque journée.</p>
+                    </div>
+                    <div class="today-card">
+                        <span>Aujourd'hui</span>
+                        <strong id="currentDate">--/--/----</strong>
+                    </div>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <span>🛒 Achats du jour</span>
+                        <strong><span id="dailyPurchaseSummary">0</span> FC</strong>
+                    </div>
+                    <div class="summary-card">
+                        <span>💰 Vente du jour</span>
+                        <strong><span id="dailySalesSummary">0</span> FC</strong>
+                    </div>
+                    <div class="summary-card">
+                        <span>💵 Solde</span>
+                        <strong><span id="dailyBalanceSummary">0</span> FC</strong>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="card-heading">
+                        <div>
+                            <h2>Enregistrement du jour</h2>
+                            <p>Remplissez les informations de votre journée.</p>
+                        </div>
+                        <span class="status-badge">Journalier</span>
+                    </div>
+
+                    <form id="dailyForm">
+                        <div class="form-group">
+                            <label for="saleDate">Date</label>
+                            <input type="date" id="saleDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="saleDay">Jour</label>
+                            <input type="text" id="saleDay" placeholder="Le jour sera automatique" readonly>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <div>
+                                    <h3>Montant des achats</h3>
+                                    <p>Vos catégories d'achat.</p>
+                                </div>
+                            </div>
+
+                            <div class="expense-row">
+                                <div class="expense-label">
+                                    <span class="expense-icon">📦</span>
+                                    <div>
+                                        <strong>Divers</strong>
+                                        <small>Dépenses diverses</small>
+                                    </div>
+                                </div>
+                                <input type="number" min="0" class="expense-input" name="divers" placeholder="0">
+                                <span class="currency">FC</span>
+                            </div>
+
+                            <div class="expense-row">
+                                <div class="expense-label">
+                                    <span class="expense-icon">🏠</span>
+                                    <div>
+                                        <strong>Vivre frais</strong>
+                                        <small>Dépenses courantes</small>
+                                    </div>
+                                </div>
+                                <input type="number" min="0" class="expense-input" name="vivreFrais" placeholder="0">
+                                <span class="currency">FC</span>
+                            </div>
+
+                            <div id="dynamicExpenses" class="dynamic-expenses"></div>
+
+                            <div class="total-row">
+                                <span>Total des achats</span>
+                                <strong><span id="totalPurchases">0</span> FC</strong>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <div>
+                                    <h3>Total des ventes</h3>
+                                    <p>Montant total vendu aujourd'hui.</p>
+                                </div>
+                            </div>
+                            <div class="money-input">
+                                <input type="number" id="dailySales" min="0" placeholder="Ex : 150000" required>
+                                <span>FC</span>
+                            </div>
+                        </div>
+
+                        <div class="balance-box">
+                            <div>
+                                <span>Solde calculé</span>
+                                <small>Ventes - achats</small>
+                            </div>
+                            <strong><span id="calculatedBalance">0</span> FC</strong>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="reset" class="secondary-button">Effacer</button>
+                            <button type="submit" class="primary-button">
+                                Enregistrer la journée <span>✓</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="history-card">
+                    <div class="card-heading">
+                        <div>
+                            <h2>Dernières journées</h2>
+                            <p>Vos dernières saisies.</p>
+                        </div>
+                    </div>
+                    <div id="dailyHistory" class="history-list">
+                        <div class="empty-state">
+                            <span>📋</span>
+                            <h3>Aucun enregistrement</h3>
+                            <p>Vos journées apparaîtront ici.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE ARTICLES -->
+            <section id="page-articles" class="page">
+                <div class="page-heading">
+                    <div>
+                        <span class="small-title">ORGANISATION</span>
+                        <h1>Articles & achats</h1>
+                        <p>Ajoutez ici vos groupes et articles.</p>
+                    </div>
+                </div>
+
+                <div class="info-banner">
+                    <div class="info-banner-icon">💡</div>
+                    <div>
+                        <strong>Comment ça fonctionne ?</strong>
+                        <p>Ajoutez ici les articles que vous achetez. Ils seront ensuite disponibles automatiquement dans vos calculs.</p>
+                    </div>
+                </div>
+
+                <!-- GROUPE -->
+                <div class="form-card">
+                    <div class="card-heading">
+                        <div>
+                            <h2>Ajouter un groupe d'articles</h2>
+                            <p>Exemple : boissons, alimentation, vêtements, accessoires...</p>
+                        </div>
+                    </div>
+
+                    <form id="articleGroupForm">
+                        <div class="form-group">
+                            <label for="groupName">Nom du groupe</label>
+                            <input type="text" id="groupName" placeholder="Ex : Alimentation" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-button">Ajouter le groupe</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- ARTICLE -->
+                <div class="form-card">
+                    <div class="card-heading">
+                        <div>
+                            <h2>Ajouter un article</h2>
+                            <p>Associez un article à un groupe existant.</p>
+                        </div>
+                    </div>
+
+                    <form id="articleForm">
+                        <div class="form-group">
+                            <label for="articleGroupSelect">Groupe</label>
+                            <select id="articleGroupSelect" required>
+                                <option value="">-- Sélectionner un groupe --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="articleName">Nom de l'article</label>
+                            <input type="text" id="articleName" placeholder="Ex : Sac de riz" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="primary-button">Ajouter l'article</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- LISTE DES ARTICLES/GROUPES -->
+                <div class="history-card">
+                    <div class="card-heading">
+                        <div>
+                            <h2>Mes groupes & articles</h2>
+                            <p>Liste de vos catégories d'articles enregistrées.</p>
+                        </div>
+                    </div>
+                    <div id="articlesList" class="history-list">
+                        <div class="empty-state">
+                            <span>🛒</span>
+                            <h3>Aucun groupe enregistré</h3>
+                            <p>Créez votre premier groupe ci-dessus.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE RAPPORTS -->
+            <section id="page-rapports" class="page">
+                <div class="page-heading">
+                    <div>
+                        <span class="small-title">ANALYSE</span>
+                        <h1>Rapports</h1>
+                        <p>Consultez vos bilans hebdomadaires et mensuels.</p>
+                    </div>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <span>📅 Total Semaine</span>
+                        <strong><span id="weeklyTotal">0</span> FC</strong>
+                    </div>
+                    <div class="summary-card">
+                        <span>📆 Total Mois</span>
+                        <strong><span id="monthlyTotal">0</span> FC</strong>
+                    </div>
+                </div>
+
+                <div class="history-card">
+                    <div class="card-heading">
+                        <div>
+                            <h2>Historique complet</h2>
+                            <p>Synthèse de vos opérations enregistrées.</p>
+                        </div>
+                    </div>
+                    <div id="reportsHistory" class="history-list">
+                        <div class="empty-state">
+                            <span>📊</span>
+                            <h3>Aucun rapport disponible</h3>
+                            <p>Saisissez des journées dans "Mes calculs" pour générer des rapports.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE AIDE -->
+            <section id="page-aide" class="page">
+                <div class="page-heading">
+                    <div>
+                        <span class="small-title">SUPPORT</span>
+                        <h1>Aide & Guide</h1>
+                        <p>Besoin d'aide pour prendre en main l'application ?</p>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="card-heading">
+                        <div>
+                            <h2>Guide rapide</h2>
+                        </div>
+                    </div>
+                    <!-- BALISES HTML CORRIGÉES (LISTE UL / LI CONFORME) -->
+                    <ul style="padding-left: 20px; line-height: 1.8;">
+                        <li><strong>1. Mes Articles :</strong> Commencez par créer vos catégories et articles de commerce.</li>
+                        <li><strong>2. Mes Calculs :</strong> À la fin de chaque journée, entrez vos dépenses (achats) et le total des ventes.</li>
+                        <li><strong>3. Rapports :</strong> Obtenez une vue globale de la rentabilité de votre commerce.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
     </div>
 
-    <!-- 4. PANNEAU ADMIN (ACCUEIL WHATSAPP DIRECT) -->
-    <div class="card">
-      <h2>Admin - Nouveaux Clients</h2>
-      <div style="display:flex; justify-scale:space-between; align-items:center;">
-        <div>
-          <strong>Jean-Paul KABANGU</strong><br>
-          <small>+243810000000</small>
-        </div>
-        <a href="https://wa.me/243810000000?text=Bonjour%20Jean-Paul,%20bienvenue%20sur%20JoSell%20!" target="_blank" style="text-decoration:none;">
-          <button class="btn-wa" style="width:auto; padding:0 10px; height:38px;">WhatsApp</button>
-        </a>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- SCRIPT CORRIGÉ ET SÉCURISÉ -->
-  <script>
-    // Activation du Service Worker pour PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(function(err) {
-        console.log('Service Worker non enregistré:', err);
-      });
-    }
-
-    // Exécution après le chargement du DOM
-    document.addEventListener('DOMContentLoaded', function() {
-      
-      const authSection = document.getElementById('auth-section');
-      const signupForm = document.getElementById('signup-form');
-
-      // Vérifier si un utilisateur est déjà enregistré dans le navigateur
-      const userExiste = localStorage.getItem('user_josell');
-      if (userExiste) {
-        authSection.style.display = 'none';
-      }
-
-      // Écoute de la soumission du formulaire
-      signupForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // Récupération sécurisée par ID
-        const client = {
-          nom: document.getElementById('input-nom').value,
-          postnom: document.getElementById('input-postnom').value,
-          prenom: document.getElementById('input-prenom').value,
-          telephone: document.getElementById('input-tel').value,
-          orange_money: document.getElementById('input-om').value,
-          whatsapp: document.getElementById('input-wa').value,
-          email: document.getElementById('input-email').value,
-          password: document.getElementById('input-pass').value
-        };
-
-        // Sauvegarde locale
-        localStorage.setItem('user_josell', JSON.stringify(client));
-
-        // Confirmation visuelle
-        alert('Bienvenue sur JoSell ' + client.prenom + ' ! Inscription réussie.');
-        
-        // Masquer le formulaire
-        authSection.style.display = 'none';
-      });
-
-    });
-  </script>
-
+    <!-- JS -->
+    <script src="script.js"></script>
 </body>
+
 </html>
