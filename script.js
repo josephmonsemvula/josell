@@ -1,472 +1,3116 @@
-/* ==========================================================================
-   JOSSELL - MA GESTION (Fichier JavaScript Complet)
-   ========================================================================== */
+/* =========================================================
+   JOSSELL - MA GESTION
+   JavaScript complet
+   Ventes - Achats - Bénéfices - Rapports
+   ========================================================= */
 
-document.addEventListener('DOMContentLoaded', () => {
 
-  // --- ÉTATS & DONNÉES (Stockées dans localStorage) ---
-  let groups = JSON.parse(localStorage.getItem('jossell_groups')) || [
-    { id: 'g1', name: 'Vivre frais', description: 'Nourriture & Vivres' },
-    { id: 'g2', name: 'Boissons', description: 'Jus & Rafraîchissements' }
-  ];
+/* =========================================================
+   1. STOCKAGE DES DONNÉES
+   ========================================================= */
 
-  let articles = JSON.parse(localStorage.getItem('jossell_articles')) || [];
-  let dailyRecords = JSON.parse(localStorage.getItem('jossell_records')) || [];
+const STORAGE_KEYS = {
+    groups: "jossell_groups",
+    articles: "jossell_articles",
+    records: "jossell_daily_records"
+};
 
-  // --- SÉLECTEURS DU DOM ---
-  const loadingScreen = document.getElementById('loadingScreen');
-  const mainNav = document.getElementById('mainNavigation');
-  const pages = document.querySelectorAll('.page');
-  const notificationContainer = document.getElementById('notificationContainer');
+let groups =
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.groups)) || [];
 
-  // Dates
-  const currentDateEl = document.getElementById('currentDate');
-  const saleDateInput = document.getElementById('saleDate');
-  const saleDayInput = document.getElementById('saleDay');
+let articles =
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.articles)) || [];
 
-  // Formulaire Calculateur
-  const dailyForm = document.getElementById('dailyForm');
-  const dailySalesInput = document.getElementById('dailySales');
-  const dynamicExpensesDiv = document.getElementById('dynamicExpenses');
-  const totalPurchasesEl = document.getElementById('totalPurchases');
-  const calculatedBalanceEl = document.getElementById('calculatedBalance');
-  const dailyHistoryDiv = document.getElementById('dailyHistory');
+let dailyRecords =
+    JSON.parse(localStorage.getItem(STORAGE_KEYS.records)) || [];
 
-  // Formulaires Groupes & Articles
-  const articleGroupForm = document.getElementById('articleGroupForm');
-  const groupNameInput = document.getElementById('groupName');
-  const groupDescInput = document.getElementById('groupDescription');
-  const articleForm = document.getElementById('articleForm');
-  const articleGroupSelect = document.getElementById('articleGroupSelect');
-  const articleNameInput = document.getElementById('articleName');
-  const articleQtyInput = document.getElementById('articleQuantity');
-  const articlePriceInput = document.getElementById('articlePrice');
-  const articlesListDiv = document.getElementById('articlesList');
 
-  // Résumés Accueil & Rapports
-  const dailySalesSummary = document.getElementById('dailySalesSummary');
-  const dailyPurchaseSummary = document.getElementById('dailyPurchaseSummary');
-  const dailyBalanceSummary = document.getElementById('dailyBalanceSummary');
-  const weeklyTotalEl = document.getElementById('weeklyTotal');
-  const monthlyTotalEl = document.getElementById('monthlyTotal');
+/* =========================================================
+   2. RÉCUPÉRATION DES ÉLÉMENTS HTML
+   ========================================================= */
 
-  // --- INITIALISATION ---
-  function initApp() {
-    // Masquer le chargement
+const loadingScreen =
+    document.getElementById("loadingScreen");
+
+const dailyForm =
+    document.getElementById("dailyForm");
+
+const saleDate =
+    document.getElementById("saleDate");
+
+const saleDay =
+    document.getElementById("saleDay");
+
+const dailySales =
+    document.getElementById("dailySales");
+
+const dynamicExpenses =
+    document.getElementById("dynamicExpenses");
+
+const totalDailySales =
+    document.getElementById("totalDailySales");
+
+const totalPurchases =
+    document.getElementById("totalPurchases");
+
+const calculatedBalance =
+    document.getElementById("calculatedBalance");
+
+const dailyHistory =
+    document.getElementById("dailyHistory");
+
+const articleGroupForm =
+    document.getElementById("articleGroupForm");
+
+const articleForm =
+    document.getElementById("articleForm");
+
+const groupName =
+    document.getElementById("groupName");
+
+const groupDescription =
+    document.getElementById("groupDescription");
+
+const articleGroupSelect =
+    document.getElementById("articleGroupSelect");
+
+const articleName =
+    document.getElementById("articleName");
+
+const articleQuantity =
+    document.getElementById("articleQuantity");
+
+const articlePrice =
+    document.getElementById("articlePrice");
+
+const articlesList =
+    document.getElementById("articlesList");
+
+const currentDate =
+    document.getElementById("currentDate");
+
+const dailySalesSummary =
+    document.getElementById("dailySalesSummary");
+
+const dailyPurchaseSummary =
+    document.getElementById("dailyPurchaseSummary");
+
+const dailyBalanceSummary =
+    document.getElementById("dailyBalanceSummary");
+
+const homeCategorySummary =
+    document.getElementById("homeCategorySummary");
+
+const weeklySales =
+    document.getElementById("weeklySales");
+
+const monthlySales =
+    document.getElementById("monthlySales");
+
+const monthlyPurchases =
+    document.getElementById("monthlyPurchases");
+
+const monthlyTotal =
+    document.getElementById("monthlyTotal");
+
+const categoryReports =
+    document.getElementById("categoryReports");
+
+const reportMonth =
+    document.getElementById("reportMonth");
+
+const refreshReports =
+    document.getElementById("refreshReports");
+
+const dailySalesReport =
+    document.getElementById("dailySalesReport");
+
+const finalMonthlySales =
+    document.getElementById("finalMonthlySales");
+
+const finalMonthlyPurchases =
+    document.getElementById("finalMonthlyPurchases");
+
+const finalMonthlyProfit =
+    document.getElementById("finalMonthlyProfit");
+
+const notificationContainer =
+    document.getElementById("notificationContainer");
+
+
+/* =========================================================
+   3. SAUVEGARDE
+   ========================================================= */
+
+function saveData() {
+
+    localStorage.setItem(
+        STORAGE_KEYS.groups,
+        JSON.stringify(groups)
+    );
+
+    localStorage.setItem(
+        STORAGE_KEYS.articles,
+        JSON.stringify(articles)
+    );
+
+    localStorage.setItem(
+        STORAGE_KEYS.records,
+        JSON.stringify(dailyRecords)
+    );
+}
+
+
+/* =========================================================
+   4. FORMATAGE DES MONTANTS
+   ========================================================= */
+
+function formatMoney(number) {
+
+    number = Number(number) || 0;
+
+    return number.toLocaleString("fr-FR") + " FC";
+}
+
+
+/* =========================================================
+   5. DATE DU JOUR
+   ========================================================= */
+
+function todayISO() {
+
+    const date = new Date();
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(date.getMonth() + 1).padStart(2, "0");
+
+    const day =
+        String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+
+/* =========================================================
+   6. FORMAT DATE
+   ========================================================= */
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
+
+    const parts =
+        dateString.split("-");
+
+    if (parts.length !== 3) {
+        return dateString;
+    }
+
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+
+/* =========================================================
+   7. NOM DU JOUR
+   ========================================================= */
+
+function getDayName(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
+
+    const date =
+        new Date(dateString + "T12:00:00");
+
+    return date.toLocaleDateString(
+        "fr-FR",
+        {
+            weekday: "long"
+        }
+    );
+}
+
+
+/* =========================================================
+   8. ÉCHAPPER LE HTML
+   ========================================================= */
+
+function escapeHTML(text) {
+
+    if (
+        text === null ||
+        text === undefined
+    ) {
+        return "";
+    }
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   9. NOTIFICATIONS
+   ========================================================= */
+
+function showNotification(
+    message,
+    type = "success"
+) {
+
+    if (!notificationContainer) {
+        return;
+    }
+
+    const notification =
+        document.createElement("div");
+
+    notification.style.padding =
+        "14px 18px";
+
+    notification.style.marginBottom =
+        "10px";
+
+    notification.style.borderRadius =
+        "10px";
+
+    notification.style.background =
+        type === "error"
+            ? "#dc2626"
+            : "#16a34a";
+
+    notification.style.color =
+        "white";
+
+    notification.style.fontWeight =
+        "600";
+
+    notification.style.boxShadow =
+        "0 5px 20px rgba(0,0,0,0.15)";
+
+    notification.textContent =
+        message;
+
+    notificationContainer.appendChild(
+        notification
+    );
+
     setTimeout(() => {
-      if (loadingScreen) loadingScreen.style.display = 'none';
-    }, 400);
 
-    // Date du jour par défaut
-    const today = new Date();
-    const formattedToday = today.toISOString().split('T')[0];
-    if (saleDateInput) {
-      saleDateInput.value = formattedToday;
-      updateDayOfWeek(formattedToday);
+        notification.remove();
+
+    }, 3000);
+}
+
+
+/* =========================================================
+   10. NAVIGATION
+   ========================================================= */
+
+function openPage(pageName) {
+
+    const pages =
+        document.querySelectorAll(".page");
+
+    const navItems =
+        document.querySelectorAll(".nav-item");
+
+
+    pages.forEach(page => {
+
+        page.classList.remove(
+            "active-page"
+        );
+
+    });
+
+
+    navItems.forEach(button => {
+
+        button.classList.remove(
+            "active"
+        );
+
+    });
+
+
+    const targetPage =
+        document.getElementById(
+            `page-${pageName}`
+        );
+
+    const targetButton =
+        document.querySelector(
+            `.nav-item[data-page="${pageName}"]`
+        );
+
+
+    if (targetPage) {
+
+        targetPage.classList.add(
+            "active-page"
+        );
+
     }
 
-    if (currentDateEl) {
-      currentDateEl.textContent = today.toLocaleDateString('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
+
+    if (targetButton) {
+
+        targetButton.classList.add(
+            "active"
+        );
+
     }
 
-    // Charger les composants
-    renderDynamicExpenses();
-    renderGroupOptions();
-    renderArticlesAndGroups();
-    renderDailyHistory();
-    updateDashboardSummaries();
-    setupNavigation();
-  }
 
-  // --- NAVIGATION ENTRE PAGES ---
-  function setupNavigation() {
-    document.querySelectorAll('[data-page]').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const targetPage = button.getAttribute('data-page');
+    if (pageName === "home") {
 
-        // Mettre à jour la navigation
-        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        const activeNav = document.querySelector(`.nav-item[data-page="${targetPage}"]`);
-        if (activeNav) activeNav.classList.add('active');
+        updateHomeSummary();
 
-        // Afficher la page ciblée
-        pages.forEach(page => {
-          if (page.id === `page-${targetPage}`) {
-            page.classList.add('active-page');
-          } else {
-            page.classList.remove('active-page');
-          }
+    }
+
+
+    if (pageName === "calculator") {
+
+        renderCategoryInputs();
+
+        calculateCurrentDay();
+
+        renderHistory();
+
+    }
+
+
+    if (pageName === "groups") {
+
+        renderGroups();
+
+        updateArticleGroupSelect();
+
+    }
+
+
+    if (pageName === "reports") {
+
+        renderReports();
+
+    }
+}
+
+
+/* Navigation principale */
+
+document
+    .querySelectorAll(".nav-item")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                openPage(
+                    button.dataset.page
+                );
+
+            }
+        );
+
+    });
+
+
+/* Bouton Commencer */
+
+document
+    .querySelectorAll("[data-page]")
+    .forEach(element => {
+
+        element.addEventListener(
+            "click",
+            function () {
+
+                const page =
+                    this.dataset.page;
+
+                if (
+                    !this.classList.contains(
+                        "nav-item"
+                    )
+                ) {
+
+                    openPage(page);
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   11. INITIALISATION DATE
+   ========================================================= */
+
+function initializeDate() {
+
+    const today =
+        todayISO();
+
+    if (saleDate) {
+
+        saleDate.value =
+            today;
+
+    }
+
+    updateDay();
+
+
+    if (currentDate) {
+
+        currentDate.textContent =
+            formatDate(today);
+
+    }
+}
+
+
+function updateDay() {
+
+    if (
+        !saleDate ||
+        !saleDay
+    ) {
+        return;
+    }
+
+    saleDay.value =
+        getDayName(
+            saleDate.value
+        );
+}
+
+
+/* Changement de date */
+
+if (saleDate) {
+
+    saleDate.addEventListener(
+        "change",
+        () => {
+
+            updateDay();
+
+            renderCategoryInputs();
+
+            calculateCurrentDay();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   12. GROUPES / CATÉGORIES
+   ========================================================= */
+
+if (articleGroupForm) {
+
+    articleGroupForm.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const name =
+                groupName.value.trim();
+
+            const description =
+                groupDescription.value.trim();
+
+
+            if (!name) {
+
+                showNotification(
+                    "Veuillez entrer le nom du groupe.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const alreadyExists =
+                groups.some(group =>
+                    group.name
+                        .toLowerCase() ===
+                    name.toLowerCase()
+                );
+
+
+            if (alreadyExists) {
+
+                showNotification(
+                    "Cette catégorie existe déjà.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const newGroup = {
+
+                id: Date.now(),
+
+                name: name,
+
+                description: description,
+
+                createdAt:
+                    new Date().toISOString()
+
+            };
+
+
+            groups.push(
+                newGroup
+            );
+
+
+            saveData();
+
+
+            articleGroupForm.reset();
+
+
+            renderGroups();
+
+            updateArticleGroupSelect();
+
+            renderCategoryInputs();
+
+
+            showNotification(
+                "Catégorie ajoutée avec succès."
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   13. AFFICHER LES GROUPES ET ARTICLES
+   ========================================================= */
+
+function renderGroups() {
+
+    if (!articlesList) {
+        return;
+    }
+
+
+    let groupsHTML = "";
+
+
+    if (groups.length === 0) {
+
+        groupsHTML = `
+
+            <div class="empty-state">
+
+                <p>
+                    📁 Aucun groupe créé pour le moment.
+                </p>
+
+            </div>
+
+        `;
+
+    } else {
+
+        groups.forEach(group => {
+
+            const groupArticles =
+                articles.filter(
+                    article =>
+                        article.groupId ===
+                        group.id
+                );
+
+
+            groupsHTML += `
+
+                <div class="group-card">
+
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        gap:10px;
+                    ">
+
+                        <div>
+
+                            <h4>
+                                📁
+                                ${escapeHTML(
+                                    group.name
+                                )}
+                            </h4>
+
+                            <small>
+                                ${escapeHTML(
+                                    group.description ||
+                                    "Aucune description"
+                                )}
+                            </small>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            onclick="deleteGroup(${group.id})"
+                            style="
+                                background:#dc2626;
+                                color:white;
+                                border:0;
+                                padding:8px 12px;
+                                border-radius:8px;
+                                cursor:pointer;
+                            "
+                        >
+                            Supprimer
+                        </button>
+
+                    </div>
+
+
+                    <div style="
+                        margin-top:12px;
+                    ">
+
+                        <strong>
+                            ${groupArticles.length}
+                            article(s)
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            `;
+
         });
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    });
-  }
+    }
 
-  // --- NOTIFICATIONS ---
-  function showNotification(message, type = 'success') {
-    if (!notificationContainer) return;
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      background: ${type === 'success' ? '#10b981' : '#ef4444'};
-      color: white;
-      padding: 12px 20px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
+
+    let articlesHTML = "";
+
+
+    if (articles.length > 0) {
+
+        articlesHTML = `
+
+            <h4 style="
+                margin-top:25px;
+                margin-bottom:12px;
+            ">
+                🛒 Articles enregistrés
+            </h4>
+
+        `;
+
+
+        articles.forEach(article => {
+
+            const group =
+                groups.find(
+                    g =>
+                        g.id ===
+                        article.groupId
+                );
+
+
+            articlesHTML += `
+
+                <div style="
+                    padding:14px;
+                    margin-bottom:10px;
+                    border-radius:12px;
+                    background:rgba(37,99,235,0.05);
+                    border:1px solid rgba(37,99,235,0.12);
+                ">
+
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        gap:10px;
+                        align-items:center;
+                    ">
+
+                        <div>
+
+                            <strong>
+                                ${escapeHTML(
+                                    article.name
+                                )}
+                            </strong>
+
+                            <div>
+                                Catégorie :
+                                ${escapeHTML(
+                                    group
+                                        ? group.name
+                                        : "Inconnue"
+                                )}
+                            </div>
+
+                            <div>
+                                Stock :
+                                ${Number(
+                                    article.quantity
+                                ) || 0}
+                            </div>
+
+                            <div>
+                                Prix :
+                                ${formatMoney(
+                                    article.price
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            onclick="deleteArticle(${article.id})"
+                            style="
+                                background:#dc2626;
+                                color:white;
+                                border:0;
+                                padding:8px 12px;
+                                border-radius:8px;
+                                cursor:pointer;
+                            "
+                        >
+                            Supprimer
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+
+    articlesList.innerHTML =
+        groupsHTML +
+        articlesHTML;
+}
+
+
+/* =========================================================
+   14. SUPPRIMER UN GROUPE
+   ========================================================= */
+
+function deleteGroup(id) {
+
+    const group =
+        groups.find(
+            g => g.id === id
+        );
+
+    if (!group) {
+        return;
+    }
+
+
+    const linkedArticles =
+        articles.filter(
+            article =>
+                article.groupId === id
+        );
+
+
+    let message =
+        `Voulez-vous supprimer la catégorie "${group.name}" ?`;
+
+
+    if (linkedArticles.length > 0) {
+
+        message +=
+            `\n\nAttention : ${linkedArticles.length} article(s) appartiennent à cette catégorie.`;
+
+    }
+
+
+    if (!confirm(message)) {
+        return;
+    }
+
+
+    groups =
+        groups.filter(
+            g => g.id !== id
+        );
+
+
+    articles =
+        articles.filter(
+            a => a.groupId !== id
+        );
+
+
+    saveData();
+
+
+    renderGroups();
+
+    updateArticleGroupSelect();
+
+    renderCategoryInputs();
+
+
+    showNotification(
+        "Catégorie supprimée."
+    );
+}
+
+
+/* =========================================================
+   15. AJOUTER UN ARTICLE
+   ========================================================= */
+
+if (articleForm) {
+
+    articleForm.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const selectedGroup =
+                articleGroupSelect.value;
+
+            const name =
+                articleName.value.trim();
+
+            const quantity =
+                Number(
+                    articleQuantity.value
+                ) || 0;
+
+            const price =
+                Number(
+                    articlePrice.value
+                ) || 0;
+
+
+            if (!selectedGroup) {
+
+                showNotification(
+                    "Veuillez sélectionner une catégorie.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (!name) {
+
+                showNotification(
+                    "Veuillez entrer le nom de l'article.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const newArticle = {
+
+                id: Date.now(),
+
+                groupId:
+                    Number(selectedGroup),
+
+                name: name,
+
+                quantity: quantity,
+
+                price: price,
+
+                createdAt:
+                    new Date().toISOString()
+
+            };
+
+
+            articles.push(
+                newArticle
+            );
+
+
+            saveData();
+
+
+            articleForm.reset();
+
+
+            renderGroups();
+
+
+            showNotification(
+                "Article ajouté avec succès."
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   16. LISTE DES CATÉGORIES
+   ========================================================= */
+
+function updateArticleGroupSelect() {
+
+    if (!articleGroupSelect) {
+        return;
+    }
+
+
+    articleGroupSelect.innerHTML = `
+
+        <option value="">
+            -- Sélectionner un groupe --
+        </option>
+
     `;
-    toast.textContent = message;
-    notificationContainer.appendChild(toast);
 
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 300);
-    }, 2500);
-  }
-
-  // --- CALCULATEUR & JOURNÉE ---
-  if (saleDateInput) {
-    saleDateInput.addEventListener('change', (e) => {
-      updateDayOfWeek(e.target.value);
-    });
-  }
-
-  function updateDayOfWeek(dateString) {
-    if (!dateString) return;
-    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    const dateObj = new Date(dateString);
-    if (saleDayInput) {
-      saleDayInput.value = days[dateObj.getDay()];
-    }
-  }
-
-  // Générer les champs de dépenses dynamiques selon les groupes créés
-  function renderDynamicExpenses() {
-    if (!dynamicExpensesDiv) return;
-    dynamicExpensesDiv.innerHTML = '';
-
-    if (groups.length === 0) {
-      dynamicExpensesDiv.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem;">Aucune catégorie trouvée. Ajoutez un groupe pour détailler vos dépenses.</p>';
-      return;
-    }
 
     groups.forEach(group => {
-      const row = document.createElement('div');
-      row.className = 'expense-row';
-      row.innerHTML = `
-        <label for="exp-${group.id}" style="font-weight: 600; font-size: 0.9rem;">${group.name}</label>
-        <input type="number" id="exp-${group.id}" class="expense-input" data-group-id="${group.id}" min="0" placeholder="0 FC">
-      `;
-      dynamicExpensesDiv.appendChild(row);
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            group.id;
+
+        option.textContent =
+            group.name;
+
+        articleGroupSelect.appendChild(
+            option
+        );
+
     });
 
-    // Écouter les changements pour le calcul automatique
-    document.querySelectorAll('.expense-input').forEach(input => {
-      input.addEventListener('input', calculateDailyTotals);
+}
+
+
+/* =========================================================
+   17. SUPPRIMER UN ARTICLE
+   ========================================================= */
+
+function deleteArticle(id) {
+
+    const article =
+        articles.find(
+            a => a.id === id
+        );
+
+    if (!article) {
+        return;
+    }
+
+
+    if (
+        !confirm(
+            `Voulez-vous supprimer l'article "${article.name}" ?`
+        )
+    ) {
+        return;
+    }
+
+
+    articles =
+        articles.filter(
+            a => a.id !== id
+        );
+
+
+    saveData();
+
+    renderGroups();
+
+
+    showNotification(
+        "Article supprimé."
+    );
+}
+
+
+/* =========================================================
+   18. CRÉER LES CHAMPS DES CATÉGORIES
+   ========================================================= */
+
+function renderCategoryInputs() {
+
+    if (!dynamicExpenses) {
+        return;
+    }
+
+
+    if (groups.length === 0) {
+
+        dynamicExpenses.innerHTML = `
+
+            <div class="empty-state">
+
+                <p>
+                    📁 Créez d'abord une catégorie
+                    dans "Groupes & Articles".
+                </p>
+
+            </div>
+
+        `;
+
+        calculateCurrentDay();
+
+        return;
+    }
+
+
+    const editingId =
+        dailyForm.dataset.editingId;
+
+
+    let existingRecord = null;
+
+
+    if (editingId) {
+
+        existingRecord =
+            dailyRecords.find(
+                record =>
+                    record.id ===
+                    Number(editingId)
+            );
+
+    }
+
+
+    dynamicExpenses.innerHTML = "";
+
+
+    groups.forEach(group => {
+
+        let existingData = null;
+
+
+        if (existingRecord) {
+
+            existingData =
+                existingRecord.categories.find(
+                    category =>
+                        category.groupId ===
+                        group.id
+                );
+
+        }
+
+
+        const salesValue =
+            existingData
+                ? existingData.sales
+                : "";
+
+        const purchaseValue =
+            existingData
+                ? existingData.purchase
+                : "";
+
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "category-financial-row";
+
+
+        row.style.cssText = `
+
+            margin-bottom:15px;
+
+            padding:15px;
+
+            border:1px solid
+                rgba(37,99,235,0.15);
+
+            border-radius:14px;
+
+            background:
+                rgba(37,99,235,0.03);
+
+        `;
+
+
+        row.innerHTML = `
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:10px;
+                margin-bottom:12px;
+            ">
+
+                <strong>
+                    📁
+                    ${escapeHTML(group.name)}
+                </strong>
+
+
+                <span
+                    class="category-profit"
+                    data-group-id="${group.id}"
+                    style="
+                        font-weight:bold;
+                        color:#16a34a;
+                    "
+                >
+                    Bénéfice : 0 FC
+                </span>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        💵 Ventes
+                    </label>
+
+                    <input
+                        type="number"
+                        min="0"
+                        class="category-sale-input"
+                        data-group-id="${group.id}"
+                        value="${salesValue}"
+                        placeholder="0"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        🛒 Achats
+                    </label>
+
+                    <input
+                        type="number"
+                        min="0"
+                        class="category-purchase-input"
+                        data-group-id="${group.id}"
+                        value="${purchaseValue}"
+                        placeholder="0"
+                    >
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        dynamicExpenses.appendChild(
+            row
+        );
+
     });
-  }
 
-  if (dailySalesInput) {
-    dailySalesInput.addEventListener('input', calculateDailyTotals);
-  }
 
-  function calculateDailyTotals() {
-    const sales = parseFloat(dailySalesInput.value) || 0;
+    /* Le total des ventes est calculé
+       automatiquement */
+
+    if (dailySales) {
+
+        dailySales.readOnly =
+            true;
+
+        dailySales.style.background =
+            "rgba(37,99,235,0.06)";
+
+        dailySales.style.fontWeight =
+            "700";
+
+    }
+
+
+    dynamicExpenses
+        .querySelectorAll(
+            ".category-sale-input, .category-purchase-input"
+        )
+        .forEach(input => {
+
+            input.addEventListener(
+                "input",
+                calculateCurrentDay
+            );
+
+        });
+
+
+    calculateCurrentDay();
+}
+
+
+/* =========================================================
+   19. CALCUL DE LA JOURNÉE
+   ========================================================= */
+
+function calculateCurrentDay() {
+
+    let sales = 0;
+
     let purchases = 0;
 
-    document.querySelectorAll('.expense-input').forEach(input => {
-      purchases += parseFloat(input.value) || 0;
-    });
 
-    const balance = sales - purchases;
+    document
+        .querySelectorAll(
+            ".category-sale-input"
+        )
+        .forEach(input => {
 
-    if (totalPurchasesEl) totalPurchasesEl.textContent = `${purchases.toLocaleString('fr-FR')} FC`;
-    if (calculatedBalanceEl) {
-      calculatedBalanceEl.textContent = `${balance.toLocaleString('fr-FR')} FC`;
-      calculatedBalanceEl.className = balance >= 0 ? 'positive' : 'negative';
+            sales +=
+                Number(input.value) || 0;
+
+        });
+
+
+    document
+        .querySelectorAll(
+            ".category-purchase-input"
+        )
+        .forEach(input => {
+
+            purchases +=
+                Number(input.value) || 0;
+
+        });
+
+
+    const balance =
+        sales - purchases;
+
+
+    /* Total ventes */
+
+    if (dailySales) {
+
+        dailySales.value =
+            sales;
+
     }
 
-    return { sales, purchases, balance };
-  }
 
-  // Enregistrement de la journée
-  if (dailyForm) {
-    dailyForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+    if (totalDailySales) {
 
-      const totals = calculateDailyTotals();
-      const dateVal = saleDateInput.value;
-      const dayVal = saleDayInput.value;
+        totalDailySales.textContent =
+            formatMoney(sales);
 
-      if (!dateVal) {
-        showNotification('Veuillez sélectionner une date.', 'danger');
-        return;
-      }
+    }
 
-      // Récupération du détail des dépenses
-      const expenseDetails = {};
-      document.querySelectorAll('.expense-input').forEach(input => {
-        const groupId = input.getAttribute('data-group-id');
-        expenseDetails[groupId] = parseFloat(input.value) || 0;
-      });
 
-      const newRecord = {
-        id: Date.now().toString(),
-        date: dateVal,
-        day: dayVal,
-        sales: totals.sales,
-        purchases: totals.purchases,
-        balance: totals.balance,
-        details: expenseDetails
-      };
+    /* Total achats */
 
-      // Remplacer si enregistrement existant à la même date
-      const existingIndex = dailyRecords.findIndex(r => r.date === dateVal);
-      if (existingIndex !== -1) {
-        dailyRecords[existingIndex] = newRecord;
-      } else {
-        dailyRecords.unshift(newRecord);
-      }
+    if (totalPurchases) {
 
-      localStorage.setItem('jossell_records', JSON.stringify(dailyRecords));
-      showNotification('Journée enregistrée avec succès !');
+        totalPurchases.textContent =
+            formatMoney(purchases);
 
-      // Réinitialiser le formulaire
-      dailySalesInput.value = '';
-      document.querySelectorAll('.expense-input').forEach(i => i.value = '');
-      calculateDailyTotals();
+    }
 
-      // Mettre à jour l'affichage
-      renderDailyHistory();
-      updateDashboardSummaries();
+
+    /* Bénéfice */
+
+    if (calculatedBalance) {
+
+        calculatedBalance.textContent =
+            formatMoney(balance);
+
+        calculatedBalance.style.color =
+            balance >= 0
+                ? "#16a34a"
+                : "#dc2626";
+
+    }
+
+
+    /* Bénéfice de chaque catégorie */
+
+    groups.forEach(group => {
+
+        const saleInput =
+            document.querySelector(
+                `.category-sale-input[data-group-id="${group.id}"]`
+            );
+
+        const purchaseInput =
+            document.querySelector(
+                `.category-purchase-input[data-group-id="${group.id}"]`
+            );
+
+        const profitElement =
+            document.querySelector(
+                `.category-profit[data-group-id="${group.id}"]`
+            );
+
+
+        if (
+            !saleInput ||
+            !purchaseInput ||
+            !profitElement
+        ) {
+            return;
+        }
+
+
+        const categorySales =
+            Number(
+                saleInput.value
+            ) || 0;
+
+        const categoryPurchases =
+            Number(
+                purchaseInput.value
+            ) || 0;
+
+
+        const profit =
+            categorySales -
+            categoryPurchases;
+
+
+        profitElement.textContent =
+            `Bénéfice : ${formatMoney(profit)}`;
+
+
+        profitElement.style.color =
+            profit >= 0
+                ? "#16a34a"
+                : "#dc2626";
+
     });
-  }
+}
 
-  // Afficher l'historique
-  function renderDailyHistory() {
-    if (!dailyHistoryDiv) return;
-    dailyHistoryDiv.innerHTML = '';
+
+/* =========================================================
+   20. ENREGISTRER UNE JOURNÉE
+   ========================================================= */
+
+if (dailyForm) {
+
+    dailyForm.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const date =
+                saleDate.value;
+
+
+            if (!date) {
+
+                showNotification(
+                    "Veuillez sélectionner une date.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (groups.length === 0) {
+
+                showNotification(
+                    "Créez au moins une catégorie avant d'enregistrer.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const categories = [];
+
+
+            groups.forEach(group => {
+
+                const saleInput =
+                    document.querySelector(
+                        `.category-sale-input[data-group-id="${group.id}"]`
+                    );
+
+                const purchaseInput =
+                    document.querySelector(
+                        `.category-purchase-input[data-group-id="${group.id}"]`
+                    );
+
+
+                const sales =
+                    Number(
+                        saleInput?.value
+                    ) || 0;
+
+
+                const purchase =
+                    Number(
+                        purchaseInput?.value
+                    ) || 0;
+
+
+                categories.push({
+
+                    groupId:
+                        group.id,
+
+                    groupName:
+                        group.name,
+
+                    sales:
+                        sales,
+
+                    purchase:
+                        purchase,
+
+                    profit:
+                        sales - purchase
+
+                });
+
+            });
+
+
+            const totalSales =
+                categories.reduce(
+                    (sum, category) =>
+                        sum +
+                        category.sales,
+                    0
+                );
+
+
+            const totalPurchase =
+                categories.reduce(
+                    (sum, category) =>
+                        sum +
+                        category.purchase,
+                    0
+                );
+
+
+            const totalProfit =
+                totalSales -
+                totalPurchase;
+
+
+            const editingId =
+                dailyForm.dataset.editingId;
+
+
+            /* MODIFICATION */
+
+            if (editingId) {
+
+                const index =
+                    dailyRecords.findIndex(
+                        record =>
+                            record.id ===
+                            Number(editingId)
+                    );
+
+
+                if (index !== -1) {
+
+                    dailyRecords[index] = {
+
+                        ...dailyRecords[index],
+
+                        date:
+                            date,
+
+                        day:
+                            getDayName(date),
+
+                        categories:
+                            categories,
+
+                        totalSales:
+                            totalSales,
+
+                        totalPurchase:
+                            totalPurchase,
+
+                        totalProfit:
+                            totalProfit,
+
+                        updatedAt:
+                            new Date().toISOString()
+
+                    };
+
+                }
+
+
+                delete dailyForm.dataset.editingId;
+
+
+                showNotification(
+                    "Journée modifiée avec succès."
+                );
+
+            }
+
+
+            /* NOUVEL ENREGISTREMENT */
+
+            else {
+
+                const record = {
+
+                    id:
+                        Date.now(),
+
+                    date:
+                        date,
+
+                    day:
+                        getDayName(date),
+
+                    categories:
+                        categories,
+
+                    totalSales:
+                        totalSales,
+
+                    totalPurchase:
+                        totalPurchase,
+
+                    totalProfit:
+                        totalProfit,
+
+                    createdAt:
+                        new Date().toISOString()
+
+                };
+
+
+                dailyRecords.push(
+                    record
+                );
+
+
+                showNotification(
+                    "Journée enregistrée avec succès."
+                );
+
+            }
+
+
+            saveData();
+
+
+            dailyForm.reset();
+
+
+            saleDate.value =
+                todayISO();
+
+
+            updateDay();
+
+
+            renderCategoryInputs();
+
+            renderHistory();
+
+            updateHomeSummary();
+
+            renderReports();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   21. HISTORIQUE
+   ========================================================= */
+
+function renderHistory() {
+
+    if (!dailyHistory) {
+        return;
+    }
+
 
     if (dailyRecords.length === 0) {
-      dailyHistoryDiv.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 10px;">Aucun enregistrement pour le moment.</p>';
-      return;
-    }
 
-    dailyRecords.forEach(rec => {
-      const div = document.createElement('div');
-      div.style.cssText = 'background: #ffffff; padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;';
-      div.innerHTML = `
-        <div>
-          <strong>${rec.day} (${rec.date})</strong>
-          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-            Ventes: ${rec.sales.toLocaleString('fr-FR')} FC | Achats: ${rec.purchases.toLocaleString('fr-FR')} FC
-          </div>
-        </div>
-        <div style="text-align: right;">
-          <span class="${rec.balance >= 0 ? 'positive' : 'negative'}" style="font-weight: 700; font-size: 1rem; display: block;">
-            ${rec.balance.toLocaleString('fr-FR')} FC
-          </span>
-          <button class="delete-button" onclick="deleteRecord('${rec.id}')" style="margin-top: 4px;">Supprimer</button>
-        </div>
-      `;
-      dailyHistoryDiv.appendChild(div);
-    });
-  }
+        dailyHistory.innerHTML = `
 
-  window.deleteRecord = function(id) {
-    dailyRecords = dailyRecords.filter(r => r.id !== id);
-    localStorage.setItem('jossell_records', JSON.stringify(dailyRecords));
-    renderDailyHistory();
-    updateDashboardSummaries();
-    showNotification('Enregistrement supprimé.');
-  };
+            <div class="empty-state">
 
-  // --- GESTION DES GROUPES & ARTICLES ---
-  if (articleGroupForm) {
-    articleGroupForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = groupNameInput.value.trim();
-      const desc = groupDescInput.value.trim();
+                <p>
+                    📜 Aucun enregistrement pour le moment.
+                </p>
 
-      if (!name) return;
-
-      const newGroup = {
-        id: 'g_' + Date.now(),
-        name: name,
-        description: desc
-      };
-
-      groups.push(newGroup);
-      localStorage.setItem('jossell_groups', JSON.stringify(groups));
-
-      groupNameInput.value = '';
-      groupDescInput.value = '';
-
-      renderGroupOptions();
-      renderDynamicExpenses();
-      renderArticlesAndGroups();
-      showNotification('Nouveau groupe ajouté !');
-    });
-  }
-
-  function renderGroupOptions() {
-    if (!articleGroupSelect) return;
-    articleGroupSelect.innerHTML = '<option value="">-- Sélectionner un groupe --</option>';
-    groups.forEach(group => {
-      const option = document.createElement('option');
-      option.value = group.id;
-      option.textContent = group.name;
-      articleGroupSelect.appendChild(option);
-    });
-  }
-
-  if (articleForm) {
-    articleForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const groupId = articleGroupSelect.value;
-      const name = articleNameInput.value.trim();
-      const qty = parseInt(articleQtyInput.value) || 0;
-      const price = parseFloat(articlePriceInput.value) || 0;
-
-      if (!groupId || !name) {
-        showNotification('Veuillez sélectionner un groupe et saisir un nom.', 'danger');
-        return;
-      }
-
-      const newArticle = {
-        id: 'a_' + Date.now(),
-        groupId: groupId,
-        name: name,
-        quantity: qty,
-        price: price
-      };
-
-      articles.push(newArticle);
-      localStorage.setItem('jossell_articles', JSON.stringify(articles));
-
-      articleNameInput.value = '';
-      articleQtyInput.value = '';
-      articlePriceInput.value = '';
-
-      renderArticlesAndGroups();
-      showNotification('Article ajouté avec succès !');
-    });
-  }
-
-  function renderArticlesAndGroups() {
-    if (!articlesListDiv) return;
-    articlesListDiv.innerHTML = '';
-
-    if (groups.length === 0) {
-      articlesListDiv.innerHTML = '<p style="color: var(--text-muted);">Aucun groupe disponible.</p>';
-      return;
-    }
-
-    groups.forEach(group => {
-      const groupArticles = articles.filter(a => a.groupId === group.id);
-      const groupBlock = document.createElement('div');
-      groupBlock.style.cssText = 'background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 14px;';
-
-      let articlesHTML = '';
-      if (groupArticles.length === 0) {
-        articlesHTML = '<p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">Aucun article dans ce groupe.</p>';
-      } else {
-        articlesHTML = groupArticles.map(art => `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.9rem;">
-            <span><strong>${art.name}</strong> (${art.quantity} en stock)</span>
-            <div>
-              <span style="color: var(--primary); font-weight: 600; margin-right: 10px;">${art.price.toLocaleString('fr-FR')} FC</span>
-              <button class="delete-button" onclick="deleteArticle('${art.id}')">✕</button>
             </div>
-          </div>
-        `).join('');
-      }
 
-      groupBlock.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--bg-color); padding-bottom: 8px;">
-          <h4 style="color: var(--primary); font-size: 1rem;">📁 ${group.name}</h4>
-          <button class="delete-button" onclick="deleteGroup('${group.id}')">Supprimer groupe</button>
+        `;
+
+        return;
+    }
+
+
+    const sortedRecords =
+        [...dailyRecords].sort(
+            (a, b) =>
+                b.date.localeCompare(
+                    a.date
+                )
+        );
+
+
+    let html = "";
+
+
+    sortedRecords.forEach(record => {
+
+        const profitClass =
+            record.totalProfit >= 0
+                ? "positive"
+                : "negative";
+
+
+        let categoryHTML = "";
+
+
+        record.categories.forEach(
+            category => {
+
+                if (
+                    category.sales === 0 &&
+                    category.purchase === 0
+                ) {
+                    return;
+                }
+
+
+                categoryHTML += `
+
+                    <div style="
+                        padding:8px 0;
+                        border-bottom:
+                            1px solid
+                            rgba(0,0,0,0.06);
+                    ">
+
+                        <strong>
+                            ${escapeHTML(
+                                category.groupName
+                            )}
+                        </strong>
+
+                        <br>
+
+                        <small>
+
+                            Ventes :
+                            ${formatMoney(
+                                category.sales
+                            )}
+
+                            |
+
+                            Achats :
+                            ${formatMoney(
+                                category.purchase
+                            )}
+
+                            |
+
+                            Bénéfice :
+
+                            <strong>
+                                ${formatMoney(
+                                    category.profit
+                                )}
+                            </strong>
+
+                        </small>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+            <div class="history-card"
+                style="
+                    margin-bottom:15px;
+                    padding:16px;
+                    border-radius:14px;
+                    border:
+                        1px solid
+                        rgba(0,0,0,0.08);
+                    background:#fff;
+                ">
+
+                <div style="
+                    display:flex;
+                    justify-content:
+                        space-between;
+                    align-items:
+                        flex-start;
+                    gap:10px;
+                ">
+
+                    <div>
+
+                        <h4 style="
+                            margin:
+                                0 0 5px;
+                        ">
+
+                            📅
+                            ${formatDate(
+                                record.date
+                            )}
+
+                        </h4>
+
+                        <small>
+                            ${escapeHTML(
+                                record.day
+                            )}
+                        </small>
+
+                    </div>
+
+
+                    <div style="
+                        text-align:right;
+                    ">
+
+                        <strong>
+                            Ventes :
+                            ${formatMoney(
+                                record.totalSales
+                            )}
+                        </strong>
+
+                        <br>
+
+                        <strong>
+                            Achats :
+                            ${formatMoney(
+                                record.totalPurchase
+                            )}
+                        </strong>
+
+                        <br>
+
+                        <strong
+                            class="${profitClass}"
+                        >
+                            Bénéfice :
+                            ${formatMoney(
+                                record.totalProfit
+                            )}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    margin-top:15px;
+                ">
+
+                    ${
+                        categoryHTML ||
+                        `
+                        <small>
+                            Aucune opération enregistrée.
+                        </small>
+                        `
+                    }
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    gap:8px;
+                    margin-top:15px;
+                    flex-wrap:wrap;
+                ">
+
+                    <button
+                        type="button"
+                        onclick="editRecord(${record.id})"
+                        style="
+                            padding:9px 14px;
+                            border:0;
+                            border-radius:8px;
+                            cursor:pointer;
+                        "
+                    >
+                        ✏️ Modifier
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="deleteRecord(${record.id})"
+                        style="
+                            padding:9px 14px;
+                            border:0;
+                            border-radius:8px;
+                            background:#dc2626;
+                            color:white;
+                            cursor:pointer;
+                        "
+                    >
+                        🗑️ Supprimer
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+
+    dailyHistory.innerHTML =
+        html;
+}
+
+
+/* =========================================================
+   22. MODIFIER UNE JOURNÉE
+   ========================================================= */
+
+function editRecord(id) {
+
+    const record =
+        dailyRecords.find(
+            r => r.id === id
+        );
+
+
+    if (!record) {
+        return;
+    }
+
+
+    dailyForm.dataset.editingId =
+        id;
+
+
+    saleDate.value =
+        record.date;
+
+
+    updateDay();
+
+
+    renderCategoryInputs();
+
+
+    openPage(
+        "calculator"
+    );
+
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+
+    showNotification(
+        "Vous pouvez maintenant modifier cette journée."
+    );
+}
+
+
+/* =========================================================
+   23. SUPPRIMER UNE JOURNÉE
+   ========================================================= */
+
+function deleteRecord(id) {
+
+    const record =
+        dailyRecords.find(
+            r => r.id === id
+        );
+
+
+    if (!record) {
+        return;
+    }
+
+
+    if (
+        !confirm(
+            `Voulez-vous supprimer l'enregistrement du ${formatDate(record.date)} ?`
+        )
+    ) {
+        return;
+    }
+
+
+    dailyRecords =
+        dailyRecords.filter(
+            r => r.id !== id
+        );
+
+
+    saveData();
+
+
+    renderHistory();
+
+    updateHomeSummary();
+
+    renderReports();
+
+
+    showNotification(
+        "Enregistrement supprimé."
+    );
+}
+
+
+/* =========================================================
+   24. RÉSUMÉ ACCUEIL
+   ========================================================= */
+
+function updateHomeSummary() {
+
+    if (!dailySalesSummary) {
+        return;
+    }
+
+
+    const today =
+        todayISO();
+
+
+    const todayRecords =
+        dailyRecords.filter(
+            record =>
+                record.date === today
+        );
+
+
+    const sales =
+        todayRecords.reduce(
+            (sum, record) =>
+                sum +
+                Number(
+                    record.totalSales || 0
+                ),
+            0
+        );
+
+
+    const purchases =
+        todayRecords.reduce(
+            (sum, record) =>
+                sum +
+                Number(
+                    record.totalPurchase || 0
+                ),
+            0
+        );
+
+
+    const balance =
+        sales - purchases;
+
+
+    dailySalesSummary.textContent =
+        formatMoney(sales);
+
+
+    dailyPurchaseSummary.textContent =
+        formatMoney(purchases);
+
+
+    dailyBalanceSummary.textContent =
+        formatMoney(balance);
+
+
+    dailyBalanceSummary.className =
+        balance >= 0
+            ? "positive"
+            : "negative";
+
+
+    /* Résumé des catégories */
+
+    renderHomeCategorySummary(
+        todayRecords
+    );
+}
+
+
+/* =========================================================
+   25. CATÉGORIES SUR L'ACCUEIL
+   ========================================================= */
+
+function renderHomeCategorySummary(
+    records
+) {
+
+    if (!homeCategorySummary) {
+        return;
+    }
+
+
+    if (records.length === 0) {
+
+        homeCategorySummary.innerHTML = `
+
+            <div class="empty-state">
+
+                <p>
+                    📊 Aucune vente enregistrée aujourd'hui.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    const categoryTotals = {};
+
+
+    records.forEach(record => {
+
+        record.categories.forEach(
+            category => {
+
+                if (
+                    !categoryTotals[
+                        category.groupId
+                    ]
+                ) {
+
+                    categoryTotals[
+                        category.groupId
+                    ] = {
+
+                        name:
+                            category.groupName,
+
+                        sales: 0,
+
+                        purchases: 0,
+
+                        profit: 0
+
+                    };
+
+                }
+
+
+                categoryTotals[
+                    category.groupId
+                ].sales +=
+                    Number(
+                        category.sales || 0
+                    );
+
+
+                categoryTotals[
+                    category.groupId
+                ].purchases +=
+                    Number(
+                        category.purchase || 0
+                    );
+
+
+                categoryTotals[
+                    category.groupId
+                ].profit +=
+                    Number(
+                        category.profit || 0
+                    );
+
+            }
+        );
+
+    });
+
+
+    let html = "";
+
+
+    Object.values(
+        categoryTotals
+    ).forEach(category => {
+
+        html += `
+
+            <div style="
+                display:grid;
+                grid-template-columns:
+                    1.3fr 1fr 1fr 1fr;
+                gap:10px;
+                align-items:center;
+                padding:12px 0;
+                border-bottom:
+                    1px solid
+                    rgba(0,0,0,0.07);
+            ">
+
+                <strong>
+                    📁
+                    ${escapeHTML(
+                        category.name
+                    )}
+                </strong>
+
+                <span>
+                    Ventes :
+                    <strong>
+                        ${formatMoney(
+                            category.sales
+                        )}
+                    </strong>
+                </span>
+
+                <span>
+                    Achats :
+                    <strong>
+                        ${formatMoney(
+                            category.purchases
+                        )}
+                    </strong>
+                </span>
+
+                <span class="${
+                    category.profit >= 0
+                        ? "positive"
+                        : "negative"
+                }">
+
+                    Bénéfice :
+                    <strong>
+                        ${formatMoney(
+                            category.profit
+                        )}
+                    </strong>
+
+                </span>
+
+            </div>
+
+        `;
+
+    });
+
+
+    homeCategorySummary.innerHTML =
+        html;
+}
+
+
+/* =========================================================
+   26. RAPPORTS
+   ========================================================= */
+
+function renderReports() {
+
+    const now =
+        new Date();
+
+
+    /* =========================
+       SEMAINE
+       ========================= */
+
+    const startOfWeek =
+        new Date(now);
+
+
+    const day =
+        startOfWeek.getDay();
+
+
+    const difference =
+        day === 0
+            ? 6
+            : day - 1;
+
+
+    startOfWeek.setDate(
+        startOfWeek.getDate() -
+        difference
+    );
+
+
+    startOfWeek.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    let weekSales = 0;
+
+
+    dailyRecords.forEach(
+        record => {
+
+            const recordDate =
+                new Date(
+                    record.date +
+                    "T12:00:00"
+                );
+
+
+            if (
+                recordDate >=
+                startOfWeek
+            ) {
+
+                weekSales +=
+                    Number(
+                        record.totalSales ||
+                        0
+                    );
+
+            }
+
+        }
+    );
+
+
+    /* =========================
+       MOIS ACTUEL
+       ========================= */
+
+    const currentYear =
+        now.getFullYear();
+
+    const currentMonth =
+        now.getMonth();
+
+
+    const monthRecords =
+        dailyRecords.filter(
+            record => {
+
+                const date =
+                    new Date(
+                        record.date +
+                        "T12:00:00"
+                    );
+
+
+                return (
+
+                    date.getFullYear() ===
+                    currentYear &&
+
+                    date.getMonth() ===
+                    currentMonth
+
+                );
+
+            }
+        );
+
+
+    let monthSales = 0;
+
+    let monthPurchases = 0;
+
+
+    monthRecords.forEach(
+        record => {
+
+            monthSales +=
+                Number(
+                    record.totalSales ||
+                    0
+                );
+
+
+            monthPurchases +=
+                Number(
+                    record.totalPurchase ||
+                    0
+                );
+
+        }
+    );
+
+
+    const monthProfit =
+        monthSales -
+        monthPurchases;
+
+
+    /* Affichage */
+
+    if (weeklySales) {
+
+        weeklySales.textContent =
+            formatMoney(
+                weekSales
+            );
+
+    }
+
+
+    if (monthlySales) {
+
+        monthlySales.textContent =
+            formatMoney(
+                monthSales
+            );
+
+    }
+
+
+    if (monthlyPurchases) {
+
+        monthlyPurchases.textContent =
+            formatMoney(
+                monthPurchases
+            );
+
+    }
+
+
+    if (monthlyTotal) {
+
+        monthlyTotal.textContent =
+            formatMoney(
+                monthProfit
+            );
+
+        monthlyTotal.className =
+            monthProfit >= 0
+                ? "positive"
+                : "negative";
+
+    }
+
+
+    if (finalMonthlySales) {
+
+        finalMonthlySales.textContent =
+            formatMoney(
+                monthSales
+            );
+
+    }
+
+
+    if (finalMonthlyPurchases) {
+
+        finalMonthlyPurchases.textContent =
+            formatMoney(
+                monthPurchases
+            );
+
+    }
+
+
+    if (finalMonthlyProfit) {
+
+        finalMonthlyProfit.textContent =
+            formatMoney(
+                monthProfit
+            );
+
+        finalMonthlyProfit.className =
+            monthProfit >= 0
+                ? "positive"
+                : "negative";
+
+    }
+
+
+    renderCategoryReports(
+        monthRecords
+    );
+
+
+    renderDailySalesReport(
+        monthRecords
+    );
+
+}
+
+
+/* =========================================================
+   27. RAPPORT PAR CATÉGORIE
+   ========================================================= */
+
+function renderCategoryReports(
+    records
+) {
+
+    if (!categoryReports) {
+        return;
+    }
+
+
+    const totals = {};
+
+
+    records.forEach(record => {
+
+        record.categories.forEach(
+            category => {
+
+                if (
+                    !totals[
+                        category.groupId
+                    ]
+                ) {
+
+                    totals[
+                        category.groupId
+                    ] = {
+
+                        name:
+                            category.groupName,
+
+                        sales: 0,
+
+                        purchases: 0,
+
+                        profit: 0
+
+                    };
+
+                }
+
+
+                totals[
+                    category.groupId
+                ].sales +=
+                    Number(
+                        category.sales ||
+                        0
+                    );
+
+
+                totals[
+                    category.groupId
+                ].purchases +=
+                    Number(
+                        category.purchase ||
+                        0
+                    );
+
+
+                totals[
+                    category.groupId
+                ].profit +=
+                    Number(
+                        category.profit ||
+                        0
+                    );
+
+            }
+        );
+
+    });
+
+
+    const categories =
+        Object.values(
+            totals
+        );
+
+
+    if (categories.length === 0) {
+
+        categoryReports.innerHTML = `
+
+            <div class="empty-state">
+
+                <p>
+                    📊 Aucun résultat disponible.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    let rows = "";
+
+
+    categories.forEach(
+        category => {
+
+            rows += `
+
+                <tr>
+
+                    <td>
+                        📁
+                        ${escapeHTML(
+                            category.name
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatMoney(
+                            category.sales
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatMoney(
+                            category.purchases
+                        )}
+                    </td>
+
+                    <td class="${
+                        category.profit >= 0
+                            ? "positive"
+                            : "negative"
+                    }">
+
+                        <strong>
+                            ${formatMoney(
+                                category.profit
+                            )}
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    categoryReports.innerHTML = `
+
+        <div style="
+            overflow-x:auto;
+        ">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Catégorie
+                        </th>
+
+                        <th>
+                            Ventes
+                        </th>
+
+                        <th>
+                            Achats
+                        </th>
+
+                        <th>
+                            Bénéfice
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    ${rows}
+
+                </tbody>
+
+            </table>
+
         </div>
-        ${group.description ? `<p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 8px 0;">${group.description}</p>` : ''}
-        ${articlesHTML}
-      `;
 
-      articlesListDiv.appendChild(groupBlock);
+    `;
+}
+
+
+/* =========================================================
+   28. RAPPORT JOUR PAR JOUR
+   ========================================================= */
+
+function renderDailySalesReport(
+    records
+) {
+
+    if (!dailySalesReport) {
+        return;
+    }
+
+
+    if (records.length === 0) {
+
+        dailySalesReport.innerHTML = `
+
+            <div class="empty-state">
+
+                <p>
+                    📅 Aucun jour enregistré pour ce mois.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    const sortedRecords =
+        [...records].sort(
+            (a, b) =>
+                a.date.localeCompare(
+                    b.date
+                )
+        );
+
+
+    let rows = "";
+
+
+    sortedRecords.forEach(
+        record => {
+
+            rows += `
+
+                <tr>
+
+                    <td>
+                        ${formatDate(
+                            record.date
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            record.day
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatMoney(
+                            record.totalSales
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatMoney(
+                            record.totalPurchase
+                        )}
+                    </td>
+
+                    <td class="${
+                        record.totalProfit >= 0
+                            ? "positive"
+                            : "negative"
+                    }">
+
+                        <strong>
+                            ${formatMoney(
+                                record.totalProfit
+                            )}
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    dailySalesReport.innerHTML = `
+
+        <div style="
+            overflow-x:auto;
+        ">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Jour
+                        </th>
+
+                        <th>
+                            Ventes
+                        </th>
+
+                        <th>
+                            Achats
+                        </th>
+
+                        <th>
+                            Bénéfice
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    ${rows}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+}
+
+
+/* =========================================================
+   29. FILTRE PAR MOIS
+   ========================================================= */
+
+if (reportMonth) {
+
+    const now =
+        new Date();
+
+
+    const year =
+        now.getFullYear();
+
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    reportMonth.value =
+        `${year}-${month}`;
+
+
+    reportMonth.addEventListener(
+        "change",
+        function() {
+
+            renderSelectedMonth(
+                this.value
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   30. ACTUALISER LES RAPPORTS
+   ========================================================= */
+
+if (refreshReports) {
+
+    refreshReports.addEventListener(
+        "click",
+        function() {
+
+            if (
+                reportMonth &&
+                reportMonth.value
+            ) {
+
+                renderSelectedMonth(
+                    reportMonth.value
+                );
+
+            } else {
+
+                renderReports();
+
+            }
+
+            showNotification(
+                "Rapports actualisés."
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   31. RAPPORT DU MOIS SÉLECTIONNÉ
+   ========================================================= */
+
+function renderSelectedMonth(
+    selectedMonth
+) {
+
+    if (!selectedMonth) {
+        return;
+    }
+
+
+    const records =
+        dailyRecords.filter(
+            record =>
+                record.date.startsWith(
+                    selectedMonth
+                )
+        );
+
+
+    let sales = 0;
+
+    let purchases = 0;
+
+
+    records.forEach(record => {
+
+        sales +=
+            Number(
+                record.totalSales ||
+                0
+            );
+
+
+        purchases +=
+            Number(
+                record.totalPurchase ||
+                0
+            );
+
     });
-  }
 
-  window.deleteGroup = function(groupId) {
-    groups = groups.filter(g => g.id !== groupId);
-    articles = articles.filter(a => a.groupId !== groupId);
-    localStorage.setItem('jossell_groups', JSON.stringify(groups));
-    localStorage.setItem('jossell_articles', JSON.stringify(articles));
 
-    renderGroupOptions();
-    renderDynamicExpenses();
-    renderArticlesAndGroups();
-    showNotification('Groupe supprimé.');
-  };
+    const profit =
+        sales - purchases;
 
-  window.deleteArticle = function(articleId) {
-    articles = articles.filter(a => a.id !== articleId);
-    localStorage.setItem('jossell_articles', JSON.stringify(articles));
-    renderArticlesAndGroups();
-    showNotification('Article supprimé.');
-  };
 
-  // --- RAPPORTS & RECAPITULATIFS ---
-  function updateDashboardSummaries() {
-    const todayStr = new Date().toISOString().split('T')[0];
-    const todayRecord = dailyRecords.find(r => r.date === todayStr);
+    if (monthlySales) {
 
-    if (todayRecord) {
-      if (dailySalesSummary) dailySalesSummary.textContent = `${todayRecord.sales.toLocaleString('fr-FR')} FC`;
-      if (dailyPurchaseSummary) dailyPurchaseSummary.textContent = `${todayRecord.purchases.toLocaleString('fr-FR')} FC`;
-      if (dailyBalanceSummary) {
-        dailyBalanceSummary.textContent = `${todayRecord.balance.toLocaleString('fr-FR')} FC`;
-        dailyBalanceSummary.className = todayRecord.balance >= 0 ? 'positive' : 'negative';
-      }
-    } else {
-      if (dailySalesSummary) dailySalesSummary.textContent = '0 FC';
-      if (dailyPurchaseSummary) dailyPurchaseSummary.textContent = '0 FC';
-      if (dailyBalanceSummary) {
-        dailyBalanceSummary.textContent = '0 FC';
-        dailyBalanceSummary.className = 'positive';
-      }
+        monthlySales.textContent =
+            formatMoney(sales);
+
     }
 
-    // Calcul semaine et mois
-    const now = new Date();
-    let weeklyBalance = 0;
-    let monthlyBalance = 0;
 
-    dailyRecords.forEach(rec => {
-      const recDate = new Date(rec.date);
-      const diffDays = Math.floor((now - recDate) / (1000 * 60 * 60 * 24));
+    if (monthlyPurchases) {
 
-      if (diffDays <= 7) weeklyBalance += rec.balance;
-      if (recDate.getMonth() === now.getMonth() && recDate.getFullYear() === now.getFullYear()) {
-        monthlyBalance += rec.balance;
-      }
-    });
+        monthlyPurchases.textContent =
+            formatMoney(purchases);
 
-    if (weeklyTotalEl) {
-      weeklyTotalEl.textContent = `${weeklyBalance.toLocaleString('fr-FR')} FC`;
-      weeklyTotalEl.className = weeklyBalance >= 0 ? 'positive' : 'negative';
     }
-    if (monthlyTotalEl) {
-      monthlyTotalEl.textContent = `${monthlyBalance.toLocaleString('fr-FR')} FC`;
-      monthlyTotalEl.className = monthlyBalance >= 0 ? 'positive' : 'negative';
+
+
+    if (monthlyTotal) {
+
+        monthlyTotal.textContent =
+            formatMoney(profit);
+
+        monthlyTotal.className =
+            profit >= 0
+                ? "positive"
+                : "negative";
+
     }
-  }
 
-  // Lancement de l'application
-  initApp();
 
-});
+    if (finalMonthlySales) {
+
+        finalMonthlySales.textContent =
+            formatMoney(sales);
+
+    }
+
+
+    if (finalMonthlyPurchases) {
+
+        finalMonthlyPurchases.textContent =
+            formatMoney(purchases);
+
+    }
+
+
+    if (finalMonthlyProfit) {
+
+        finalMonthlyProfit.textContent =
+            formatMoney(profit);
+
+        finalMonthlyProfit.className =
+            profit >= 0
+                ? "positive"
+                : "negative";
+
+    }
+
+
+    renderCategoryReports(
+        records
+    );
+
+
+    renderDailySalesReport(
+        records
+    );
+
+}
+
+
+/* =========================================================
+   32. INITIALISATION DE L'APPLICATION
+   ========================================================= */
+
+function initializeApp() {
+
+    initializeDate();
+
+    updateArticleGroupSelect();
+
+    renderGroups();
+
+    renderCategoryInputs();
+
+    renderHistory();
+
+    updateHomeSummary();
+
+    renderReports();
+
+
+    /* Écran de chargement */
+
+    setTimeout(
+        () => {
+
+            if (loadingScreen) {
+
+                loadingScreen.style.opacity =
+                    "0";
+
+
+                setTimeout(
+                    () => {
+
+                        loadingScreen.style.display =
+                            "none";
+
+                    },
+                    400
+                );
+
+            }
+
+        },
+        500
+    );
+
+}
+
+
+/* =========================================================
+   33. LANCEMENT
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeApp
+);

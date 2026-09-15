@@ -1,221 +1,1066 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>JOSSELL - MA GESTION</title>
 
-  <!-- Configuration PWA & Icône Écran d'accueil -->
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
+
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Jossell">
+
+  <!-- Correction : pas de point après logo.png -->
   <link rel="apple-touch-icon" href="logo.png">
+
   <meta name="theme-color" content="#2563eb">
 
-  <!-- Fichier CSS Externe -->
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <div class="app-container">
 
-    <!-- Écran de chargement -->
+    <!-- =====================================================
+         ÉCRAN DE CHARGEMENT
+         ===================================================== -->
+
     <div id="loadingScreen">
+
       <div class="spinner"></div>
-      <span>Chargement de Jossell...</span>
+
+      <span>
+        Chargement de Jossell...
+      </span>
+
     </div>
 
-    <!-- En-tête principal & Navigation -->
+
+    <!-- =====================================================
+         EN-TÊTE + NAVIGATION
+         ===================================================== -->
+
     <header class="header">
-      <h1>JOSSELL - MA GESTION</h1>
+
+      <h1>
+        JOSSELL - MA GESTION
+      </h1>
+
       <nav class="main-nav" id="mainNavigation">
-        <button class="nav-item active" data-page="home">Accueil</button>
-        <button class="nav-item" data-page="calculator">Calculateur</button>
-        <button class="nav-item" data-page="groups">Groupes & Articles</button>
-        <button class="nav-item" data-page="reports">Rapports</button>
-        <button class="nav-item" data-page="help">Aide ❓</button>
+
+        <button class="nav-item active"
+                data-page="home">
+          Accueil
+        </button>
+
+        <button class="nav-item"
+                data-page="calculator">
+          Calculateur
+        </button>
+
+        <button class="nav-item"
+                data-page="groups">
+          Groupes & Articles
+        </button>
+
+        <button class="nav-item"
+                data-page="reports">
+          Rapports
+        </button>
+
+        <button class="nav-item"
+                data-page="help">
+          Aide ❓
+        </button>
+
       </nav>
+
     </header>
 
-    <!-- Notifications -->
-    <div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
 
-    <!-- ================= PAGE 1 : ACCUEIL ================= -->
-    <section id="page-home" class="page active-page">
+    <!-- =====================================================
+         NOTIFICATIONS
+         ===================================================== -->
+
+    <div id="notificationContainer"
+         style="
+         position:fixed;
+         top:20px;
+         right:20px;
+         z-index:10000;">
+    </div>
+
+
+    <!-- =====================================================
+         PAGE 1 : ACCUEIL
+         ===================================================== -->
+
+    <section id="page-home"
+             class="page active-page">
+
       <div class="hero-banner">
-        <h2>Bienvenue sur Jossell</h2>
-        <p>Gérez facilement vos recettes, dépenses et bénéfices journaliers.</p>
-        <button type="button" class="btn-primary" data-page="calculator" style="max-width: 220px; margin: 0 auto; display: block; background: #ffffff; color: var(--primary);">
+
+        <h2>
+          Bienvenue sur Jossell
+        </h2>
+
+        <p>
+          Gérez facilement vos ventes, achats,
+          dépenses et bénéfices.
+        </p>
+
+        <button type="button"
+                class="btn-primary"
+                data-page="calculator"
+                style="
+                max-width:220px;
+                margin:0 auto;
+                display:block;
+                background:#ffffff;
+                color:var(--primary);">
+
           Commencer 🚀
+
         </button>
+
       </div>
+
+
+      <!-- =========================
+           RÉSUMÉ DU JOUR
+           ========================= -->
 
       <div class="card">
-        <h3 class="card-title">📅 Aujourd'hui : <span id="currentDate">--/--/----</span></h3>
+
+        <h3 class="card-title">
+          📅 Aujourd'hui :
+          <span id="currentDate">
+            --/--/----
+          </span>
+        </h3>
+
+
         <div class="summary-grid">
+
           <div class="summary-card">
-            <span>Ventes du jour</span>
-            <strong id="dailySalesSummary">0 FC</strong>
+
+            <span>
+              💵 Ventes du jour
+            </span>
+
+            <strong id="dailySalesSummary">
+              0 FC
+            </strong>
+
           </div>
+
+
           <div class="summary-card">
-            <span>Achats du jour</span>
-            <strong id="dailyPurchaseSummary">0 FC</strong>
+
+            <span>
+              🛒 Achats du jour
+            </span>
+
+            <strong id="dailyPurchaseSummary">
+              0 FC
+            </strong>
+
           </div>
+
+
           <div class="summary-card">
-            <span>Solde du jour</span>
-            <strong id="dailyBalanceSummary" class="positive">0 FC</strong>
+
+            <span>
+              📈 Bénéfice du jour
+            </span>
+
+            <strong id="dailyBalanceSummary"
+                    class="positive">
+              0 FC
+            </strong>
+
           </div>
+
         </div>
+
       </div>
+
+
+      <!-- =========================
+           RAPPORT RAPIDE PAR CATÉGORIE
+           ========================= -->
+
+      <div class="card">
+
+        <h3 class="card-title">
+          📊 Ventes du jour par catégorie
+        </h3>
+
+        <div id="homeCategorySummary">
+
+          <!-- Rempli automatiquement par JavaScript -->
+
+        </div>
+
+      </div>
+
     </section>
 
-    <!-- ================= PAGE 2 : CALCULATEUR ================= -->
-    <section id="page-calculator" class="page">
+
+    <!-- =====================================================
+         PAGE 2 : CALCULATEUR
+         ===================================================== -->
+
+    <section id="page-calculator"
+             class="page">
+
+
+      <!-- =========================
+           ENREGISTRER UNE JOURNÉE
+           ========================= -->
+
       <div class="card">
-        <h3 class="card-title">📝 Enregistrer la journée</h3>
+
+        <h3 class="card-title">
+          📝 Enregistrer la journée
+        </h3>
+
 
         <form id="dailyForm">
+
+
+          <!-- DATE -->
+
           <div class="form-grid">
+
             <div class="form-group">
-              <label for="saleDate">Date</label>
-              <input type="date" id="saleDate" required>
+
+              <label for="saleDate">
+                Date
+              </label>
+
+              <input type="date"
+                     id="saleDate"
+                     required>
+
             </div>
+
+
             <div class="form-group">
-              <label for="saleDay">Jour</label>
-              <input type="text" id="saleDay" readonly placeholder="Jour de la semaine">
+
+              <label for="saleDay">
+                Jour
+              </label>
+
+              <input type="text"
+                     id="saleDay"
+                     readonly
+                     placeholder="Jour de la semaine">
+
             </div>
+
           </div>
+
+
+          <!-- =================================================
+               VENTES GÉNÉRALES
+               ================================================= -->
+
+          <div class="card-subsection">
+
+            <h4>
+              💰 Ventes / Recettes
+            </h4>
+
+            <p class="form-help">
+              Les ventes peuvent être réparties
+              automatiquement par catégorie.
+            </p>
+
+
+            <div class="form-group">
+
+              <label for="dailySales">
+                Total des ventes du jour (FC)
+              </label>
+
+              <input type="number"
+                     id="dailySales"
+                     min="0"
+                     placeholder="0">
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               VENTES ET ACHATS PAR CATÉGORIE
+               ================================================= -->
+
+          <div class="card-subsection">
+
+            <h4>
+              📦 Résultat par catégorie
+            </h4>
+
+            <p class="form-help">
+              Pour chaque catégorie, indiquez les ventes
+              et les achats. Jossell calculera automatiquement
+              le bénéfice.
+            </p>
+
+            <div id="dynamicExpenses">
+
+              <!--
+                JavaScript ajoutera ici :
+
+                Catégorie
+                Ventes
+                Achats
+                Bénéfice
+              -->
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               RÉSUMÉ DE LA JOURNÉE
+               ================================================= -->
+
+          <div class="daily-financial-summary">
+
+
+            <div class="financial-line">
+
+              <span>
+                💵 Total ventes
+              </span>
+
+              <strong id="totalDailySales">
+                0 FC
+              </strong>
+
+            </div>
+
+
+            <div class="financial-line">
+
+              <span>
+                🛒 Total achats
+              </span>
+
+              <strong id="totalPurchases">
+                0 FC
+              </strong>
+
+            </div>
+
+
+            <div class="financial-line highlight">
+
+              <span>
+                📈 Bénéfice du jour
+              </span>
+
+              <strong id="calculatedBalance">
+                0 FC
+              </strong>
+
+            </div>
+
+
+          </div>
+
+
+          <!-- ENREGISTRER -->
+
+          <button type="submit"
+                  class="btn-primary"
+                  style="margin-top:18px;">
+
+            💾 Enregistrer la journée
+
+          </button>
+
+
+        </form>
+
+      </div>
+
+
+      <!-- =====================================================
+           HISTORIQUE
+           ===================================================== -->
+
+      <div class="card">
+
+        <h3 class="card-title">
+          📜 Historique des enregistrements
+        </h3>
+
+        <div id="dailyHistory">
+
+          <!-- Historique généré par JS -->
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PAGE 3 : GROUPES & ARTICLES
+         ===================================================== -->
+
+    <section id="page-groups"
+             class="page">
+
+
+      <div class="form-grid">
+
+
+        <!-- CRÉATION GROUPE -->
+
+        <div class="card">
+
+          <h3 class="card-title">
+            📁 Créer un groupe d'articles
+          </h3>
+
+
+          <form id="articleGroupForm">
+
+            <div class="form-group">
+
+              <label for="groupName">
+                Nom du groupe
+              </label>
+
+              <input type="text"
+                     id="groupName"
+                     placeholder="Ex: Boissons, Riz, Vêtements..."
+                     required>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="groupDescription">
+                Description
+              </label>
+
+              <input type="text"
+                     id="groupDescription"
+                     placeholder="Détails du groupe">
+
+            </div>
+
+
+            <button type="submit"
+                    class="btn-primary">
+
+              ➕ Ajouter le groupe
+
+            </button>
+
+          </form>
+
+        </div>
+
+
+        <!-- AJOUT ARTICLE -->
+
+        <div class="card">
+
+          <h3 class="card-title">
+            🛒 Ajouter un article
+          </h3>
+
+
+          <form id="articleForm">
+
+
+            <div class="form-group">
+
+              <label for="articleGroupSelect">
+                Groupe parent
+              </label>
+
+              <select id="articleGroupSelect"
+                      required>
+
+                <option value="">
+                  -- Sélectionner un groupe --
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="articleName">
+                Nom de l'article
+              </label>
+
+              <input type="text"
+                     id="articleName"
+                     placeholder="Ex: Sac de riz"
+                     required>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+              <div class="form-group">
+
+                <label for="articleQuantity">
+                  Quantité
+                </label>
+
+                <input type="number"
+                       id="articleQuantity"
+                       min="0"
+                       placeholder="0">
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="articlePrice">
+                  Prix unitaire (FC)
+                </label>
+
+                <input type="number"
+                       id="articlePrice"
+                       min="0"
+                       placeholder="0">
+
+              </div>
+
+
+            </div>
+
+
+            <button type="submit"
+                    class="btn-primary">
+
+              ➕ Ajouter l'article
+
+            </button>
+
+          </form>
+
+        </div>
+
+      </div>
+
+
+      <!-- LISTE -->
+
+      <div class="card">
+
+        <h3 class="card-title">
+          📦 Vos Groupes et Articles
+        </h3>
+
+        <div id="articlesList">
+
+          <!-- Généré par JavaScript -->
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PAGE 4 : RAPPORTS
+         ===================================================== -->
+
+    <section id="page-reports"
+             class="page">
+
+
+      <!-- =================================================
+           RÉSUMÉ GÉNÉRAL
+           ================================================= -->
+
+      <div class="card">
+
+        <h3 class="card-title">
+          📊 Résumé Général
+        </h3>
+
+
+        <div class="summary-grid">
+
+
+          <div class="summary-card">
+
+            <span>
+              💵 Ventes de la semaine
+            </span>
+
+            <strong id="weeklySales">
+              0 FC
+            </strong>
+
+          </div>
+
+
+          <div class="summary-card">
+
+            <span>
+              💵 Ventes du mois
+            </span>
+
+            <strong id="monthlySales">
+              0 FC
+            </strong>
+
+          </div>
+
+
+          <div class="summary-card">
+
+            <span>
+              🛒 Achats du mois
+            </span>
+
+            <strong id="monthlyPurchases">
+              0 FC
+            </strong>
+
+          </div>
+
+
+          <div class="summary-card">
+
+            <span>
+              📈 Bénéfice du mois
+            </span>
+
+            <strong id="monthlyTotal"
+                    class="positive">
+              0 FC
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           RAPPORT PAR CATÉGORIE
+           ================================================= -->
+
+      <div class="card">
+
+        <h3 class="card-title">
+          📦 Résultats par catégorie
+        </h3>
+
+
+        <p class="form-help">
+          Consultez les ventes, achats et bénéfices
+          de chaque catégorie.
+        </p>
+
+
+        <div id="categoryReports">
+
+          <!-- Tableau généré par JavaScript -->
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           VENTES JOUR PAR JOUR
+           ================================================= -->
+
+      <div class="card">
+
+        <h3 class="card-title">
+          📅 Ventes jour par jour
+        </h3>
+
+
+        <div class="report-filters">
+
 
           <div class="form-group">
-            <label for="dailySales">Total des Ventes / Recettes (FC)</label>
-            <input type="number" id="dailySales" min="0" placeholder="0">
+
+            <label for="reportMonth">
+              Mois
+            </label>
+
+            <input type="month"
+                   id="reportMonth">
+
           </div>
 
-          <h4 style="margin: 18px 0 10px 0; font-size: 0.95rem; color: var(--text-muted);">Achats & Dépenses par catégorie :</h4>
 
-          <div id="dynamicExpenses"></div>
+          <button type="button"
+                  id="refreshReports"
+                  class="btn-primary">
 
-          <div style="margin-top: 20px; background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); padding: 16px; border-radius: 12px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span>Total Achats :</span>
-              <strong id="totalPurchases">0 FC</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 1.1rem; color: var(--primary);">
-              <span>Solde calculé :</span>
-              <strong id="calculatedBalance">0 FC</strong>
-            </div>
-          </div>
+            🔄 Actualiser
 
-          <button type="submit" class="btn-primary" style="margin-top: 18px;">Enregistrer la journée</button>
-        </form>
-      </div>
+          </button>
 
-      <div class="card">
-        <h3 class="card-title">📜 Historique des enregistrements</h3>
-        <div id="dailyHistory"></div>
-      </div>
-    </section>
 
-    <!-- ================= PAGE 3 : GROUPES & ARTICLES ================= -->
-    <section id="page-groups" class="page">
-      <div class="form-grid">
-        <div class="card">
-          <h3 class="card-title">📁 Créer un groupe d'articles</h3>
-          <form id="articleGroupForm">
-            <div class="form-group">
-              <label for="groupName">Nom du groupe</label>
-              <input type="text" id="groupName" placeholder="Ex: Vivre frais, Boissons..." required>
-            </div>
-            <div class="form-group">
-              <label for="groupDescription">Description (optionnelle)</label>
-              <input type="text" id="groupDescription" placeholder="Détails du groupe">
-            </div>
-            <button type="submit" class="btn-primary">Ajouter le groupe</button>
-          </form>
         </div>
 
-        <div class="card">
-          <h3 class="card-title">🛒 Ajouter un article</h3>
-          <form id="articleForm">
-            <div class="form-group">
-              <label for="articleGroupSelect">Groupe parent</label>
-              <select id="articleGroupSelect" required>
-                <option value="">-- Sélectionner un groupe --</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="articleName">Nom de l'article</label>
-              <input type="text" id="articleName" placeholder="Ex: Sac de riz" required>
-            </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="articleQuantity">Quantité</label>
-                <input type="number" id="articleQuantity" min="0" placeholder="0">
-              </div>
-              <div class="form-group">
-                <label for="articlePrice">Prix unitaire (FC)</label>
-                <input type="number" id="articlePrice" min="0" placeholder="0">
-              </div>
-            </div>
-            <button type="submit" class="btn-primary">Ajouter l'article</button>
-          </form>
+
+        <div id="dailySalesReport">
+
+          <!-- Rapport journalier généré par JS -->
+
         </div>
+
       </div>
 
-      <div class="card">
-        <h3 class="card-title">📦 Vos Groupes et Articles</h3>
-        <div id="articlesList"></div>
-      </div>
-    </section>
 
-    <!-- ================= PAGE 4 : RAPPORTS ================= -->
-    <section id="page-reports" class="page">
-      <div class="card">
-        <h3 class="card-title">📊 Résumé Général</h3>
+      <!-- =================================================
+           TOTAL DU MOIS
+           ================================================= -->
+
+      <div class="card monthly-final-summary">
+
+        <h3 class="card-title">
+          🧾 Total du mois
+        </h3>
+
+
         <div class="summary-grid">
-          <div class="summary-card">
-            <span>Bénéfice de la semaine</span>
-            <strong id="weeklyTotal" class="positive">0 FC</strong>
-          </div>
-          <div class="summary-card">
-            <span>Bénéfice du mois</span>
-            <strong id="monthlyTotal" class="positive">0 FC</strong>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ================= PAGE 5 : AIDE ================= -->
-    <section id="page-help" class="page">
+
+          <div class="summary-card">
+
+            <span>
+              Total ventes
+            </span>
+
+            <strong id="finalMonthlySales">
+              0 FC
+            </strong>
+
+          </div>
+
+
+          <div class="summary-card">
+
+            <span>
+              Total achats
+            </span>
+
+            <strong id="finalMonthlyPurchases">
+              0 FC
+            </strong>
+
+          </div>
+
+
+          <div class="summary-card">
+
+            <span>
+              Bénéfice total
+            </span>
+
+            <strong id="finalMonthlyProfit"
+                    class="positive">
+              0 FC
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           CONTRÔLE COMPTABLE
+           ================================================= -->
+
       <div class="card">
-        <h3 class="card-title">❓ Guide d'utilisation</h3>
 
-        <div class="help-item">
-          <h4>🚀 Comment démarrer ?</h4>
-          <p>Cliquez sur le bouton <strong>Commencer</strong> depuis l'accueil ou utilisez l'onglet <strong>Calculateur</strong> pour enregistrer vos recettes et dépenses journalières.</p>
+        <h3 class="card-title">
+          🧮 Contrôle comptable
+        </h3>
+
+
+        <div class="accounting-check">
+
+
+          <div class="help-item">
+
+            <h4>
+              💵 Chiffre d'affaires
+            </h4>
+
+            <p>
+              Total de l'argent obtenu grâce aux ventes.
+            </p>
+
+          </div>
+
+
+          <div class="help-item">
+
+            <h4>
+              🛒 Coût des achats
+            </h4>
+
+            <p>
+              Total des montants dépensés pour les achats
+              enregistrés.
+            </p>
+
+          </div>
+
+
+          <div class="help-item">
+
+            <h4>
+              📈 Bénéfice brut
+            </h4>
+
+            <p>
+              <strong>
+                Bénéfice = Ventes - Achats
+              </strong>
+            </p>
+
+          </div>
+
+
+          <div class="help-item">
+
+            <h4>
+              ⚠️ Attention
+            </h4>
+
+            <p>
+              Le bénéfice affiché par l'application est
+              un bénéfice basé sur les achats enregistrés.
+              Les autres charges éventuelles doivent aussi
+              être enregistrées pour obtenir un résultat
+              comptable plus complet.
+            </p>
+
+          </div>
+
+
         </div>
 
-        <div class="help-item">
-          <h4>📦 Créer des catégories de dépenses</h4>
-          <p>Dans la section <strong>Groupes & Articles</strong>, ajoutez des groupes (ex: <i>Nourriture, Transport, Divers</i>). Ils apparaîtront automatiquement sous forme de catégories dans le Calculateur.</p>
-        </div>
-
-        <div class="help-item">
-          <h4>🧮 Comment le solde est-il calculé ?</h4>
-          <p>Le solde est calculé automatiquement selon la formule :<br><strong>Solde = Total Recettes (Ventes) - Total Achats (Dépenses)</strong>.</p>
-        </div>
-
-        <div class="help-item">
-          <h4>💾 Vos données sont-elles conservées ?</h4>
-          <p>Oui ! Vos données sont automatiquement enregistrées dans la mémoire locale de votre navigateur. Vous pouvez fermer et rouvrir la page à tout moment sans rien perdre.</p>
-        </div>
       </div>
+
     </section>
+
+
+    <!-- =====================================================
+         PAGE 5 : AIDE
+         ===================================================== -->
+
+    <section id="page-help"
+             class="page">
+
+
+      <div class="card">
+
+        <h3 class="card-title">
+          ❓ Guide d'utilisation
+        </h3>
+
+
+        <!-- DÉMARRAGE -->
+
+        <div class="help-item">
+
+          <h4>
+            🚀 Comment démarrer ?
+          </h4>
+
+          <p>
+            Cliquez sur le bouton
+            <strong>Commencer</strong>
+            depuis l'accueil ou utilisez
+            l'onglet
+            <strong>Calculateur</strong>
+            pour enregistrer vos opérations.
+          </p>
+
+        </div>
+
+
+        <!-- CATÉGORIES -->
+
+        <div class="help-item">
+
+          <h4>
+            📦 Comment créer une catégorie ?
+          </h4>
+
+          <p>
+            Dans
+            <strong>
+              Groupes & Articles
+            </strong>,
+            créez vos catégories d'articles.
+            Elles apparaîtront ensuite dans
+            le calculateur.
+          </p>
+
+        </div>
+
+
+        <!-- VENTES -->
+
+        <div class="help-item">
+
+          <h4>
+            💵 Comment enregistrer les ventes ?
+          </h4>
+
+          <p>
+            Pour chaque catégorie, indiquez
+            le montant total vendu pendant
+            la journée.
+          </p>
+
+        </div>
+
+
+        <!-- ACHATS -->
+
+        <div class="help-item">
+
+          <h4>
+            🛒 Comment enregistrer les achats ?
+          </h4>
+
+          <p>
+            Indiquez le montant dépensé pour
+            chaque catégorie pendant la journée.
+          </p>
+
+        </div>
+
+
+        <!-- BÉNÉFICE -->
+
+        <div class="help-item">
+
+          <h4>
+            📈 Comment le bénéfice est-il calculé ?
+          </h4>
+
+          <p>
+
+            Pour chaque catégorie :
+
+            <br><br>
+
+            <strong>
+              Bénéfice =
+              Ventes - Achats
+            </strong>
+
+          </p>
+
+        </div>
+
+
+        <!-- RAPPORT -->
+
+        <div class="help-item">
+
+          <h4>
+            📊 À quoi servent les rapports ?
+          </h4>
+
+          <p>
+            Les rapports permettent de connaître
+            les ventes et bénéfices par jour,
+            par catégorie et par mois.
+          </p>
+
+        </div>
+
+
+        <!-- DONNÉES -->
+
+        <div class="help-item">
+
+          <h4>
+            💾 Vos données sont-elles conservées ?
+          </h4>
+
+          <p>
+            Oui. Les données sont conservées
+            automatiquement dans la mémoire locale
+            de votre navigateur.
+          </p>
+
+        </div>
+
+
+        <!-- CONSEIL -->
+
+        <div class="help-item">
+
+          <h4>
+            💡 Conseil de gestion
+          </h4>
+
+          <p>
+            Enregistrez les ventes et achats
+            chaque jour afin d'obtenir des rapports
+            mensuels fiables.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
 
   </div>
 
-  <!-- Fichier JS Externe -->
+
+  <!-- =====================================================
+       JAVASCRIPT
+       ===================================================== -->
+
   <script src="script.js"></script>
+
 </body>
+
 </html>
+```
