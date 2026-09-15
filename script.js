@@ -1,19 +1,21 @@
 /* =========================================================
    JOSSELL - MA GESTION
    JavaScript complet
-   Ventes - Achats - Bénéfices - Rapports
+   Ventes + Achats + Dépenses + Bénéfices
+   Rapports journaliers + hebdomadaires + mensuels
    ========================================================= */
 
 
 /* =========================================================
-   1. STOCKAGE DES DONNÉES
-   ========================================================= */
+   1. STOCKAGE
+========================================================= */
 
 const STORAGE_KEYS = {
     groups: "jossell_groups",
     articles: "jossell_articles",
     records: "jossell_daily_records"
 };
+
 
 let groups =
     JSON.parse(localStorage.getItem(STORAGE_KEYS.groups)) || [];
@@ -26,8 +28,8 @@ let dailyRecords =
 
 
 /* =========================================================
-   2. RÉCUPÉRATION DES ÉLÉMENTS HTML
-   ========================================================= */
+   2. ÉLÉMENTS HTML
+========================================================= */
 
 const loadingScreen =
     document.getElementById("loadingScreen");
@@ -53,8 +55,17 @@ const totalDailySales =
 const totalPurchases =
     document.getElementById("totalPurchases");
 
+const totalDailyExpenses =
+    document.getElementById("totalDailyExpenses");
+
 const calculatedBalance =
     document.getElementById("calculatedBalance");
+
+const dailyExpensesContainer =
+    document.getElementById("dailyExpensesContainer");
+
+const addExpenseButton =
+    document.getElementById("addExpenseButton");
 
 const dailyHistory =
     document.getElementById("dailyHistory");
@@ -86,8 +97,11 @@ const articlePrice =
 const articlesList =
     document.getElementById("articlesList");
 
-const currentDate =
-    document.getElementById("currentDate");
+const currentYear =
+    document.getElementById("currentYear");
+
+const homeTodayDate =
+    document.getElementById("homeTodayDate");
 
 const dailySalesSummary =
     document.getElementById("dailySalesSummary");
@@ -95,11 +109,26 @@ const dailySalesSummary =
 const dailyPurchaseSummary =
     document.getElementById("dailyPurchaseSummary");
 
+const dailyExpenseSummary =
+    document.getElementById("dailyExpenseSummary");
+
 const dailyBalanceSummary =
     document.getElementById("dailyBalanceSummary");
 
 const homeCategorySummary =
     document.getElementById("homeCategorySummary");
+
+const totalRecordedDays =
+    document.getElementById("totalRecordedDays");
+
+const totalCategories =
+    document.getElementById("totalCategories");
+
+const totalArticles =
+    document.getElementById("totalArticles");
+
+const bestCategory =
+    document.getElementById("bestCategory");
 
 const weeklySales =
     document.getElementById("weeklySales");
@@ -110,8 +139,29 @@ const monthlySales =
 const monthlyPurchases =
     document.getElementById("monthlyPurchases");
 
+const monthlyExpenses =
+    document.getElementById("monthlyExpenses");
+
 const monthlyTotal =
     document.getElementById("monthlyTotal");
+
+const weeklyReportSales =
+    document.getElementById("weeklyReportSales");
+
+const weeklyReportPurchases =
+    document.getElementById("weeklyReportPurchases");
+
+const weeklyReportExpenses =
+    document.getElementById("weeklyReportExpenses");
+
+const weeklyReportProfit =
+    document.getElementById("weeklyReportProfit");
+
+const weeklyReportDays =
+    document.getElementById("weeklyReportDays");
+
+const weekRange =
+    document.getElementById("weekRange");
 
 const categoryReports =
     document.getElementById("categoryReports");
@@ -131,16 +181,31 @@ const finalMonthlySales =
 const finalMonthlyPurchases =
     document.getElementById("finalMonthlyPurchases");
 
+const finalMonthlyExpenses =
+    document.getElementById("finalMonthlyExpenses");
+
 const finalMonthlyProfit =
     document.getElementById("finalMonthlyProfit");
+
+const accountingAlert =
+    document.getElementById("accountingAlert");
 
 const notificationContainer =
     document.getElementById("notificationContainer");
 
+const historyCount =
+    document.getElementById("historyCount");
+
+const inventoryCount =
+    document.getElementById("inventoryCount");
+
+const calculatorStatus =
+    document.getElementById("calculatorStatus");
+
 
 /* =========================================================
-   3. SAUVEGARDE
-   ========================================================= */
+   3. FONCTIONS GÉNÉRALES
+========================================================= */
 
 function saveData() {
 
@@ -161,10 +226,6 @@ function saveData() {
 }
 
 
-/* =========================================================
-   4. FORMATAGE DES MONTANTS
-   ========================================================= */
-
 function formatMoney(number) {
 
     number = Number(number) || 0;
@@ -172,10 +233,6 @@ function formatMoney(number) {
     return number.toLocaleString("fr-FR") + " FC";
 }
 
-
-/* =========================================================
-   5. DATE DU JOUR
-   ========================================================= */
 
 function todayISO() {
 
@@ -185,45 +242,34 @@ function todayISO() {
         date.getFullYear();
 
     const month =
-        String(date.getMonth() + 1).padStart(2, "0");
+        String(date.getMonth() + 1)
+            .padStart(2, "0");
 
     const day =
-        String(date.getDate()).padStart(2, "0");
+        String(date.getDate())
+            .padStart(2, "0");
 
     return `${year}-${month}-${day}`;
 }
 
 
-/* =========================================================
-   6. FORMAT DATE
-   ========================================================= */
-
 function formatDate(dateString) {
 
-    if (!dateString) {
-        return "";
-    }
+    if (!dateString) return "";
 
     const parts =
         dateString.split("-");
 
-    if (parts.length !== 3) {
+    if (parts.length !== 3)
         return dateString;
-    }
 
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
 
-/* =========================================================
-   7. NOM DU JOUR
-   ========================================================= */
-
 function getDayName(dateString) {
 
-    if (!dateString) {
-        return "";
-    }
+    if (!dateString) return "";
 
     const date =
         new Date(dateString + "T12:00:00");
@@ -236,10 +282,6 @@ function getDayName(dateString) {
     );
 }
 
-
-/* =========================================================
-   8. ÉCHAPPER LE HTML
-   ========================================================= */
 
 function escapeHTML(text) {
 
@@ -260,20 +302,22 @@ function escapeHTML(text) {
 
 
 /* =========================================================
-   9. NOTIFICATIONS
-   ========================================================= */
+   4. NOTIFICATIONS
+========================================================= */
 
 function showNotification(
     message,
     type = "success"
 ) {
 
-    if (!notificationContainer) {
+    if (!notificationContainer)
         return;
-    }
 
     const notification =
         document.createElement("div");
+
+    notification.className =
+        "jossell-notification";
 
     notification.style.padding =
         "14px 18px";
@@ -282,21 +326,23 @@ function showNotification(
         "10px";
 
     notification.style.borderRadius =
-        "10px";
-
-    notification.style.background =
-        type === "error"
-            ? "#dc2626"
-            : "#16a34a";
+        "12px";
 
     notification.style.color =
-        "white";
+        "#ffffff";
 
     notification.style.fontWeight =
         "600";
 
     notification.style.boxShadow =
-        "0 5px 20px rgba(0,0,0,0.15)";
+        "0 8px 25px rgba(0,0,0,0.18)";
+
+    notification.style.background =
+        type === "error"
+            ? "#dc2626"
+            : type === "warning"
+                ? "#f59e0b"
+                : "#16a34a";
 
     notification.textContent =
         message;
@@ -307,15 +353,28 @@ function showNotification(
 
     setTimeout(() => {
 
-        notification.remove();
+        notification.style.opacity =
+            "0";
+
+        notification.style.transform =
+            "translateX(30px)";
+
+        notification.style.transition =
+            "0.3s";
+
+        setTimeout(() => {
+
+            notification.remove();
+
+        }, 300);
 
     }, 3000);
 }
 
 
 /* =========================================================
-   10. NAVIGATION
-   ========================================================= */
+   5. NAVIGATION
+========================================================= */
 
 function openPage(pageName) {
 
@@ -348,6 +407,7 @@ function openPage(pageName) {
         document.getElementById(
             `page-${pageName}`
         );
+
 
     const targetButton =
         document.querySelector(
@@ -405,10 +465,9 @@ function openPage(pageName) {
         renderReports();
 
     }
+
 }
 
-
-/* Navigation principale */
 
 document
     .querySelectorAll(".nav-item")
@@ -427,8 +486,6 @@ document
 
     });
 
-
-/* Bouton Commencer */
 
 document
     .querySelectorAll("[data-page]")
@@ -458,13 +515,14 @@ document
 
 
 /* =========================================================
-   11. INITIALISATION DATE
-   ========================================================= */
+   6. DATE
+========================================================= */
 
 function initializeDate() {
 
     const today =
         todayISO();
+
 
     if (saleDate) {
 
@@ -473,15 +531,17 @@ function initializeDate() {
 
     }
 
+
     updateDay();
 
 
-    if (currentDate) {
+    if (homeTodayDate) {
 
-        currentDate.textContent =
+        homeTodayDate.textContent =
             formatDate(today);
 
     }
+
 }
 
 
@@ -498,10 +558,9 @@ function updateDay() {
         getDayName(
             saleDate.value
         );
+
 }
 
-
-/* Changement de date */
 
 if (saleDate) {
 
@@ -522,8 +581,8 @@ if (saleDate) {
 
 
 /* =========================================================
-   12. GROUPES / CATÉGORIES
-   ========================================================= */
+   7. GROUPES / CATÉGORIES
+========================================================= */
 
 if (articleGroupForm) {
 
@@ -537,6 +596,7 @@ if (articleGroupForm) {
             const name =
                 groupName.value.trim();
 
+
             const description =
                 groupDescription.value.trim();
 
@@ -549,6 +609,7 @@ if (articleGroupForm) {
                 );
 
                 return;
+
             }
 
 
@@ -568,6 +629,7 @@ if (articleGroupForm) {
                 );
 
                 return;
+
             }
 
 
@@ -577,7 +639,8 @@ if (articleGroupForm) {
 
                 name: name,
 
-                description: description,
+                description:
+                    description,
 
                 createdAt:
                     new Date().toISOString()
@@ -602,6 +665,8 @@ if (articleGroupForm) {
 
             renderCategoryInputs();
 
+            updateHomeSummary();
+
 
             showNotification(
                 "Catégorie ajoutée avec succès."
@@ -613,15 +678,10 @@ if (articleGroupForm) {
 }
 
 
-/* =========================================================
-   13. AFFICHER LES GROUPES ET ARTICLES
-   ========================================================= */
-
 function renderGroups() {
 
-    if (!articlesList) {
+    if (!articlesList)
         return;
-    }
 
 
     let groupsHTML = "";
@@ -633,15 +693,25 @@ function renderGroups() {
 
             <div class="empty-state">
 
+                <div class="empty-icon">
+                    📁
+                </div>
+
+                <h4>
+                    Aucune catégorie
+                </h4>
+
                 <p>
-                    📁 Aucun groupe créé pour le moment.
+                    Créez votre première catégorie.
                 </p>
 
             </div>
 
         `;
 
-    } else {
+    }
+
+    else {
 
         groups.forEach(group => {
 
@@ -657,12 +727,7 @@ function renderGroups() {
 
                 <div class="group-card">
 
-                    <div style="
-                        display:flex;
-                        justify-content:space-between;
-                        align-items:center;
-                        gap:10px;
-                    ">
+                    <div class="group-header">
 
                         <div>
 
@@ -685,30 +750,23 @@ function renderGroups() {
 
                         <button
                             type="button"
-                            onclick="deleteGroup(${group.id})"
-                            style="
-                                background:#dc2626;
-                                color:white;
-                                border:0;
-                                padding:8px 12px;
-                                border-radius:8px;
-                                cursor:pointer;
-                            "
-                        >
-                            Supprimer
+                            class="btn-danger-small"
+                            onclick="deleteGroup(${group.id})">
+
+                            🗑️
+
                         </button>
 
                     </div>
 
 
-                    <div style="
-                        margin-top:12px;
-                    ">
+                    <div class="group-meta">
 
-                        <strong>
+                        <span>
+                            📦
                             ${groupArticles.length}
                             article(s)
-                        </strong>
+                        </span>
 
                     </div>
 
@@ -728,10 +786,7 @@ function renderGroups() {
 
         articlesHTML = `
 
-            <h4 style="
-                margin-top:25px;
-                margin-bottom:12px;
-            ">
+            <h4 class="list-title">
                 🛒 Articles enregistrés
             </h4>
 
@@ -750,71 +805,50 @@ function renderGroups() {
 
             articlesHTML += `
 
-                <div style="
-                    padding:14px;
-                    margin-bottom:10px;
-                    border-radius:12px;
-                    background:rgba(37,99,235,0.05);
-                    border:1px solid rgba(37,99,235,0.12);
-                ">
+                <div class="article-card">
 
-                    <div style="
-                        display:flex;
-                        justify-content:space-between;
-                        gap:10px;
-                        align-items:center;
-                    ">
+                    <div class="article-info">
 
-                        <div>
+                        <strong>
+                            ${escapeHTML(
+                                article.name
+                            )}
+                        </strong>
 
-                            <strong>
-                                ${escapeHTML(
-                                    article.name
-                                )}
-                            </strong>
+                        <span>
+                            📁
+                            ${escapeHTML(
+                                group
+                                    ? group.name
+                                    : "Inconnue"
+                            )}
+                        </span>
 
-                            <div>
-                                Catégorie :
-                                ${escapeHTML(
-                                    group
-                                        ? group.name
-                                        : "Inconnue"
-                                )}
-                            </div>
+                        <span>
+                            📦 Stock :
+                            ${Number(
+                                article.quantity
+                            ) || 0}
+                        </span>
 
-                            <div>
-                                Stock :
-                                ${Number(
-                                    article.quantity
-                                ) || 0}
-                            </div>
-
-                            <div>
-                                Prix :
-                                ${formatMoney(
-                                    article.price
-                                )}
-                            </div>
-
-                        </div>
-
-
-                        <button
-                            type="button"
-                            onclick="deleteArticle(${article.id})"
-                            style="
-                                background:#dc2626;
-                                color:white;
-                                border:0;
-                                padding:8px 12px;
-                                border-radius:8px;
-                                cursor:pointer;
-                            "
-                        >
-                            Supprimer
-                        </button>
+                        <span>
+                            💰 Prix :
+                            ${formatMoney(
+                                article.price
+                            )}
+                        </span>
 
                     </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-danger-small"
+                        onclick="deleteArticle(${article.id})">
+
+                        🗑️
+
+                    </button>
 
                 </div>
 
@@ -828,12 +862,17 @@ function renderGroups() {
     articlesList.innerHTML =
         groupsHTML +
         articlesHTML;
+
+
+    if (inventoryCount) {
+
+        inventoryCount.textContent =
+            articles.length;
+
+    }
+
 }
 
-
-/* =========================================================
-   14. SUPPRIMER UN GROUPE
-   ========================================================= */
 
 function deleteGroup(id) {
 
@@ -842,9 +881,9 @@ function deleteGroup(id) {
             g => g.id === id
         );
 
-    if (!group) {
+
+    if (!group)
         return;
-    }
 
 
     const linkedArticles =
@@ -861,14 +900,13 @@ function deleteGroup(id) {
     if (linkedArticles.length > 0) {
 
         message +=
-            `\n\nAttention : ${linkedArticles.length} article(s) appartiennent à cette catégorie.`;
+            `\n\nAttention : ${linkedArticles.length} article(s) seront également supprimés.`;
 
     }
 
 
-    if (!confirm(message)) {
+    if (!confirm(message))
         return;
-    }
 
 
     groups =
@@ -892,16 +930,21 @@ function deleteGroup(id) {
 
     renderCategoryInputs();
 
+    updateHomeSummary();
+
+    renderReports();
+
 
     showNotification(
         "Catégorie supprimée."
     );
+
 }
 
 
 /* =========================================================
-   15. AJOUTER UN ARTICLE
-   ========================================================= */
+   8. ARTICLES
+========================================================= */
 
 if (articleForm) {
 
@@ -915,13 +958,16 @@ if (articleForm) {
             const selectedGroup =
                 articleGroupSelect.value;
 
+
             const name =
                 articleName.value.trim();
+
 
             const quantity =
                 Number(
                     articleQuantity.value
                 ) || 0;
+
 
             const price =
                 Number(
@@ -937,6 +983,7 @@ if (articleForm) {
                 );
 
                 return;
+
             }
 
 
@@ -948,6 +995,7 @@ if (articleForm) {
                 );
 
                 return;
+
             }
 
 
@@ -960,9 +1008,11 @@ if (articleForm) {
 
                 name: name,
 
-                quantity: quantity,
+                quantity:
+                    quantity,
 
-                price: price,
+                price:
+                    price,
 
                 createdAt:
                     new Date().toISOString()
@@ -983,6 +1033,8 @@ if (articleForm) {
 
             renderGroups();
 
+            updateHomeSummary();
+
 
             showNotification(
                 "Article ajouté avec succès."
@@ -994,15 +1046,10 @@ if (articleForm) {
 }
 
 
-/* =========================================================
-   16. LISTE DES CATÉGORIES
-   ========================================================= */
-
 function updateArticleGroupSelect() {
 
-    if (!articleGroupSelect) {
+    if (!articleGroupSelect)
         return;
-    }
 
 
     articleGroupSelect.innerHTML = `
@@ -1021,11 +1068,14 @@ function updateArticleGroupSelect() {
                 "option"
             );
 
+
         option.value =
             group.id;
 
+
         option.textContent =
             group.name;
+
 
         articleGroupSelect.appendChild(
             option
@@ -1036,10 +1086,6 @@ function updateArticleGroupSelect() {
 }
 
 
-/* =========================================================
-   17. SUPPRIMER UN ARTICLE
-   ========================================================= */
-
 function deleteArticle(id) {
 
     const article =
@@ -1047,9 +1093,9 @@ function deleteArticle(id) {
             a => a.id === id
         );
 
-    if (!article) {
+
+    if (!article)
         return;
-    }
 
 
     if (
@@ -1057,7 +1103,9 @@ function deleteArticle(id) {
             `Voulez-vous supprimer l'article "${article.name}" ?`
         )
     ) {
+
         return;
+
     }
 
 
@@ -1069,24 +1117,27 @@ function deleteArticle(id) {
 
     saveData();
 
+
     renderGroups();
+
+    updateHomeSummary();
 
 
     showNotification(
         "Article supprimé."
     );
+
 }
 
 
 /* =========================================================
-   18. CRÉER LES CHAMPS DES CATÉGORIES
-   ========================================================= */
+   9. CATÉGORIES DU CALCULATEUR
+========================================================= */
 
 function renderCategoryInputs() {
 
-    if (!dynamicExpenses) {
+    if (!dynamicExpenses)
         return;
-    }
 
 
     if (groups.length === 0) {
@@ -1095,8 +1146,16 @@ function renderCategoryInputs() {
 
             <div class="empty-state">
 
+                <div class="empty-icon">
+                    📁
+                </div>
+
+                <h4>
+                    Aucune catégorie
+                </h4>
+
                 <p>
-                    📁 Créez d'abord une catégorie
+                    Créez d'abord une catégorie
                     dans "Groupes & Articles".
                 </p>
 
@@ -1104,9 +1163,11 @@ function renderCategoryInputs() {
 
         `;
 
+
         calculateCurrentDay();
 
         return;
+
     }
 
 
@@ -1134,6 +1195,7 @@ function renderCategoryInputs() {
 
     groups.forEach(group => {
 
+
         let existingData = null;
 
 
@@ -1154,6 +1216,7 @@ function renderCategoryInputs() {
                 ? existingData.sales
                 : "";
 
+
         const purchaseValue =
             existingData
                 ? existingData.purchase
@@ -1170,48 +1233,25 @@ function renderCategoryInputs() {
             "category-financial-row";
 
 
-        row.style.cssText = `
-
-            margin-bottom:15px;
-
-            padding:15px;
-
-            border:1px solid
-                rgba(37,99,235,0.15);
-
-            border-radius:14px;
-
-            background:
-                rgba(37,99,235,0.03);
-
-        `;
-
-
         row.innerHTML = `
 
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                gap:10px;
-                margin-bottom:12px;
-            ">
+            <div class="category-header">
 
                 <strong>
                     📁
-                    ${escapeHTML(group.name)}
+                    ${escapeHTML(
+                        group.name
+                    )}
                 </strong>
 
 
                 <span
                     class="category-profit"
-                    data-group-id="${group.id}"
-                    style="
-                        font-weight:bold;
-                        color:#16a34a;
-                    "
-                >
-                    Bénéfice : 0 FC
+                    data-group-id="${group.id}">
+
+                    Bénéfice :
+                    0 FC
+
                 </span>
 
             </div>
@@ -1219,20 +1259,28 @@ function renderCategoryInputs() {
 
             <div class="form-grid">
 
+
                 <div class="form-group">
 
                     <label>
                         💵 Ventes
                     </label>
 
-                    <input
-                        type="number"
-                        min="0"
-                        class="category-sale-input"
-                        data-group-id="${group.id}"
-                        value="${salesValue}"
-                        placeholder="0"
-                    >
+                    <div class="money-input">
+
+                        <input
+                            type="number"
+                            min="0"
+                            class="category-sale-input"
+                            data-group-id="${group.id}"
+                            value="${salesValue}"
+                            placeholder="0">
+
+                        <span>
+                            FC
+                        </span>
+
+                    </div>
 
                 </div>
 
@@ -1243,16 +1291,24 @@ function renderCategoryInputs() {
                         🛒 Achats
                     </label>
 
-                    <input
-                        type="number"
-                        min="0"
-                        class="category-purchase-input"
-                        data-group-id="${group.id}"
-                        value="${purchaseValue}"
-                        placeholder="0"
-                    >
+                    <div class="money-input">
+
+                        <input
+                            type="number"
+                            min="0"
+                            class="category-purchase-input"
+                            data-group-id="${group.id}"
+                            value="${purchaseValue}"
+                            placeholder="0">
+
+                        <span>
+                            FC
+                        </span>
+
+                    </div>
 
                 </div>
+
 
             </div>
 
@@ -1265,9 +1321,6 @@ function renderCategoryInputs() {
 
     });
 
-
-    /* Le total des ventes est calculé
-       automatiquement */
 
     if (dailySales) {
 
@@ -1298,12 +1351,13 @@ function renderCategoryInputs() {
 
 
     calculateCurrentDay();
+
 }
 
 
 /* =========================================================
-   19. CALCUL DE LA JOURNÉE
-   ========================================================= */
+   10. CALCUL DES VENTES / ACHATS / DÉPENSES
+========================================================= */
 
 function calculateCurrentDay() {
 
@@ -1319,7 +1373,9 @@ function calculateCurrentDay() {
         .forEach(input => {
 
             sales +=
-                Number(input.value) || 0;
+                Number(
+                    input.value
+                ) || 0;
 
         });
 
@@ -1331,16 +1387,22 @@ function calculateCurrentDay() {
         .forEach(input => {
 
             purchases +=
-                Number(input.value) || 0;
+                Number(
+                    input.value
+                ) || 0;
 
         });
 
 
-    const balance =
-        sales - purchases;
+    const expenses =
+        calculateExpenseInputs();
 
 
-    /* Total ventes */
+    const profit =
+        sales -
+        purchases -
+        expenses;
+
 
     if (dailySales) {
 
@@ -1358,8 +1420,6 @@ function calculateCurrentDay() {
     }
 
 
-    /* Total achats */
-
     if (totalPurchases) {
 
         totalPurchases.textContent =
@@ -1368,22 +1428,27 @@ function calculateCurrentDay() {
     }
 
 
-    /* Bénéfice */
+    if (totalDailyExpenses) {
+
+        totalDailyExpenses.textContent =
+            formatMoney(expenses);
+
+    }
+
 
     if (calculatedBalance) {
 
         calculatedBalance.textContent =
-            formatMoney(balance);
+            formatMoney(profit);
+
 
         calculatedBalance.style.color =
-            balance >= 0
+            profit >= 0
                 ? "#16a34a"
                 : "#dc2626";
 
     }
 
-
-    /* Bénéfice de chaque catégorie */
 
     groups.forEach(group => {
 
@@ -1392,10 +1457,12 @@ function calculateCurrentDay() {
                 `.category-sale-input[data-group-id="${group.id}"]`
             );
 
+
         const purchaseInput =
             document.querySelector(
                 `.category-purchase-input[data-group-id="${group.id}"]`
             );
+
 
         const profitElement =
             document.querySelector(
@@ -1408,7 +1475,9 @@ function calculateCurrentDay() {
             !purchaseInput ||
             !profitElement
         ) {
+
             return;
+
         }
 
 
@@ -1417,33 +1486,230 @@ function calculateCurrentDay() {
                 saleInput.value
             ) || 0;
 
+
         const categoryPurchases =
             Number(
                 purchaseInput.value
             ) || 0;
 
 
-        const profit =
+        const categoryProfit =
             categorySales -
             categoryPurchases;
 
 
         profitElement.textContent =
-            `Bénéfice : ${formatMoney(profit)}`;
+            `Bénéfice : ${formatMoney(
+                categoryProfit
+            )}`;
 
 
         profitElement.style.color =
-            profit >= 0
+            categoryProfit >= 0
                 ? "#16a34a"
                 : "#dc2626";
 
     });
+
 }
 
 
 /* =========================================================
-   20. ENREGISTRER UNE JOURNÉE
-   ========================================================= */
+   11. DÉPENSES
+========================================================= */
+
+function calculateExpenseInputs() {
+
+    let total = 0;
+
+
+    document
+        .querySelectorAll(
+            ".expense-amount"
+        )
+        .forEach(input => {
+
+            total +=
+                Number(
+                    input.value
+                ) || 0;
+
+        });
+
+
+    return total;
+}
+
+
+function attachExpenseEvents() {
+
+    document
+        .querySelectorAll(
+            ".expense-amount, .expense-name"
+        )
+        .forEach(element => {
+
+            element.addEventListener(
+                "input",
+                calculateCurrentDay
+            );
+
+            element.addEventListener(
+                "change",
+                calculateCurrentDay
+            );
+
+        });
+
+
+    document
+        .querySelectorAll(
+            ".remove-expense"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const row =
+                        this.closest(
+                            ".expense-input-row"
+                        );
+
+
+                    if (row) {
+
+                        row.remove();
+
+                        calculateCurrentDay();
+
+                    }
+
+                }
+            );
+
+        });
+
+}
+
+
+if (addExpenseButton) {
+
+    addExpenseButton.addEventListener(
+        "click",
+        function () {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "expense-input-row";
+
+
+            row.innerHTML = `
+
+                <div class="form-group">
+
+                    <label>
+                        Catégorie de dépense
+                    </label>
+
+                    <select class="expense-name">
+
+                        <option value="">
+                            -- Choisir --
+                        </option>
+
+                        <option value="Transport">
+                            Transport
+                        </option>
+
+                        <option value="Salaire">
+                            Salaire
+                        </option>
+
+                        <option value="Electricité">
+                            Électricité
+                        </option>
+
+                        <option value="Loyer">
+                            Loyer
+                        </option>
+
+                        <option value="Communication">
+                            Communication
+                        </option>
+
+                        <option value="Carburant">
+                            Carburant
+                        </option>
+
+                        <option value="Autre">
+                            Autre
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Montant
+                    </label>
+
+                    <div class="money-input">
+
+                        <input
+                            type="number"
+                            class="expense-amount"
+                            min="0"
+                            placeholder="0">
+
+                        <span>
+                            FC
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-danger-small remove-expense">
+
+                    ✕
+
+                </button>
+
+            `;
+
+
+            dailyExpensesContainer.appendChild(
+                row
+            );
+
+
+            attachExpenseEvents();
+
+        }
+    );
+
+}
+
+
+attachExpenseEvents();
+
+
+/* =========================================================
+   12. ENREGISTRER UNE JOURNÉE
+========================================================= */
 
 if (dailyForm) {
 
@@ -1466,17 +1732,19 @@ if (dailyForm) {
                 );
 
                 return;
+
             }
 
 
             if (groups.length === 0) {
 
                 showNotification(
-                    "Créez au moins une catégorie avant d'enregistrer.",
+                    "Créez au moins une catégorie.",
                     "error"
                 );
 
                 return;
+
             }
 
 
@@ -1485,10 +1753,12 @@ if (dailyForm) {
 
             groups.forEach(group => {
 
+
                 const saleInput =
                     document.querySelector(
                         `.category-sale-input[data-group-id="${group.id}"]`
                     );
+
 
                 const purchaseInput =
                     document.querySelector(
@@ -1523,11 +1793,60 @@ if (dailyForm) {
                         purchase,
 
                     profit:
-                        sales - purchase
+                        sales -
+                        purchase
 
                 });
 
             });
+
+
+            /* -----------------------------------------
+               RÉCUPÉRER LES DÉPENSES
+            ----------------------------------------- */
+
+            const expenses = [];
+
+
+            document
+                .querySelectorAll(
+                    ".expense-input-row"
+                )
+                .forEach(row => {
+
+
+                    const name =
+                        row.querySelector(
+                            ".expense-name"
+                        )?.value || "";
+
+
+                    const amount =
+                        Number(
+                            row.querySelector(
+                                ".expense-amount"
+                            )?.value
+                        ) || 0;
+
+
+                    if (
+                        name &&
+                        amount > 0
+                    ) {
+
+                        expenses.push({
+
+                            name:
+                                name,
+
+                            amount:
+                                amount
+
+                        });
+
+                    }
+
+                });
 
 
             const totalSales =
@@ -1548,18 +1867,31 @@ if (dailyForm) {
                 );
 
 
+            const totalExpenses =
+                expenses.reduce(
+                    (sum, expense) =>
+                        sum +
+                        expense.amount,
+                    0
+                );
+
+
             const totalProfit =
                 totalSales -
-                totalPurchase;
+                totalPurchase -
+                totalExpenses;
 
 
             const editingId =
                 dailyForm.dataset.editingId;
 
 
-            /* MODIFICATION */
+            /* -----------------------------------------
+               MODIFICATION
+            ----------------------------------------- */
 
             if (editingId) {
+
 
                 const index =
                     dailyRecords.findIndex(
@@ -1579,16 +1911,24 @@ if (dailyForm) {
                             date,
 
                         day:
-                            getDayName(date),
+                            getDayName(
+                                date
+                            ),
 
                         categories:
                             categories,
+
+                        expenses:
+                            expenses,
 
                         totalSales:
                             totalSales,
 
                         totalPurchase:
                             totalPurchase,
+
+                        totalExpenses:
+                            totalExpenses,
 
                         totalProfit:
                             totalProfit,
@@ -1604,6 +1944,14 @@ if (dailyForm) {
                 delete dailyForm.dataset.editingId;
 
 
+                if (calculatorStatus) {
+
+                    calculatorStatus.textContent =
+                        "Nouvelle journée";
+
+                }
+
+
                 showNotification(
                     "Journée modifiée avec succès."
                 );
@@ -1611,9 +1959,12 @@ if (dailyForm) {
             }
 
 
-            /* NOUVEL ENREGISTREMENT */
+            /* -----------------------------------------
+               NOUVEL ENREGISTREMENT
+            ----------------------------------------- */
 
             else {
+
 
                 const record = {
 
@@ -1624,16 +1975,24 @@ if (dailyForm) {
                         date,
 
                     day:
-                        getDayName(date),
+                        getDayName(
+                            date
+                        ),
 
                     categories:
                         categories,
+
+                    expenses:
+                        expenses,
 
                     totalSales:
                         totalSales,
 
                     totalPurchase:
                         totalPurchase,
+
+                    totalExpenses:
+                        totalExpenses,
 
                     totalProfit:
                         totalProfit,
@@ -1659,17 +2018,8 @@ if (dailyForm) {
             saveData();
 
 
-            dailyForm.reset();
+            resetDailyForm();
 
-
-            saleDate.value =
-                todayISO();
-
-
-            updateDay();
-
-
-            renderCategoryInputs();
 
             renderHistory();
 
@@ -1684,13 +2034,148 @@ if (dailyForm) {
 
 
 /* =========================================================
-   21. HISTORIQUE
-   ========================================================= */
+   13. RÉINITIALISER LE FORMULAIRE
+========================================================= */
+
+function resetDailyForm() {
+
+    if (!dailyForm)
+        return;
+
+
+    dailyForm.reset();
+
+
+    delete dailyForm.dataset.editingId;
+
+
+    saleDate.value =
+        todayISO();
+
+
+    updateDay();
+
+
+    if (calculatorStatus) {
+
+        calculatorStatus.textContent =
+            "Nouvelle journée";
+
+    }
+
+
+    if (dailyExpensesContainer) {
+
+        dailyExpensesContainer.innerHTML = `
+
+            <div class="expense-input-row">
+
+                <div class="form-group">
+
+                    <label>
+                        Catégorie de dépense
+                    </label>
+
+                    <select class="expense-name">
+
+                        <option value="">
+                            -- Choisir --
+                        </option>
+
+                        <option value="Transport">
+                            Transport
+                        </option>
+
+                        <option value="Salaire">
+                            Salaire
+                        </option>
+
+                        <option value="Electricité">
+                            Électricité
+                        </option>
+
+                        <option value="Loyer">
+                            Loyer
+                        </option>
+
+                        <option value="Communication">
+                            Communication
+                        </option>
+
+                        <option value="Carburant">
+                            Carburant
+                        </option>
+
+                        <option value="Autre">
+                            Autre
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Montant
+                    </label>
+
+                    <div class="money-input">
+
+                        <input
+                            type="number"
+                            class="expense-amount"
+                            min="0"
+                            placeholder="0">
+
+                        <span>
+                            FC
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-danger-small remove-expense">
+
+                    ✕
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        attachExpenseEvents();
+
+    }
+
+
+    renderCategoryInputs();
+
+}
+
+
+/* =========================================================
+   14. HISTORIQUE
+========================================================= */
 
 function renderHistory() {
 
-    if (!dailyHistory) {
+    if (!dailyHistory)
         return;
+
+
+    if (historyCount) {
+
+        historyCount.textContent =
+            dailyRecords.length;
+
     }
 
 
@@ -1700,8 +2185,16 @@ function renderHistory() {
 
             <div class="empty-state">
 
+                <div class="empty-icon">
+                    📜
+                </div>
+
+                <h4>
+                    Aucun enregistrement
+                </h4>
+
                 <p>
-                    📜 Aucun enregistrement pour le moment.
+                    Vos journées apparaîtront ici.
                 </p>
 
             </div>
@@ -1709,6 +2202,7 @@ function renderHistory() {
         `;
 
         return;
+
     }
 
 
@@ -1726,6 +2220,7 @@ function renderHistory() {
 
     sortedRecords.forEach(record => {
 
+
         const profitClass =
             record.totalProfit >= 0
                 ? "positive"
@@ -1738,22 +2233,20 @@ function renderHistory() {
         record.categories.forEach(
             category => {
 
+
                 if (
                     category.sales === 0 &&
                     category.purchase === 0
                 ) {
+
                     return;
+
                 }
 
 
                 categoryHTML += `
 
-                    <div style="
-                        padding:8px 0;
-                        border-bottom:
-                            1px solid
-                            rgba(0,0,0,0.06);
-                    ">
+                    <div class="history-category">
 
                         <strong>
                             ${escapeHTML(
@@ -1761,33 +2254,26 @@ function renderHistory() {
                             )}
                         </strong>
 
-                        <br>
-
-                        <small>
-
+                        <span>
                             Ventes :
                             ${formatMoney(
                                 category.sales
                             )}
+                        </span>
 
-                            |
-
+                        <span>
                             Achats :
                             ${formatMoney(
                                 category.purchase
                             )}
+                        </span>
 
-                            |
-
+                        <span>
                             Bénéfice :
-
-                            <strong>
-                                ${formatMoney(
-                                    category.profit
-                                )}
-                            </strong>
-
-                        </small>
+                            ${formatMoney(
+                                category.profit
+                            )}
+                        </span>
 
                     </div>
 
@@ -1797,40 +2283,70 @@ function renderHistory() {
         );
 
 
+        let expenseHTML = "";
+
+
+        if (
+            record.expenses &&
+            record.expenses.length > 0
+        ) {
+
+
+            expenseHTML = `
+
+                <div class="history-expenses">
+
+                    <strong>
+                        💸 Dépenses
+                    </strong>
+
+            `;
+
+
+            record.expenses.forEach(
+                expense => {
+
+                    expenseHTML += `
+
+                        <span>
+                            ${escapeHTML(
+                                expense.name
+                            )}
+                            :
+                            ${formatMoney(
+                                expense.amount
+                            )}
+                        </span>
+
+                    `;
+
+                }
+            );
+
+
+            expenseHTML += `
+
+                </div>
+
+            `;
+
+        }
+
+
         html += `
 
-            <div class="history-card"
-                style="
-                    margin-bottom:15px;
-                    padding:16px;
-                    border-radius:14px;
-                    border:
-                        1px solid
-                        rgba(0,0,0,0.08);
-                    background:#fff;
-                ">
+            <div class="history-card">
 
-                <div style="
-                    display:flex;
-                    justify-content:
-                        space-between;
-                    align-items:
-                        flex-start;
-                    gap:10px;
-                ">
+
+                <div class="history-top">
 
                     <div>
 
-                        <h4 style="
-                            margin:
-                                0 0 5px;
-                        ">
-
+                        <h4>
                             📅
                             ${formatDate(
                                 record.date
                             )}
-
                         </h4>
 
                         <small>
@@ -1842,35 +2358,36 @@ function renderHistory() {
                     </div>
 
 
-                    <div style="
-                        text-align:right;
-                    ">
+                    <div class="history-result">
 
-                        <strong>
+                        <span>
                             Ventes :
                             ${formatMoney(
                                 record.totalSales
                             )}
-                        </strong>
+                        </span>
 
-                        <br>
-
-                        <strong>
+                        <span>
                             Achats :
                             ${formatMoney(
                                 record.totalPurchase
                             )}
-                        </strong>
+                        </span>
 
-                        <br>
+                        <span>
+                            Dépenses :
+                            ${formatMoney(
+                                record.totalExpenses
+                            )}
+                        </span>
 
-                        <strong
-                            class="${profitClass}"
-                        >
-                            Bénéfice :
+                        <strong class="${profitClass}">
+
+                            Bénéfice net :
                             ${formatMoney(
                                 record.totalProfit
                             )}
+
                         </strong>
 
                     </div>
@@ -1878,59 +2395,40 @@ function renderHistory() {
                 </div>
 
 
-                <div style="
-                    margin-top:15px;
-                ">
+                <div class="history-categories">
 
                     ${
                         categoryHTML ||
-                        `
-                        <small>
-                            Aucune opération enregistrée.
-                        </small>
-                        `
+                        "<small>Aucune vente enregistrée.</small>"
                     }
 
                 </div>
 
 
-                <div style="
-                    display:flex;
-                    gap:8px;
-                    margin-top:15px;
-                    flex-wrap:wrap;
-                ">
+                ${expenseHTML}
+
+
+                <div class="history-actions">
 
                     <button
                         type="button"
-                        onclick="editRecord(${record.id})"
-                        style="
-                            padding:9px 14px;
-                            border:0;
-                            border-radius:8px;
-                            cursor:pointer;
-                        "
-                    >
+                        onclick="editRecord(${record.id})">
+
                         ✏️ Modifier
+
                     </button>
 
 
                     <button
                         type="button"
-                        onclick="deleteRecord(${record.id})"
-                        style="
-                            padding:9px 14px;
-                            border:0;
-                            border-radius:8px;
-                            background:#dc2626;
-                            color:white;
-                            cursor:pointer;
-                        "
-                    >
+                        onclick="deleteRecord(${record.id})">
+
                         🗑️ Supprimer
+
                     </button>
 
                 </div>
+
 
             </div>
 
@@ -1941,12 +2439,13 @@ function renderHistory() {
 
     dailyHistory.innerHTML =
         html;
+
 }
 
 
 /* =========================================================
-   22. MODIFIER UNE JOURNÉE
-   ========================================================= */
+   15. MODIFIER UNE JOURNÉE
+========================================================= */
 
 function editRecord(id) {
 
@@ -1956,9 +2455,8 @@ function editRecord(id) {
         );
 
 
-    if (!record) {
+    if (!record)
         return;
-    }
 
 
     dailyForm.dataset.editingId =
@@ -1973,6 +2471,58 @@ function editRecord(id) {
 
 
     renderCategoryInputs();
+
+
+    /* -----------------------------------------
+       RESTAURER LES DÉPENSES
+    ----------------------------------------- */
+
+    if (dailyExpensesContainer) {
+
+        dailyExpensesContainer.innerHTML =
+            "";
+
+
+        const expenses =
+            record.expenses || [];
+
+
+        if (expenses.length === 0) {
+
+            addEmptyExpenseRow();
+
+        }
+
+        else {
+
+            expenses.forEach(
+                expense => {
+
+                    addExpenseRow(
+                        expense.name,
+                        expense.amount
+                    );
+
+                }
+            );
+
+        }
+
+
+        attachExpenseEvents();
+
+    }
+
+
+    if (calculatorStatus) {
+
+        calculatorStatus.textContent =
+            "Modification en cours";
+
+    }
+
+
+    calculateCurrentDay();
 
 
     openPage(
@@ -1992,12 +2542,141 @@ function editRecord(id) {
     showNotification(
         "Vous pouvez maintenant modifier cette journée."
     );
+
+}
+
+
+function addExpenseRow(
+    selectedName = "",
+    amount = ""
+) {
+
+    if (!dailyExpensesContainer)
+        return;
+
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "expense-input-row";
+
+
+    row.innerHTML = `
+
+        <div class="form-group">
+
+            <label>
+                Catégorie de dépense
+            </label>
+
+            <select class="expense-name">
+
+                <option value="">
+                    -- Choisir --
+                </option>
+
+                <option value="Transport">
+                    Transport
+                </option>
+
+                <option value="Salaire">
+                    Salaire
+                </option>
+
+                <option value="Electricité">
+                    Électricité
+                </option>
+
+                <option value="Loyer">
+                    Loyer
+                </option>
+
+                <option value="Communication">
+                    Communication
+                </option>
+
+                <option value="Carburant">
+                    Carburant
+                </option>
+
+                <option value="Autre">
+                    Autre
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Montant
+            </label>
+
+            <div class="money-input">
+
+                <input
+                    type="number"
+                    class="expense-amount"
+                    min="0"
+                    value="${amount}"
+                    placeholder="0">
+
+                <span>
+                    FC
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="btn-danger-small remove-expense">
+
+            ✕
+
+        </button>
+
+    `;
+
+
+    dailyExpensesContainer.appendChild(
+        row
+    );
+
+
+    const select =
+        row.querySelector(
+            ".expense-name"
+        );
+
+
+    select.value =
+        selectedName;
+
+}
+
+
+function addEmptyExpenseRow() {
+
+    addExpenseRow(
+        "",
+        ""
+    );
+
 }
 
 
 /* =========================================================
-   23. SUPPRIMER UNE JOURNÉE
-   ========================================================= */
+   16. SUPPRIMER UNE JOURNÉE
+========================================================= */
 
 function deleteRecord(id) {
 
@@ -2007,9 +2686,8 @@ function deleteRecord(id) {
         );
 
 
-    if (!record) {
+    if (!record)
         return;
-    }
 
 
     if (
@@ -2017,7 +2695,9 @@ function deleteRecord(id) {
             `Voulez-vous supprimer l'enregistrement du ${formatDate(record.date)} ?`
         )
     ) {
+
         return;
+
     }
 
 
@@ -2040,22 +2720,26 @@ function deleteRecord(id) {
     showNotification(
         "Enregistrement supprimé."
     );
+
 }
 
 
 /* =========================================================
-   24. RÉSUMÉ ACCUEIL
-   ========================================================= */
+   17. ACCUEIL
+========================================================= */
 
 function updateHomeSummary() {
 
-    if (!dailySalesSummary) {
-        return;
-    }
-
-
     const today =
         todayISO();
+
+
+    if (homeTodayDate) {
+
+        homeTodayDate.textContent =
+            formatDate(today);
+
+    }
 
 
     const todayRecords =
@@ -2087,47 +2771,105 @@ function updateHomeSummary() {
         );
 
 
-    const balance =
-        sales - purchases;
+    const expenses =
+        todayRecords.reduce(
+            (sum, record) =>
+                sum +
+                Number(
+                    record.totalExpenses || 0
+                ),
+            0
+        );
 
 
-    dailySalesSummary.textContent =
-        formatMoney(sales);
+    const profit =
+        sales -
+        purchases -
+        expenses;
 
 
-    dailyPurchaseSummary.textContent =
-        formatMoney(purchases);
+    if (dailySalesSummary) {
+
+        dailySalesSummary.textContent =
+            formatMoney(sales);
+
+    }
 
 
-    dailyBalanceSummary.textContent =
-        formatMoney(balance);
+    if (dailyPurchaseSummary) {
+
+        dailyPurchaseSummary.textContent =
+            formatMoney(purchases);
+
+    }
 
 
-    dailyBalanceSummary.className =
-        balance >= 0
-            ? "positive"
-            : "negative";
+    if (dailyExpenseSummary) {
+
+        dailyExpenseSummary.textContent =
+            formatMoney(expenses);
+
+    }
 
 
-    /* Résumé des catégories */
+    if (dailyBalanceSummary) {
+
+        dailyBalanceSummary.textContent =
+            formatMoney(profit);
+
+
+        dailyBalanceSummary.className =
+            profit >= 0
+                ? "positive"
+                : "negative";
+
+    }
+
+
+    if (totalRecordedDays) {
+
+        totalRecordedDays.textContent =
+            dailyRecords.length;
+
+    }
+
+
+    if (totalCategories) {
+
+        totalCategories.textContent =
+            groups.length;
+
+    }
+
+
+    if (totalArticles) {
+
+        totalArticles.textContent =
+            articles.length;
+
+    }
+
 
     renderHomeCategorySummary(
         todayRecords
     );
+
+
+    calculateBestCategory();
+
 }
 
 
 /* =========================================================
-   25. CATÉGORIES SUR L'ACCUEIL
-   ========================================================= */
+   18. VENTES PAR CATÉGORIE SUR ACCUEIL
+========================================================= */
 
 function renderHomeCategorySummary(
     records
 ) {
 
-    if (!homeCategorySummary) {
+    if (!homeCategorySummary)
         return;
-    }
 
 
     if (records.length === 0) {
@@ -2136,8 +2878,17 @@ function renderHomeCategorySummary(
 
             <div class="empty-state">
 
+                <div class="empty-icon">
+                    📊
+                </div>
+
+                <h4>
+                    Aucune donnée aujourd'hui
+                </h4>
+
                 <p>
-                    📊 Aucune vente enregistrée aujourd'hui.
+                    Les résultats par catégorie
+                    apparaîtront ici.
                 </p>
 
             </div>
@@ -2145,6 +2896,7 @@ function renderHomeCategorySummary(
         `;
 
         return;
+
     }
 
 
@@ -2155,6 +2907,7 @@ function renderHomeCategorySummary(
 
         record.categories.forEach(
             category => {
+
 
                 if (
                     !categoryTotals[
@@ -2169,11 +2922,14 @@ function renderHomeCategorySummary(
                         name:
                             category.groupName,
 
-                        sales: 0,
+                        sales:
+                            0,
 
-                        purchases: 0,
+                        purchases:
+                            0,
 
-                        profit: 0
+                        profit:
+                            0
 
                     };
 
@@ -2216,59 +2972,85 @@ function renderHomeCategorySummary(
         categoryTotals
     ).forEach(category => {
 
+
+        const maxSales =
+            Math.max(
+                ...Object.values(
+                    categoryTotals
+                ).map(
+                    item =>
+                        item.sales
+                )
+            );
+
+
+        const percentage =
+            maxSales > 0
+                ? Math.round(
+                    category.sales /
+                    maxSales *
+                    100
+                )
+                : 0;
+
+
         html += `
 
-            <div style="
-                display:grid;
-                grid-template-columns:
-                    1.3fr 1fr 1fr 1fr;
-                gap:10px;
-                align-items:center;
-                padding:12px 0;
-                border-bottom:
-                    1px solid
-                    rgba(0,0,0,0.07);
-            ">
+            <div class="home-category-row">
 
-                <strong>
-                    📁
-                    ${escapeHTML(
-                        category.name
-                    )}
-                </strong>
 
-                <span>
-                    Ventes :
+                <div class="home-category-top">
+
+                    <strong>
+                        📁
+                        ${escapeHTML(
+                            category.name
+                        )}
+                    </strong>
+
                     <strong>
                         ${formatMoney(
                             category.sales
                         )}
                     </strong>
-                </span>
 
-                <span>
-                    Achats :
-                    <strong>
+                </div>
+
+
+                <div class="category-progress">
+
+                    <div
+                        class="category-progress-bar"
+                        style="width:${percentage}%">
+                    </div>
+
+                </div>
+
+
+                <div class="home-category-bottom">
+
+                    <span>
+                        Achats :
                         ${formatMoney(
                             category.purchases
                         )}
-                    </strong>
-                </span>
+                    </span>
 
-                <span class="${
-                    category.profit >= 0
-                        ? "positive"
-                        : "negative"
-                }">
 
-                    Bénéfice :
-                    <strong>
+                    <span class="${
+                        category.profit >= 0
+                            ? "positive"
+                            : "negative"
+                    }">
+
+                        Bénéfice :
                         ${formatMoney(
                             category.profit
                         )}
-                    </strong>
 
-                </span>
+                    </span>
+
+                </div>
 
             </div>
 
@@ -2279,29 +3061,104 @@ function renderHomeCategorySummary(
 
     homeCategorySummary.innerHTML =
         html;
+
 }
 
 
 /* =========================================================
-   26. RAPPORTS
-   ========================================================= */
+   19. MEILLEURE CATÉGORIE
+========================================================= */
 
-function renderReports() {
+function calculateBestCategory() {
 
-    const now =
-        new Date();
+    if (!bestCategory)
+        return;
 
 
-    /* =========================
-       SEMAINE
-       ========================= */
+    const totals = {};
 
-    const startOfWeek =
-        new Date(now);
+
+    dailyRecords.forEach(record => {
+
+        record.categories.forEach(
+            category => {
+
+
+                if (
+                    !totals[
+                        category.groupId
+                    ]
+                ) {
+
+                    totals[
+                        category.groupId
+                    ] = {
+
+                        name:
+                            category.groupName,
+
+                        profit:
+                            0
+
+                    };
+
+                }
+
+
+                totals[
+                    category.groupId
+                ].profit +=
+                    Number(
+                        category.profit || 0
+                    );
+
+            }
+        );
+
+    });
+
+
+    const list =
+        Object.values(
+            totals
+        );
+
+
+    if (list.length === 0) {
+
+        bestCategory.textContent =
+            "-";
+
+        return;
+
+    }
+
+
+    list.sort(
+        (a, b) =>
+            b.profit -
+            a.profit
+    );
+
+
+    bestCategory.textContent =
+        list[0].name;
+
+}
+
+
+/* =========================================================
+   20. RAPPORTS
+========================================================= */
+
+function getWeekStart(date) {
+
+    const result =
+        new Date(date);
 
 
     const day =
-        startOfWeek.getDay();
+        result.getDay();
 
 
     const difference =
@@ -2310,13 +3167,13 @@ function renderReports() {
             : day - 1;
 
 
-    startOfWeek.setDate(
-        startOfWeek.getDate() -
+    result.setDate(
+        result.getDate() -
         difference
     );
 
 
-    startOfWeek.setHours(
+    result.setHours(
         0,
         0,
         0,
@@ -2324,44 +3181,164 @@ function renderReports() {
     );
 
 
-    let weekSales = 0;
+    return result;
+
+}
 
 
-    dailyRecords.forEach(
+function getWeekRecords() {
+
+    const today =
+        new Date();
+
+
+    const start =
+        getWeekStart(
+            today
+        );
+
+
+    return dailyRecords.filter(
         record => {
 
-            const recordDate =
+            const date =
                 new Date(
                     record.date +
                     "T12:00:00"
                 );
 
 
-            if (
-                recordDate >=
-                startOfWeek
-            ) {
+            return date >= start;
 
-                weekSales +=
-                    Number(
-                        record.totalSales ||
-                        0
-                    );
+        }
+    );
 
-            }
+}
+
+
+function renderReports() {
+
+    const now =
+        new Date();
+
+
+    /* -----------------------------------------
+       SEMAINE
+    ----------------------------------------- */
+
+    const weekRecords =
+        getWeekRecords();
+
+
+    let weekSalesTotal = 0;
+
+    let weekPurchasesTotal = 0;
+
+    let weekExpensesTotal = 0;
+
+
+    weekRecords.forEach(
+        record => {
+
+            weekSalesTotal +=
+                Number(
+                    record.totalSales || 0
+                );
+
+
+            weekPurchasesTotal +=
+                Number(
+                    record.totalPurchase || 0
+                );
+
+
+            weekExpensesTotal +=
+                Number(
+                    record.totalExpenses || 0
+                );
 
         }
     );
 
 
-    /* =========================
-       MOIS ACTUEL
-       ========================= */
+    const weekProfit =
+        weekSalesTotal -
+        weekPurchasesTotal -
+        weekExpensesTotal;
 
-    const currentYear =
+
+    if (weeklySales) {
+
+        weeklySales.textContent =
+            formatMoney(
+                weekSalesTotal
+            );
+
+    }
+
+
+    if (weeklyReportSales) {
+
+        weeklyReportSales.textContent =
+            formatMoney(
+                weekSalesTotal
+            );
+
+    }
+
+
+    if (weeklyReportPurchases) {
+
+        weeklyReportPurchases.textContent =
+            formatMoney(
+                weekPurchasesTotal
+            );
+
+    }
+
+
+    if (weeklyReportExpenses) {
+
+        weeklyReportExpenses.textContent =
+            formatMoney(
+                weekExpensesTotal
+            );
+
+    }
+
+
+    if (weeklyReportProfit) {
+
+        weeklyReportProfit.textContent =
+            formatMoney(
+                weekProfit
+            );
+
+
+        weeklyReportProfit.className =
+            weekProfit >= 0
+                ? "positive"
+                : "negative";
+
+    }
+
+
+    renderWeekRange();
+
+    renderWeeklyDays(
+        weekRecords
+    );
+
+
+    /* -----------------------------------------
+       MOIS ACTUEL
+    ----------------------------------------- */
+
+    const year =
         now.getFullYear();
 
-    const currentMonth =
+
+    const month =
         now.getMonth();
 
 
@@ -2377,129 +3354,20 @@ function renderReports() {
 
 
                 return (
-
                     date.getFullYear() ===
-                    currentYear &&
+                    year &&
 
                     date.getMonth() ===
-                    currentMonth
-
+                    month
                 );
 
             }
         );
 
 
-    let monthSales = 0;
-
-    let monthPurchases = 0;
-
-
-    monthRecords.forEach(
-        record => {
-
-            monthSales +=
-                Number(
-                    record.totalSales ||
-                    0
-                );
-
-
-            monthPurchases +=
-                Number(
-                    record.totalPurchase ||
-                    0
-                );
-
-        }
+    renderMonthlyTotals(
+        monthRecords
     );
-
-
-    const monthProfit =
-        monthSales -
-        monthPurchases;
-
-
-    /* Affichage */
-
-    if (weeklySales) {
-
-        weeklySales.textContent =
-            formatMoney(
-                weekSales
-            );
-
-    }
-
-
-    if (monthlySales) {
-
-        monthlySales.textContent =
-            formatMoney(
-                monthSales
-            );
-
-    }
-
-
-    if (monthlyPurchases) {
-
-        monthlyPurchases.textContent =
-            formatMoney(
-                monthPurchases
-            );
-
-    }
-
-
-    if (monthlyTotal) {
-
-        monthlyTotal.textContent =
-            formatMoney(
-                monthProfit
-            );
-
-        monthlyTotal.className =
-            monthProfit >= 0
-                ? "positive"
-                : "negative";
-
-    }
-
-
-    if (finalMonthlySales) {
-
-        finalMonthlySales.textContent =
-            formatMoney(
-                monthSales
-            );
-
-    }
-
-
-    if (finalMonthlyPurchases) {
-
-        finalMonthlyPurchases.textContent =
-            formatMoney(
-                monthPurchases
-            );
-
-    }
-
-
-    if (finalMonthlyProfit) {
-
-        finalMonthlyProfit.textContent =
-            formatMoney(
-                monthProfit
-            );
-
-        finalMonthlyProfit.className =
-            monthProfit >= 0
-                ? "positive"
-                : "negative";
-
-    }
 
 
     renderCategoryReports(
@@ -2511,20 +3379,306 @@ function renderReports() {
         monthRecords
     );
 
+
+    updateAccountingAlert(
+        monthRecords
+    );
+
 }
 
 
 /* =========================================================
-   27. RAPPORT PAR CATÉGORIE
-   ========================================================= */
+   21. PÉRIODE DE LA SEMAINE
+========================================================= */
+
+function renderWeekRange() {
+
+    if (!weekRange)
+        return;
+
+
+    const start =
+        getWeekStart(
+            new Date()
+        );
+
+
+    const end =
+        new Date(start);
+
+
+    end.setDate(
+        end.getDate() + 6
+    );
+
+
+    weekRange.textContent =
+        `${formatDate(
+            dateToISO(start)
+        )} → ${formatDate(
+            dateToISO(end)
+        )}`;
+
+}
+
+
+function dateToISO(date) {
+
+    const year =
+        date.getFullYear();
+
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+/* =========================================================
+   22. JOURS DE LA SEMAINE
+========================================================= */
+
+function renderWeeklyDays(
+    records
+) {
+
+    if (!weeklyReportDays)
+        return;
+
+
+    if (records.length === 0) {
+
+        weeklyReportDays.innerHTML = `
+
+            <div class="empty-state">
+
+                <p>
+                    📅 Aucune journée enregistrée cette semaine.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const sorted =
+        [...records].sort(
+            (a, b) =>
+                a.date.localeCompare(
+                    b.date
+                )
+        );
+
+
+    let html = "";
+
+
+    sorted.forEach(record => {
+
+        html += `
+
+            <div class="weekly-day-row">
+
+                <div>
+
+                    <strong>
+                        ${formatDate(
+                            record.date
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escapeHTML(
+                            record.day
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Ventes :
+                        ${formatMoney(
+                            record.totalSales
+                        )}
+                    </span>
+
+                    <span>
+                        Bénéfice :
+                        ${formatMoney(
+                            record.totalProfit
+                        )}
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+
+    weeklyReportDays.innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   23. TOTAL MENSUEL
+========================================================= */
+
+function renderMonthlyTotals(
+    records
+) {
+
+    let sales = 0;
+
+    let purchases = 0;
+
+    let expenses = 0;
+
+
+    records.forEach(record => {
+
+        sales +=
+            Number(
+                record.totalSales || 0
+            );
+
+
+        purchases +=
+            Number(
+                record.totalPurchase || 0
+            );
+
+
+        expenses +=
+            Number(
+                record.totalExpenses || 0
+            );
+
+    });
+
+
+    const profit =
+        sales -
+        purchases -
+        expenses;
+
+
+    if (monthlySales) {
+
+        monthlySales.textContent =
+            formatMoney(sales);
+
+    }
+
+
+    if (monthlyPurchases) {
+
+        monthlyPurchases.textContent =
+            formatMoney(purchases);
+
+    }
+
+
+    if (monthlyExpenses) {
+
+        monthlyExpenses.textContent =
+            formatMoney(expenses);
+
+    }
+
+
+    if (monthlyTotal) {
+
+        monthlyTotal.textContent =
+            formatMoney(profit);
+
+
+        monthlyTotal.className =
+            profit >= 0
+                ? "positive"
+                : "negative";
+
+    }
+
+
+    if (finalMonthlySales) {
+
+        finalMonthlySales.textContent =
+            formatMoney(sales);
+
+    }
+
+
+    if (finalMonthlyPurchases) {
+
+        finalMonthlyPurchases.textContent =
+            formatMoney(purchases);
+
+    }
+
+
+    if (finalMonthlyExpenses) {
+
+        finalMonthlyExpenses.textContent =
+            formatMoney(expenses);
+
+    }
+
+
+    if (finalMonthlyProfit) {
+
+        finalMonthlyProfit.textContent =
+            formatMoney(profit);
+
+
+        finalMonthlyProfit.className =
+            profit >= 0
+                ? "positive"
+                : "negative";
+
+    }
+
+}
+
+
+/* =========================================================
+   24. RAPPORT PAR CATÉGORIE
+========================================================= */
 
 function renderCategoryReports(
     records
 ) {
 
-    if (!categoryReports) {
+    if (!categoryReports)
         return;
-    }
 
 
     const totals = {};
@@ -2534,6 +3688,7 @@ function renderCategoryReports(
 
         record.categories.forEach(
             category => {
+
 
                 if (
                     !totals[
@@ -2548,11 +3703,14 @@ function renderCategoryReports(
                         name:
                             category.groupName,
 
-                        sales: 0,
+                        sales:
+                            0,
 
-                        purchases: 0,
+                        purchases:
+                            0,
 
-                        profit: 0
+                        profit:
+                            0
 
                     };
 
@@ -2563,8 +3721,7 @@ function renderCategoryReports(
                     category.groupId
                 ].sales +=
                     Number(
-                        category.sales ||
-                        0
+                        category.sales || 0
                     );
 
 
@@ -2572,8 +3729,7 @@ function renderCategoryReports(
                     category.groupId
                 ].purchases +=
                     Number(
-                        category.purchase ||
-                        0
+                        category.purchase || 0
                     );
 
 
@@ -2581,8 +3737,7 @@ function renderCategoryReports(
                     category.groupId
                 ].profit +=
                     Number(
-                        category.profit ||
-                        0
+                        category.profit || 0
                     );
 
             }
@@ -2612,6 +3767,7 @@ function renderCategoryReports(
         `;
 
         return;
+
     }
 
 
@@ -2668,9 +3824,7 @@ function renderCategoryReports(
 
     categoryReports.innerHTML = `
 
-        <div style="
-            overflow-x:auto;
-        ">
+        <div class="table-container">
 
             <table>
 
@@ -2710,20 +3864,20 @@ function renderCategoryReports(
         </div>
 
     `;
+
 }
 
 
 /* =========================================================
-   28. RAPPORT JOUR PAR JOUR
-   ========================================================= */
+   25. RAPPORT JOUR PAR JOUR
+========================================================= */
 
 function renderDailySalesReport(
     records
 ) {
 
-    if (!dailySalesReport) {
+    if (!dailySalesReport)
         return;
-    }
 
 
     if (records.length === 0) {
@@ -2741,6 +3895,7 @@ function renderDailySalesReport(
         `;
 
         return;
+
     }
 
 
@@ -2787,6 +3942,12 @@ function renderDailySalesReport(
                         )}
                     </td>
 
+                    <td>
+                        ${formatMoney(
+                            record.totalExpenses
+                        )}
+                    </td>
+
                     <td class="${
                         record.totalProfit >= 0
                             ? "positive"
@@ -2811,9 +3972,7 @@ function renderDailySalesReport(
 
     dailySalesReport.innerHTML = `
 
-        <div style="
-            overflow-x:auto;
-        ">
+        <div class="table-container">
 
             <table>
 
@@ -2838,7 +3997,11 @@ function renderDailySalesReport(
                         </th>
 
                         <th>
-                            Bénéfice
+                            Dépenses
+                        </th>
+
+                        <th>
+                            Bénéfice net
                         </th>
 
                     </tr>
@@ -2857,12 +4020,13 @@ function renderDailySalesReport(
         </div>
 
     `;
+
 }
 
 
 /* =========================================================
-   29. FILTRE PAR MOIS
-   ========================================================= */
+   26. FILTRE DU MOIS
+========================================================= */
 
 if (reportMonth) {
 
@@ -2889,7 +4053,7 @@ if (reportMonth) {
 
     reportMonth.addEventListener(
         "change",
-        function() {
+        function () {
 
             renderSelectedMonth(
                 this.value
@@ -2901,15 +4065,11 @@ if (reportMonth) {
 }
 
 
-/* =========================================================
-   30. ACTUALISER LES RAPPORTS
-   ========================================================= */
-
 if (refreshReports) {
 
     refreshReports.addEventListener(
         "click",
-        function() {
+        function () {
 
             if (
                 reportMonth &&
@@ -2920,11 +4080,14 @@ if (refreshReports) {
                     reportMonth.value
                 );
 
-            } else {
+            }
+
+            else {
 
                 renderReports();
 
             }
+
 
             showNotification(
                 "Rapports actualisés."
@@ -2936,17 +4099,12 @@ if (refreshReports) {
 }
 
 
-/* =========================================================
-   31. RAPPORT DU MOIS SÉLECTIONNÉ
-   ========================================================= */
-
 function renderSelectedMonth(
     selectedMonth
 ) {
 
-    if (!selectedMonth) {
+    if (!selectedMonth)
         return;
-    }
 
 
     const records =
@@ -2958,89 +4116,9 @@ function renderSelectedMonth(
         );
 
 
-    let sales = 0;
-
-    let purchases = 0;
-
-
-    records.forEach(record => {
-
-        sales +=
-            Number(
-                record.totalSales ||
-                0
-            );
-
-
-        purchases +=
-            Number(
-                record.totalPurchase ||
-                0
-            );
-
-    });
-
-
-    const profit =
-        sales - purchases;
-
-
-    if (monthlySales) {
-
-        monthlySales.textContent =
-            formatMoney(sales);
-
-    }
-
-
-    if (monthlyPurchases) {
-
-        monthlyPurchases.textContent =
-            formatMoney(purchases);
-
-    }
-
-
-    if (monthlyTotal) {
-
-        monthlyTotal.textContent =
-            formatMoney(profit);
-
-        monthlyTotal.className =
-            profit >= 0
-                ? "positive"
-                : "negative";
-
-    }
-
-
-    if (finalMonthlySales) {
-
-        finalMonthlySales.textContent =
-            formatMoney(sales);
-
-    }
-
-
-    if (finalMonthlyPurchases) {
-
-        finalMonthlyPurchases.textContent =
-            formatMoney(purchases);
-
-    }
-
-
-    if (finalMonthlyProfit) {
-
-        finalMonthlyProfit.textContent =
-            formatMoney(profit);
-
-        finalMonthlyProfit.className =
-            profit >= 0
-                ? "positive"
-                : "negative";
-
-    }
+    renderMonthlyTotals(
+        records
+    );
 
 
     renderCategoryReports(
@@ -3052,12 +4130,165 @@ function renderSelectedMonth(
         records
     );
 
+
+    updateAccountingAlert(
+        records
+    );
+
 }
 
 
 /* =========================================================
-   32. INITIALISATION DE L'APPLICATION
-   ========================================================= */
+   27. CONTRÔLE COMPTABLE
+========================================================= */
+
+function updateAccountingAlert(
+    records
+) {
+
+    if (!accountingAlert)
+        return;
+
+
+    let sales = 0;
+
+    let purchases = 0;
+
+    let expenses = 0;
+
+
+    records.forEach(record => {
+
+        sales +=
+            Number(
+                record.totalSales || 0
+            );
+
+
+        purchases +=
+            Number(
+                record.totalPurchase || 0
+            );
+
+
+        expenses +=
+            Number(
+                record.totalExpenses || 0
+            );
+
+    });
+
+
+    const profit =
+        sales -
+        purchases -
+        expenses;
+
+
+    if (records.length === 0) {
+
+        accountingAlert.innerHTML = `
+
+            <strong>
+                ℹ️ Aucune donnée
+            </strong>
+
+            <p>
+                Enregistrez vos journées pour
+                obtenir une analyse comptable.
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    if (profit > 0) {
+
+        accountingAlert.innerHTML = `
+
+            <strong>
+                ✅ Situation positive
+            </strong>
+
+            <p>
+                Votre résultat net est de
+                <strong>
+                    ${formatMoney(profit)}
+                </strong>.
+            </p>
+
+        `;
+
+        accountingAlert.className =
+            "accounting-alert success";
+
+    }
+
+    else if (profit === 0) {
+
+        accountingAlert.innerHTML = `
+
+            <strong>
+                ⚖️ Équilibre
+            </strong>
+
+            <p>
+                Les ventes couvrent exactement
+                les achats et les dépenses.
+            </p>
+
+        `;
+
+        accountingAlert.className =
+            "accounting-alert warning";
+
+    }
+
+    else {
+
+        accountingAlert.innerHTML = `
+
+            <strong>
+                ⚠️ Attention : résultat négatif
+            </strong>
+
+            <p>
+                Vous avez enregistré une perte de
+                <strong>
+                    ${formatMoney(
+                        Math.abs(profit)
+                    )}
+                </strong>.
+            </p>
+
+        `;
+
+        accountingAlert.className =
+            "accounting-alert danger";
+
+    }
+
+}
+
+
+/* =========================================================
+   28. ANNÉE AUTOMATIQUE
+========================================================= */
+
+if (currentYear) {
+
+    currentYear.textContent =
+        new Date().getFullYear();
+
+}
+
+
+/* =========================================================
+   29. INITIALISATION
+========================================================= */
 
 function initializeApp() {
 
@@ -3076,8 +4307,6 @@ function initializeApp() {
     renderReports();
 
 
-    /* Écran de chargement */
-
     setTimeout(
         () => {
 
@@ -3085,6 +4314,9 @@ function initializeApp() {
 
                 loadingScreen.style.opacity =
                     "0";
+
+                loadingScreen.style.transition =
+                    "0.4s";
 
 
                 setTimeout(
@@ -3105,10 +4337,6 @@ function initializeApp() {
 
 }
 
-
-/* =========================================================
-   33. LANCEMENT
-   ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
