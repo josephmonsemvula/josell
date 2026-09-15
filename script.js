@@ -1,211 +1,437 @@
 /* =========================================================
    JOSSELL - MA GESTION
-   JavaScript complet
-   Ventes + Achats + Dépenses + Bénéfices
-   Rapports journaliers + hebdomadaires + mensuels
+   SCRIPT JAVASCRIPT COMPLET
+
+   VENTES
+   ACHATS
+   DEPENSES
+   BENEFICE BRUT
+   BENEFICE NET
+   RAPPORT HEBDOMADAIRE
+   RAPPORT MENSUEL
+   INSTALLATION APPLICATION
    ========================================================= */
 
 
 /* =========================================================
    1. STOCKAGE
-========================================================= */
+   ========================================================= */
 
 const STORAGE_KEYS = {
+
     groups: "jossell_groups",
+
     articles: "jossell_articles",
-    records: "jossell_daily_records"
+
+    records: "jossell_daily_records",
+
+    expenseCategories:
+        "jossell_expense_categories"
+
 };
 
 
+/* =========================================================
+   2. CHARGEMENT DES DONNEES
+   ========================================================= */
+
 let groups =
-    JSON.parse(localStorage.getItem(STORAGE_KEYS.groups)) || [];
+    JSON.parse(
+        localStorage.getItem(
+            STORAGE_KEYS.groups
+        )
+    ) || [];
+
 
 let articles =
-    JSON.parse(localStorage.getItem(STORAGE_KEYS.articles)) || [];
+    JSON.parse(
+        localStorage.getItem(
+            STORAGE_KEYS.articles
+        )
+    ) || [];
+
 
 let dailyRecords =
-    JSON.parse(localStorage.getItem(STORAGE_KEYS.records)) || [];
+    JSON.parse(
+        localStorage.getItem(
+            STORAGE_KEYS.records
+        )
+    ) || [];
+
+
+/*
+   Catégories de dépenses par défaut
+*/
+
+let expenseCategories =
+    JSON.parse(
+        localStorage.getItem(
+            STORAGE_KEYS.expenseCategories
+        )
+    ) || [
+
+        {
+            id: 1,
+            name: "Loyer"
+        },
+
+        {
+            id: 2,
+            name: "Transport"
+        }
+
+    ];
 
 
 /* =========================================================
-   2. ÉLÉMENTS HTML
-========================================================= */
+   3. ELEMENTS HTML
+   ========================================================= */
 
 const loadingScreen =
-    document.getElementById("loadingScreen");
+    document.getElementById(
+        "loadingScreen"
+    );
+
 
 const dailyForm =
-    document.getElementById("dailyForm");
+    document.getElementById(
+        "dailyForm"
+    );
+
 
 const saleDate =
-    document.getElementById("saleDate");
+    document.getElementById(
+        "saleDate"
+    );
+
 
 const saleDay =
-    document.getElementById("saleDay");
+    document.getElementById(
+        "saleDay"
+    );
+
 
 const dailySales =
-    document.getElementById("dailySales");
+    document.getElementById(
+        "dailySales"
+    );
+
 
 const dynamicExpenses =
-    document.getElementById("dynamicExpenses");
+    document.getElementById(
+        "dynamicExpenses"
+    );
+
 
 const totalDailySales =
-    document.getElementById("totalDailySales");
+    document.getElementById(
+        "totalDailySales"
+    );
+
 
 const totalPurchases =
-    document.getElementById("totalPurchases");
+    document.getElementById(
+        "totalPurchases"
+    );
 
-const totalDailyExpenses =
-    document.getElementById("totalDailyExpenses");
+
+const calculatedGrossProfit =
+    document.getElementById(
+        "calculatedGrossProfit"
+    );
+
 
 const calculatedBalance =
-    document.getElementById("calculatedBalance");
+    document.getElementById(
+        "calculatedBalance"
+    );
 
-const dailyExpensesContainer =
-    document.getElementById("dailyExpensesContainer");
-
-const addExpenseButton =
-    document.getElementById("addExpenseButton");
 
 const dailyHistory =
-    document.getElementById("dailyHistory");
+    document.getElementById(
+        "dailyHistory"
+    );
+
 
 const articleGroupForm =
-    document.getElementById("articleGroupForm");
+    document.getElementById(
+        "articleGroupForm"
+    );
+
 
 const articleForm =
-    document.getElementById("articleForm");
+    document.getElementById(
+        "articleForm"
+    );
+
 
 const groupName =
-    document.getElementById("groupName");
+    document.getElementById(
+        "groupName"
+    );
+
 
 const groupDescription =
-    document.getElementById("groupDescription");
+    document.getElementById(
+        "groupDescription"
+    );
+
 
 const articleGroupSelect =
-    document.getElementById("articleGroupSelect");
+    document.getElementById(
+        "articleGroupSelect"
+    );
+
 
 const articleName =
-    document.getElementById("articleName");
+    document.getElementById(
+        "articleName"
+    );
+
 
 const articleQuantity =
-    document.getElementById("articleQuantity");
+    document.getElementById(
+        "articleQuantity"
+    );
+
 
 const articlePrice =
-    document.getElementById("articlePrice");
+    document.getElementById(
+        "articlePrice"
+    );
+
 
 const articlesList =
-    document.getElementById("articlesList");
+    document.getElementById(
+        "articlesList"
+    );
 
-const currentYear =
-    document.getElementById("currentYear");
 
-const homeTodayDate =
-    document.getElementById("homeTodayDate");
+const currentDate =
+    document.getElementById(
+        "currentDate"
+    );
+
 
 const dailySalesSummary =
-    document.getElementById("dailySalesSummary");
+    document.getElementById(
+        "dailySalesSummary"
+    );
+
 
 const dailyPurchaseSummary =
-    document.getElementById("dailyPurchaseSummary");
+    document.getElementById(
+        "dailyPurchaseSummary"
+    );
+
 
 const dailyExpenseSummary =
-    document.getElementById("dailyExpenseSummary");
+    document.getElementById(
+        "dailyExpenseSummary"
+    );
+
 
 const dailyBalanceSummary =
-    document.getElementById("dailyBalanceSummary");
+    document.getElementById(
+        "dailyBalanceSummary"
+    );
+
 
 const homeCategorySummary =
-    document.getElementById("homeCategorySummary");
+    document.getElementById(
+        "homeCategorySummary"
+    );
 
-const totalRecordedDays =
-    document.getElementById("totalRecordedDays");
 
-const totalCategories =
-    document.getElementById("totalCategories");
+const expenseCategoriesContainer =
+    document.getElementById(
+        "expenseCategories"
+    );
 
-const totalArticles =
-    document.getElementById("totalArticles");
 
-const bestCategory =
-    document.getElementById("bestCategory");
+const addExpenseCategoryButton =
+    document.getElementById(
+        "addExpenseCategory"
+    );
 
-const weeklySales =
-    document.getElementById("weeklySales");
-
-const monthlySales =
-    document.getElementById("monthlySales");
-
-const monthlyPurchases =
-    document.getElementById("monthlyPurchases");
-
-const monthlyExpenses =
-    document.getElementById("monthlyExpenses");
-
-const monthlyTotal =
-    document.getElementById("monthlyTotal");
-
-const weeklyReportSales =
-    document.getElementById("weeklyReportSales");
-
-const weeklyReportPurchases =
-    document.getElementById("weeklyReportPurchases");
-
-const weeklyReportExpenses =
-    document.getElementById("weeklyReportExpenses");
-
-const weeklyReportProfit =
-    document.getElementById("weeklyReportProfit");
-
-const weeklyReportDays =
-    document.getElementById("weeklyReportDays");
-
-const weekRange =
-    document.getElementById("weekRange");
 
 const categoryReports =
-    document.getElementById("categoryReports");
+    document.getElementById(
+        "categoryReports"
+    );
+
+
+const expenseReports =
+    document.getElementById(
+        "expenseReports"
+    );
+
 
 const reportMonth =
-    document.getElementById("reportMonth");
+    document.getElementById(
+        "reportMonth"
+    );
+
 
 const refreshReports =
-    document.getElementById("refreshReports");
+    document.getElementById(
+        "refreshReports"
+    );
+
 
 const dailySalesReport =
-    document.getElementById("dailySalesReport");
+    document.getElementById(
+        "dailySalesReport"
+    );
 
-const finalMonthlySales =
-    document.getElementById("finalMonthlySales");
-
-const finalMonthlyPurchases =
-    document.getElementById("finalMonthlyPurchases");
-
-const finalMonthlyExpenses =
-    document.getElementById("finalMonthlyExpenses");
-
-const finalMonthlyProfit =
-    document.getElementById("finalMonthlyProfit");
-
-const accountingAlert =
-    document.getElementById("accountingAlert");
 
 const notificationContainer =
-    document.getElementById("notificationContainer");
-
-const historyCount =
-    document.getElementById("historyCount");
-
-const inventoryCount =
-    document.getElementById("inventoryCount");
-
-const calculatorStatus =
-    document.getElementById("calculatorStatus");
+    document.getElementById(
+        "notificationContainer"
+    );
 
 
 /* =========================================================
-   3. FONCTIONS GÉNÉRALES
-========================================================= */
+   4. FORMATAGE
+   ========================================================= */
+
+function formatMoney(number) {
+
+    number =
+        Number(number) || 0;
+
+    return (
+        number.toLocaleString("fr-FR")
+        + " FC"
+    );
+
+}
+
+
+/* =========================================================
+   5. DATE DU JOUR
+   ========================================================= */
+
+function todayISO() {
+
+    const date =
+        new Date();
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+    return (
+        `${year}-${month}-${day}`
+    );
+
+}
+
+
+/* =========================================================
+   6. FORMAT DATE
+   ========================================================= */
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
+
+    const parts =
+        dateString.split("-");
+
+    if (parts.length !== 3) {
+        return dateString;
+    }
+
+    return (
+        `${parts[2]}/${parts[1]}/${parts[0]}`
+    );
+
+}
+
+
+/* =========================================================
+   7. JOUR DE LA SEMAINE
+   ========================================================= */
+
+function getDayName(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
+
+    const date =
+        new Date(
+            dateString + "T12:00:00"
+        );
+
+    return date.toLocaleDateString(
+        "fr-FR",
+        {
+            weekday: "long"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   8. PROTECTION HTML
+   ========================================================= */
+
+function escapeHTML(text) {
+
+    if (
+        text === null ||
+        text === undefined
+    ) {
+        return "";
+    }
+
+    return String(text)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   9. SAUVEGARDE
+   ========================================================= */
 
 function saveData() {
 
@@ -223,101 +449,32 @@ function saveData() {
         STORAGE_KEYS.records,
         JSON.stringify(dailyRecords)
     );
-}
 
-
-function formatMoney(number) {
-
-    number = Number(number) || 0;
-
-    return number.toLocaleString("fr-FR") + " FC";
-}
-
-
-function todayISO() {
-
-    const date = new Date();
-
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(date.getMonth() + 1)
-            .padStart(2, "0");
-
-    const day =
-        String(date.getDate())
-            .padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-
-function formatDate(dateString) {
-
-    if (!dateString) return "";
-
-    const parts =
-        dateString.split("-");
-
-    if (parts.length !== 3)
-        return dateString;
-
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-}
-
-
-function getDayName(dateString) {
-
-    if (!dateString) return "";
-
-    const date =
-        new Date(dateString + "T12:00:00");
-
-    return date.toLocaleDateString(
-        "fr-FR",
-        {
-            weekday: "long"
-        }
+    localStorage.setItem(
+        STORAGE_KEYS.expenseCategories,
+        JSON.stringify(
+            expenseCategories
+        )
     );
-}
 
-
-function escapeHTML(text) {
-
-    if (
-        text === null ||
-        text === undefined
-    ) {
-        return "";
-    }
-
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
 }
 
 
 /* =========================================================
-   4. NOTIFICATIONS
-========================================================= */
+   10. NOTIFICATION
+   ========================================================= */
 
 function showNotification(
     message,
     type = "success"
 ) {
 
-    if (!notificationContainer)
+    if (!notificationContainer) {
         return;
+    }
 
     const notification =
         document.createElement("div");
-
-    notification.className =
-        "jossell-notification";
 
     notification.style.padding =
         "14px 18px";
@@ -326,23 +483,21 @@ function showNotification(
         "10px";
 
     notification.style.borderRadius =
-        "12px";
-
-    notification.style.color =
-        "#ffffff";
-
-    notification.style.fontWeight =
-        "600";
-
-    notification.style.boxShadow =
-        "0 8px 25px rgba(0,0,0,0.18)";
+        "10px";
 
     notification.style.background =
         type === "error"
             ? "#dc2626"
-            : type === "warning"
-                ? "#f59e0b"
-                : "#16a34a";
+            : "#16a34a";
+
+    notification.style.color =
+        "white";
+
+    notification.style.fontWeight =
+        "700";
+
+    notification.style.boxShadow =
+        "0 8px 25px rgba(0,0,0,0.18)";
 
     notification.textContent =
         message;
@@ -351,38 +506,31 @@ function showNotification(
         notification
     );
 
-    setTimeout(() => {
-
-        notification.style.opacity =
-            "0";
-
-        notification.style.transform =
-            "translateX(30px)";
-
-        notification.style.transition =
-            "0.3s";
-
-        setTimeout(() => {
-
+    setTimeout(
+        () => {
             notification.remove();
+        },
+        3500
+    );
 
-        }, 300);
-
-    }, 3000);
 }
 
 
 /* =========================================================
-   5. NAVIGATION
-========================================================= */
+   11. NAVIGATION
+   ========================================================= */
 
 function openPage(pageName) {
 
     const pages =
-        document.querySelectorAll(".page");
+        document.querySelectorAll(
+            ".page"
+        );
 
     const navItems =
-        document.querySelectorAll(".nav-item");
+        document.querySelectorAll(
+            ".nav-item"
+        );
 
 
     pages.forEach(page => {
@@ -444,6 +592,8 @@ function openPage(pageName) {
 
         renderCategoryInputs();
 
+        renderExpenseCategories();
+
         calculateCurrentDay();
 
         renderHistory();
@@ -462,15 +612,34 @@ function openPage(pageName) {
 
     if (pageName === "reports") {
 
-        renderReports();
+        if (
+            reportMonth &&
+            reportMonth.value
+        ) {
+
+            renderSelectedMonth(
+                reportMonth.value
+            );
+
+        } else {
+
+            renderReports();
+
+        }
 
     }
 
 }
 
 
+/* =========================================================
+   12. BOUTONS NAVIGATION
+   ========================================================= */
+
 document
-    .querySelectorAll(".nav-item")
+    .querySelectorAll(
+        ".nav-item"
+    )
     .forEach(button => {
 
         button.addEventListener(
@@ -488,7 +657,9 @@ document
 
 
 document
-    .querySelectorAll("[data-page]")
+    .querySelectorAll(
+        "[data-page]"
+    )
     .forEach(element => {
 
         element.addEventListener(
@@ -515,8 +686,8 @@ document
 
 
 /* =========================================================
-   6. DATE
-========================================================= */
+   13. INITIALISATION DATE
+   ========================================================= */
 
 function initializeDate() {
 
@@ -535,15 +706,19 @@ function initializeDate() {
     updateDay();
 
 
-    if (homeTodayDate) {
+    if (currentDate) {
 
-        homeTodayDate.textContent =
+        currentDate.textContent =
             formatDate(today);
 
     }
 
 }
 
+
+/* =========================================================
+   14. AFFICHER LE JOUR
+   ========================================================= */
 
 function updateDay() {
 
@@ -562,15 +737,21 @@ function updateDay() {
 }
 
 
+/* =========================================================
+   15. CHANGEMENT DATE
+   ========================================================= */
+
 if (saleDate) {
 
     saleDate.addEventListener(
         "change",
-        () => {
+        function () {
 
             updateDay();
 
             renderCategoryInputs();
+
+            renderExpenseCategories();
 
             calculateCurrentDay();
 
@@ -581,14 +762,14 @@ if (saleDate) {
 
 
 /* =========================================================
-   7. GROUPES / CATÉGORIES
-========================================================= */
+   16. GROUPES / CATEGORIES
+   ========================================================= */
 
 if (articleGroupForm) {
 
     articleGroupForm.addEventListener(
         "submit",
-        function(event) {
+        function (event) {
 
             event.preventDefault();
 
@@ -614,10 +795,11 @@ if (articleGroupForm) {
 
 
             const alreadyExists =
-                groups.some(group =>
-                    group.name
-                        .toLowerCase() ===
-                    name.toLowerCase()
+                groups.some(
+                    group =>
+                        group.name
+                            .toLowerCase() ===
+                        name.toLowerCase()
                 );
 
 
@@ -635,9 +817,11 @@ if (articleGroupForm) {
 
             const newGroup = {
 
-                id: Date.now(),
+                id:
+                    Date.now(),
 
-                name: name,
+                name:
+                    name,
 
                 description:
                     description,
@@ -665,8 +849,6 @@ if (articleGroupForm) {
 
             renderCategoryInputs();
 
-            updateHomeSummary();
-
 
             showNotification(
                 "Catégorie ajoutée avec succès."
@@ -678,18 +860,23 @@ if (articleGroupForm) {
 }
 
 
+/* =========================================================
+   17. AFFICHER LES GROUPES
+   ========================================================= */
+
 function renderGroups() {
 
-    if (!articlesList)
+    if (!articlesList) {
         return;
+    }
 
 
-    let groupsHTML = "";
+    let html = "";
 
 
     if (groups.length === 0) {
 
-        groupsHTML = `
+        html = `
 
             <div class="empty-state">
 
@@ -698,11 +885,12 @@ function renderGroups() {
                 </div>
 
                 <h4>
-                    Aucune catégorie
+                    Aucun groupe
                 </h4>
 
                 <p>
-                    Créez votre première catégorie.
+                    Créez votre première catégorie
+                    d'articles.
                 </p>
 
             </div>
@@ -711,80 +899,73 @@ function renderGroups() {
 
     }
 
-    else {
 
-        groups.forEach(group => {
+    groups.forEach(group => {
 
-            const groupArticles =
-                articles.filter(
-                    article =>
-                        article.groupId ===
-                        group.id
-                );
+        const groupArticles =
+            articles.filter(
+                article =>
+                    article.groupId ===
+                    group.id
+            );
 
 
-            groupsHTML += `
+        html += `
 
-                <div class="group-card">
+            <div class="group-card">
 
-                    <div class="group-header">
+                <div class="group-header">
 
-                        <div>
+                    <div>
 
-                            <h4>
-                                📁
-                                ${escapeHTML(
-                                    group.name
-                                )}
-                            </h4>
+                        <h4>
+                            📁
+                            ${escapeHTML(
+                                group.name
+                            )}
+                        </h4>
 
-                            <small>
-                                ${escapeHTML(
+                        <small>
+                            ${
+                                escapeHTML(
                                     group.description ||
                                     "Aucune description"
-                                )}
-                            </small>
-
-                        </div>
-
-
-                        <button
-                            type="button"
-                            class="btn-danger-small"
-                            onclick="deleteGroup(${group.id})">
-
-                            🗑️
-
-                        </button>
+                                )
+                            }
+                        </small>
 
                     </div>
 
 
-                    <div class="group-meta">
-
-                        <span>
-                            📦
-                            ${groupArticles.length}
-                            article(s)
-                        </span>
-
-                    </div>
+                    <button
+                        type="button"
+                        class="btn-danger-small"
+                        onclick="deleteGroup(${group.id})"
+                    >
+                        ×
+                    </button>
 
                 </div>
 
-            `;
 
-        });
+                <div class="group-meta">
 
-    }
+                    📦
+                    ${groupArticles.length}
+                    article(s)
 
+                </div>
 
-    let articlesHTML = "";
+            </div>
+
+        `;
+
+    });
 
 
     if (articles.length > 0) {
 
-        articlesHTML = `
+        html += `
 
             <h4 class="list-title">
                 🛒 Articles enregistrés
@@ -803,7 +984,7 @@ function renderGroups() {
                 );
 
 
-            articlesHTML += `
+            html += `
 
                 <div class="article-card">
 
@@ -817,22 +998,26 @@ function renderGroups() {
 
                         <span>
                             📁
-                            ${escapeHTML(
-                                group
-                                    ? group.name
-                                    : "Inconnue"
-                            )}
+                            ${
+                                escapeHTML(
+                                    group
+                                        ? group.name
+                                        : "Inconnue"
+                                )
+                            }
                         </span>
 
                         <span>
                             📦 Stock :
-                            ${Number(
-                                article.quantity
-                            ) || 0}
+                            ${
+                                Number(
+                                    article.quantity
+                                ) || 0
+                            }
                         </span>
 
                         <span>
-                            💰 Prix :
+                            💵 Prix :
                             ${formatMoney(
                                 article.price
                             )}
@@ -844,10 +1029,9 @@ function renderGroups() {
                     <button
                         type="button"
                         class="btn-danger-small"
-                        onclick="deleteArticle(${article.id})">
-
-                        🗑️
-
+                        onclick="deleteArticle(${article.id})"
+                    >
+                        ×
                     </button>
 
                 </div>
@@ -860,30 +1044,27 @@ function renderGroups() {
 
 
     articlesList.innerHTML =
-        groupsHTML +
-        articlesHTML;
-
-
-    if (inventoryCount) {
-
-        inventoryCount.textContent =
-            articles.length;
-
-    }
+        html;
 
 }
 
+
+/* =========================================================
+   18. SUPPRIMER GROUPE
+   ========================================================= */
 
 function deleteGroup(id) {
 
     const group =
         groups.find(
-            g => g.id === id
+            g =>
+                g.id === id
         );
 
 
-    if (!group)
+    if (!group) {
         return;
+    }
 
 
     const linkedArticles =
@@ -894,30 +1075,35 @@ function deleteGroup(id) {
 
 
     let message =
-        `Voulez-vous supprimer la catégorie "${group.name}" ?`;
+        `Voulez-vous supprimer "${group.name}" ?`;
 
 
-    if (linkedArticles.length > 0) {
+    if (
+        linkedArticles.length > 0
+    ) {
 
         message +=
-            `\n\nAttention : ${linkedArticles.length} article(s) seront également supprimés.`;
+            `\n\n${linkedArticles.length} article(s) seront également supprimés.`;
 
     }
 
 
-    if (!confirm(message))
+    if (!confirm(message)) {
         return;
+    }
 
 
     groups =
         groups.filter(
-            g => g.id !== id
+            g =>
+                g.id !== id
         );
 
 
     articles =
         articles.filter(
-            a => a.groupId !== id
+            a =>
+                a.groupId !== id
         );
 
 
@@ -930,10 +1116,6 @@ function deleteGroup(id) {
 
     renderCategoryInputs();
 
-    updateHomeSummary();
-
-    renderReports();
-
 
     showNotification(
         "Catégorie supprimée."
@@ -943,14 +1125,14 @@ function deleteGroup(id) {
 
 
 /* =========================================================
-   8. ARTICLES
-========================================================= */
+   19. AJOUT ARTICLE
+   ========================================================= */
 
 if (articleForm) {
 
     articleForm.addEventListener(
         "submit",
-        function(event) {
+        function (event) {
 
             event.preventDefault();
 
@@ -999,14 +1181,18 @@ if (articleForm) {
             }
 
 
-            const newArticle = {
+            articles.push({
 
-                id: Date.now(),
+                id:
+                    Date.now(),
 
                 groupId:
-                    Number(selectedGroup),
+                    Number(
+                        selectedGroup
+                    ),
 
-                name: name,
+                name:
+                    name,
 
                 quantity:
                     quantity,
@@ -1017,12 +1203,7 @@ if (articleForm) {
                 createdAt:
                     new Date().toISOString()
 
-            };
-
-
-            articles.push(
-                newArticle
-            );
+            });
 
 
             saveData();
@@ -1032,8 +1213,6 @@ if (articleForm) {
 
 
             renderGroups();
-
-            updateHomeSummary();
 
 
             showNotification(
@@ -1046,10 +1225,15 @@ if (articleForm) {
 }
 
 
+/* =========================================================
+   20. SELECT DES GROUPES
+   ========================================================= */
+
 function updateArticleGroupSelect() {
 
-    if (!articleGroupSelect)
+    if (!articleGroupSelect) {
         return;
+    }
 
 
     articleGroupSelect.innerHTML = `
@@ -1086,21 +1270,27 @@ function updateArticleGroupSelect() {
 }
 
 
+/* =========================================================
+   21. SUPPRIMER ARTICLE
+   ========================================================= */
+
 function deleteArticle(id) {
 
     const article =
         articles.find(
-            a => a.id === id
+            a =>
+                a.id === id
         );
 
 
-    if (!article)
+    if (!article) {
         return;
+    }
 
 
     if (
         !confirm(
-            `Voulez-vous supprimer l'article "${article.name}" ?`
+            `Supprimer l'article "${article.name}" ?`
         )
     ) {
 
@@ -1111,7 +1301,8 @@ function deleteArticle(id) {
 
     articles =
         articles.filter(
-            a => a.id !== id
+            a =>
+                a.id !== id
         );
 
 
@@ -1119,8 +1310,6 @@ function deleteArticle(id) {
 
 
     renderGroups();
-
-    updateHomeSummary();
 
 
     showNotification(
@@ -1131,13 +1320,14 @@ function deleteArticle(id) {
 
 
 /* =========================================================
-   9. CATÉGORIES DU CALCULATEUR
-========================================================= */
+   22. AFFICHER CATEGORIES FINANCIERES
+   ========================================================= */
 
 function renderCategoryInputs() {
 
-    if (!dynamicExpenses)
+    if (!dynamicExpenses) {
         return;
+    }
 
 
     if (groups.length === 0) {
@@ -1156,7 +1346,7 @@ function renderCategoryInputs() {
 
                 <p>
                     Créez d'abord une catégorie
-                    dans "Groupes & Articles".
+                    dans Groupes & Articles.
                 </p>
 
             </div>
@@ -1172,7 +1362,7 @@ function renderCategoryInputs() {
 
 
     const editingId =
-        dailyForm.dataset.editingId;
+        dailyForm?.dataset.editingId;
 
 
     let existingRecord = null;
@@ -1190,11 +1380,11 @@ function renderCategoryInputs() {
     }
 
 
-    dynamicExpenses.innerHTML = "";
+    dynamicExpenses.innerHTML =
+        "";
 
 
     groups.forEach(group => {
-
 
         let existingData = null;
 
@@ -1202,7 +1392,7 @@ function renderCategoryInputs() {
         if (existingRecord) {
 
             existingData =
-                existingRecord.categories.find(
+                existingRecord.categories?.find(
                     category =>
                         category.groupId ===
                         group.id
@@ -1244,21 +1434,17 @@ function renderCategoryInputs() {
                     )}
                 </strong>
 
-
                 <span
                     class="category-profit"
-                    data-group-id="${group.id}">
-
-                    Bénéfice :
-                    0 FC
-
+                    data-group-id="${group.id}"
+                >
+                    Bénéfice : 0 FC
                 </span>
 
             </div>
 
 
             <div class="form-grid">
-
 
                 <div class="form-group">
 
@@ -1274,7 +1460,8 @@ function renderCategoryInputs() {
                             class="category-sale-input"
                             data-group-id="${group.id}"
                             value="${salesValue}"
-                            placeholder="0">
+                            placeholder="0"
+                        >
 
                         <span>
                             FC
@@ -1299,7 +1486,8 @@ function renderCategoryInputs() {
                             class="category-purchase-input"
                             data-group-id="${group.id}"
                             value="${purchaseValue}"
-                            placeholder="0">
+                            placeholder="0"
+                        >
 
                         <span>
                             FC
@@ -1308,7 +1496,6 @@ function renderCategoryInputs() {
                     </div>
 
                 </div>
-
 
             </div>
 
@@ -1326,12 +1513,6 @@ function renderCategoryInputs() {
 
         dailySales.readOnly =
             true;
-
-        dailySales.style.background =
-            "rgba(37,99,235,0.06)";
-
-        dailySales.style.fontWeight =
-            "700";
 
     }
 
@@ -1356,8 +1537,316 @@ function renderCategoryInputs() {
 
 
 /* =========================================================
-   10. CALCUL DES VENTES / ACHATS / DÉPENSES
-========================================================= */
+   23. DEPENSES PERSONNALISEES
+   ========================================================= */
+
+function renderExpenseCategories() {
+
+    if (
+        !expenseCategoriesContainer
+    ) {
+        return;
+    }
+
+
+    const editingId =
+        dailyForm?.dataset.editingId;
+
+
+    let existingRecord = null;
+
+
+    if (editingId) {
+
+        existingRecord =
+            dailyRecords.find(
+                record =>
+                    record.id ===
+                    Number(editingId)
+            );
+
+    }
+
+
+    expenseCategoriesContainer.innerHTML =
+        "";
+
+
+    if (
+        expenseCategories.length === 0
+    ) {
+
+        expenseCategoriesContainer.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    💸
+                </div>
+
+                <p>
+                    Aucune catégorie de dépense.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    expenseCategories.forEach(
+        category => {
+
+            let existingAmount = "";
+
+
+            if (existingRecord) {
+
+                const oldExpense =
+                    existingRecord.expenses?.find(
+                        expense =>
+                            expense.categoryId ===
+                            category.id
+                    );
+
+
+                if (oldExpense) {
+
+                    existingAmount =
+                        oldExpense.amount;
+
+                }
+
+            }
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "expense-input-row";
+
+
+            row.innerHTML = `
+
+                <div class="form-group">
+
+                    <label>
+                        Catégorie
+                    </label>
+
+                    <input
+                        type="text"
+                        value="${escapeHTML(
+                            category.name
+                        )}"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Montant
+                    </label>
+
+                    <div class="money-input">
+
+                        <input
+                            type="number"
+                            min="0"
+                            value="${existingAmount}"
+                            placeholder="0"
+                            class="expense-value-input"
+                            data-expense-id="${category.id}"
+                        >
+
+                        <span>
+                            FC
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-danger-small"
+                    onclick="deleteExpenseCategory(${category.id})"
+                    title="Supprimer cette catégorie"
+                >
+                    ×
+                </button>
+
+            `;
+
+
+            expenseCategoriesContainer.appendChild(
+                row
+            );
+
+        }
+    );
+
+
+    expenseCategoriesContainer
+        .querySelectorAll(
+            ".expense-value-input"
+        )
+        .forEach(input => {
+
+            input.addEventListener(
+                "input",
+                calculateCurrentDay
+            );
+
+        });
+
+
+    calculateCurrentDay();
+
+}
+
+
+/* =========================================================
+   24. AJOUT CATEGORIE DEPENSE
+   ========================================================= */
+
+if (addExpenseCategoryButton) {
+
+    addExpenseCategoryButton.addEventListener(
+        "click",
+        function () {
+
+            const name =
+                prompt(
+                    "Quel est le nom de cette dépense ?"
+                );
+
+
+            if (!name) {
+                return;
+            }
+
+
+            const cleanName =
+                name.trim();
+
+
+            if (!cleanName) {
+                return;
+            }
+
+
+            const exists =
+                expenseCategories.some(
+                    category =>
+                        category.name
+                            .toLowerCase() ===
+                        cleanName.toLowerCase()
+                );
+
+
+            if (exists) {
+
+                showNotification(
+                    "Cette catégorie existe déjà.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            expenseCategories.push({
+
+                id:
+                    Date.now(),
+
+                name:
+                    cleanName
+
+            });
+
+
+            saveData();
+
+
+            renderExpenseCategories();
+
+
+            showNotification(
+                "Catégorie de dépense ajoutée."
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   25. SUPPRIMER CATEGORIE DEPENSE
+   ========================================================= */
+
+function deleteExpenseCategory(id) {
+
+    const category =
+        expenseCategories.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!category) {
+        return;
+    }
+
+
+    if (
+        !confirm(
+            `Supprimer "${category.name}" ?`
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    expenseCategories =
+        expenseCategories.filter(
+            item =>
+                item.id !== id
+        );
+
+
+    saveData();
+
+
+    renderExpenseCategories();
+
+
+    showNotification(
+        "Catégorie de dépense supprimée."
+    );
+
+}
+
+
+/* =========================================================
+   26. CALCUL JOURNALIER
+   ========================================================= */
 
 function calculateCurrentDay() {
 
@@ -1365,6 +1854,10 @@ function calculateCurrentDay() {
 
     let purchases = 0;
 
+    let expenses = 0;
+
+
+    /* VENTES */
 
     document
         .querySelectorAll(
@@ -1380,6 +1873,8 @@ function calculateCurrentDay() {
         });
 
 
+    /* ACHATS */
+
     document
         .querySelectorAll(
             ".category-purchase-input"
@@ -1394,15 +1889,34 @@ function calculateCurrentDay() {
         });
 
 
-    const expenses =
-        calculateExpenseInputs();
+    /* DEPENSES */
+
+    document
+        .querySelectorAll(
+            ".expense-value-input"
+        )
+        .forEach(input => {
+
+            expenses +=
+                Number(
+                    input.value
+                ) || 0;
+
+        });
 
 
-    const profit =
+    const grossProfit =
+        sales -
+        purchases;
+
+
+    const netProfit =
         sales -
         purchases -
         expenses;
 
+
+    /* TOTAL VENTES */
 
     if (dailySales) {
 
@@ -1420,6 +1934,8 @@ function calculateCurrentDay() {
     }
 
 
+    /* TOTAL ACHATS */
+
     if (totalPurchases) {
 
         totalPurchases.textContent =
@@ -1428,27 +1944,50 @@ function calculateCurrentDay() {
     }
 
 
-    if (totalDailyExpenses) {
+    /* DEPENSES */
 
-        totalDailyExpenses.textContent =
-            formatMoney(expenses);
+    updateExpenseTotalElements(
+        expenses
+    );
+
+
+    /* BENEFICE BRUT */
+
+    if (calculatedGrossProfit) {
+
+        calculatedGrossProfit.textContent =
+            formatMoney(
+                grossProfit
+            );
+
+
+        calculatedGrossProfit.className =
+            grossProfit >= 0
+                ? "positive"
+                : "negative";
 
     }
 
+
+    /* BENEFICE NET */
 
     if (calculatedBalance) {
 
         calculatedBalance.textContent =
-            formatMoney(profit);
+            formatMoney(
+                netProfit
+            );
 
 
-        calculatedBalance.style.color =
-            profit >= 0
-                ? "#16a34a"
-                : "#dc2626";
+        calculatedBalance.className =
+            netProfit >= 0
+                ? "positive"
+                : "negative";
 
     }
 
+
+    /* BENEFICE PAR CATEGORIE */
 
     groups.forEach(group => {
 
@@ -1493,21 +2032,22 @@ function calculateCurrentDay() {
             ) || 0;
 
 
-        const categoryProfit =
+        const profit =
             categorySales -
             categoryPurchases;
 
 
         profitElement.textContent =
-            `Bénéfice : ${formatMoney(
-                categoryProfit
-            )}`;
+            `Bénéfice : ${formatMoney(profit)}`;
 
 
-        profitElement.style.color =
-            categoryProfit >= 0
-                ? "#16a34a"
-                : "#dc2626";
+        profitElement.className =
+            "category-profit " +
+            (
+                profit >= 0
+                    ? "positive"
+                    : "negative"
+            );
 
     });
 
@@ -1515,207 +2055,38 @@ function calculateCurrentDay() {
 
 
 /* =========================================================
-   11. DÉPENSES
-========================================================= */
+   27. METTRE A JOUR LES DEUX AFFICHAGES DES DEPENSES
+   ========================================================= */
 
-function calculateExpenseInputs() {
+function updateExpenseTotalElements(
+    amount
+) {
 
-    let total = 0;
-
-
-    document
-        .querySelectorAll(
-            ".expense-amount"
-        )
-        .forEach(input => {
-
-            total +=
-                Number(
-                    input.value
-                ) || 0;
-
-        });
+    const elements =
+        document.querySelectorAll(
+            "#dailyExpensesTotal"
+        );
 
 
-    return total;
-}
+    elements.forEach(element => {
 
+        element.textContent =
+            formatMoney(amount);
 
-function attachExpenseEvents() {
-
-    document
-        .querySelectorAll(
-            ".expense-amount, .expense-name"
-        )
-        .forEach(element => {
-
-            element.addEventListener(
-                "input",
-                calculateCurrentDay
-            );
-
-            element.addEventListener(
-                "change",
-                calculateCurrentDay
-            );
-
-        });
-
-
-    document
-        .querySelectorAll(
-            ".remove-expense"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    const row =
-                        this.closest(
-                            ".expense-input-row"
-                        );
-
-
-                    if (row) {
-
-                        row.remove();
-
-                        calculateCurrentDay();
-
-                    }
-
-                }
-            );
-
-        });
+    });
 
 }
-
-
-if (addExpenseButton) {
-
-    addExpenseButton.addEventListener(
-        "click",
-        function () {
-
-            const row =
-                document.createElement(
-                    "div"
-                );
-
-
-            row.className =
-                "expense-input-row";
-
-
-            row.innerHTML = `
-
-                <div class="form-group">
-
-                    <label>
-                        Catégorie de dépense
-                    </label>
-
-                    <select class="expense-name">
-
-                        <option value="">
-                            -- Choisir --
-                        </option>
-
-                        <option value="Transport">
-                            Transport
-                        </option>
-
-                        <option value="Salaire">
-                            Salaire
-                        </option>
-
-                        <option value="Electricité">
-                            Électricité
-                        </option>
-
-                        <option value="Loyer">
-                            Loyer
-                        </option>
-
-                        <option value="Communication">
-                            Communication
-                        </option>
-
-                        <option value="Carburant">
-                            Carburant
-                        </option>
-
-                        <option value="Autre">
-                            Autre
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Montant
-                    </label>
-
-                    <div class="money-input">
-
-                        <input
-                            type="number"
-                            class="expense-amount"
-                            min="0"
-                            placeholder="0">
-
-                        <span>
-                            FC
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    type="button"
-                    class="btn-danger-small remove-expense">
-
-                    ✕
-
-                </button>
-
-            `;
-
-
-            dailyExpensesContainer.appendChild(
-                row
-            );
-
-
-            attachExpenseEvents();
-
-        }
-    );
-
-}
-
-
-attachExpenseEvents();
 
 
 /* =========================================================
-   12. ENREGISTRER UNE JOURNÉE
-========================================================= */
+   28. ENREGISTRER LA JOURNEE
+   ========================================================= */
 
 if (dailyForm) {
 
     dailyForm.addEventListener(
         "submit",
-        function(event) {
+        function (event) {
 
             event.preventDefault();
 
@@ -1736,10 +2107,12 @@ if (dailyForm) {
             }
 
 
-            if (groups.length === 0) {
+            if (
+                groups.length === 0
+            ) {
 
                 showNotification(
-                    "Créez au moins une catégorie.",
+                    "Créez au moins une catégorie avant d'enregistrer.",
                     "error"
                 );
 
@@ -1748,11 +2121,12 @@ if (dailyForm) {
             }
 
 
+            /* CATEGORIES */
+
             const categories = [];
 
 
             groups.forEach(group => {
-
 
                 const saleInput =
                     document.querySelector(
@@ -1801,43 +2175,72 @@ if (dailyForm) {
             });
 
 
-            /* -----------------------------------------
-               RÉCUPÉRER LES DÉPENSES
-            ----------------------------------------- */
+            /* TOTALS */
+
+            const totalSales =
+                categories.reduce(
+                    (
+                        sum,
+                        category
+                    ) =>
+                        sum +
+                        category.sales,
+                    0
+                );
+
+
+            const totalPurchase =
+                categories.reduce(
+                    (
+                        sum,
+                        category
+                    ) =>
+                        sum +
+                        category.purchase,
+                    0
+                );
+
+
+            /* DEPENSES */
 
             const expenses = [];
 
 
             document
                 .querySelectorAll(
-                    ".expense-input-row"
+                    ".expense-value-input"
                 )
-                .forEach(row => {
-
-
-                    const name =
-                        row.querySelector(
-                            ".expense-name"
-                        )?.value || "";
-
+                .forEach(input => {
 
                     const amount =
                         Number(
-                            row.querySelector(
-                                ".expense-amount"
-                            )?.value
+                            input.value
                         ) || 0;
 
 
-                    if (
-                        name &&
-                        amount > 0
-                    ) {
+                    const expenseId =
+                        Number(
+                            input.dataset.expenseId
+                        );
+
+
+                    const category =
+                        expenseCategories.find(
+                            item =>
+                                item.id ===
+                                expenseId
+                        );
+
+
+                    if (category) {
 
                         expenses.push({
 
-                            name:
-                                name,
+                            categoryId:
+                                category.id,
+
+                            categoryName:
+                                category.name,
 
                             amount:
                                 amount
@@ -1849,55 +2252,46 @@ if (dailyForm) {
                 });
 
 
-            const totalSales =
-                categories.reduce(
-                    (sum, category) =>
-                        sum +
-                        category.sales,
-                    0
-                );
-
-
-            const totalPurchase =
-                categories.reduce(
-                    (sum, category) =>
-                        sum +
-                        category.purchase,
-                    0
-                );
-
-
             const totalExpenses =
                 expenses.reduce(
-                    (sum, expense) =>
+                    (
+                        sum,
+                        expense
+                    ) =>
                         sum +
-                        expense.amount,
+                        Number(
+                            expense.amount || 0
+                        ),
                     0
                 );
 
 
-            const totalProfit =
+            const grossProfit =
+                totalSales -
+                totalPurchase;
+
+
+            const netProfit =
                 totalSales -
                 totalPurchase -
                 totalExpenses;
 
 
+            /* MODIFICATION */
+
             const editingId =
                 dailyForm.dataset.editingId;
 
 
-            /* -----------------------------------------
-               MODIFICATION
-            ----------------------------------------- */
-
             if (editingId) {
-
 
                 const index =
                     dailyRecords.findIndex(
                         record =>
                             record.id ===
-                            Number(editingId)
+                            Number(
+                                editingId
+                            )
                     );
 
 
@@ -1918,20 +2312,23 @@ if (dailyForm) {
                         categories:
                             categories,
 
-                        expenses:
-                            expenses,
-
                         totalSales:
                             totalSales,
 
                         totalPurchase:
                             totalPurchase,
 
+                        expenses:
+                            expenses,
+
                         totalExpenses:
                             totalExpenses,
 
-                        totalProfit:
-                            totalProfit,
+                        grossProfit:
+                            grossProfit,
+
+                        netProfit:
+                            netProfit,
 
                         updatedAt:
                             new Date().toISOString()
@@ -1944,14 +2341,6 @@ if (dailyForm) {
                 delete dailyForm.dataset.editingId;
 
 
-                if (calculatorStatus) {
-
-                    calculatorStatus.textContent =
-                        "Nouvelle journée";
-
-                }
-
-
                 showNotification(
                     "Journée modifiée avec succès."
                 );
@@ -1959,12 +2348,9 @@ if (dailyForm) {
             }
 
 
-            /* -----------------------------------------
-               NOUVEL ENREGISTREMENT
-            ----------------------------------------- */
+            /* NOUVEL ENREGISTREMENT */
 
             else {
-
 
                 const record = {
 
@@ -1982,20 +2368,23 @@ if (dailyForm) {
                     categories:
                         categories,
 
-                    expenses:
-                        expenses,
-
                     totalSales:
                         totalSales,
 
                     totalPurchase:
                         totalPurchase,
 
+                    expenses:
+                        expenses,
+
                     totalExpenses:
                         totalExpenses,
 
-                    totalProfit:
-                        totalProfit,
+                    grossProfit:
+                        grossProfit,
+
+                    netProfit:
+                        netProfit,
 
                     createdAt:
                         new Date().toISOString()
@@ -2018,8 +2407,19 @@ if (dailyForm) {
             saveData();
 
 
-            resetDailyForm();
+            dailyForm.reset();
 
+
+            saleDate.value =
+                todayISO();
+
+
+            updateDay();
+
+
+            renderCategoryInputs();
+
+            renderExpenseCategories();
 
             renderHistory();
 
@@ -2034,152 +2434,19 @@ if (dailyForm) {
 
 
 /* =========================================================
-   13. RÉINITIALISER LE FORMULAIRE
-========================================================= */
-
-function resetDailyForm() {
-
-    if (!dailyForm)
-        return;
-
-
-    dailyForm.reset();
-
-
-    delete dailyForm.dataset.editingId;
-
-
-    saleDate.value =
-        todayISO();
-
-
-    updateDay();
-
-
-    if (calculatorStatus) {
-
-        calculatorStatus.textContent =
-            "Nouvelle journée";
-
-    }
-
-
-    if (dailyExpensesContainer) {
-
-        dailyExpensesContainer.innerHTML = `
-
-            <div class="expense-input-row">
-
-                <div class="form-group">
-
-                    <label>
-                        Catégorie de dépense
-                    </label>
-
-                    <select class="expense-name">
-
-                        <option value="">
-                            -- Choisir --
-                        </option>
-
-                        <option value="Transport">
-                            Transport
-                        </option>
-
-                        <option value="Salaire">
-                            Salaire
-                        </option>
-
-                        <option value="Electricité">
-                            Électricité
-                        </option>
-
-                        <option value="Loyer">
-                            Loyer
-                        </option>
-
-                        <option value="Communication">
-                            Communication
-                        </option>
-
-                        <option value="Carburant">
-                            Carburant
-                        </option>
-
-                        <option value="Autre">
-                            Autre
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Montant
-                    </label>
-
-                    <div class="money-input">
-
-                        <input
-                            type="number"
-                            class="expense-amount"
-                            min="0"
-                            placeholder="0">
-
-                        <span>
-                            FC
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    type="button"
-                    class="btn-danger-small remove-expense">
-
-                    ✕
-
-                </button>
-
-            </div>
-
-        `;
-
-
-        attachExpenseEvents();
-
-    }
-
-
-    renderCategoryInputs();
-
-}
-
-
-/* =========================================================
-   14. HISTORIQUE
-========================================================= */
+   29. HISTORIQUE
+   ========================================================= */
 
 function renderHistory() {
 
-    if (!dailyHistory)
+    if (!dailyHistory) {
         return;
-
-
-    if (historyCount) {
-
-        historyCount.textContent =
-            dailyRecords.length;
-
     }
 
 
-    if (dailyRecords.length === 0) {
+    if (
+        dailyRecords.length === 0
+    ) {
 
         dailyHistory.innerHTML = `
 
@@ -2194,7 +2461,8 @@ function renderHistory() {
                 </h4>
 
                 <p>
-                    Vos journées apparaîtront ici.
+                    Vos journées enregistrées
+                    apparaîtront ici.
                 </p>
 
             </div>
@@ -2220,23 +2488,36 @@ function renderHistory() {
 
     sortedRecords.forEach(record => {
 
+        const profit =
+            Number(
+                record.netProfit ??
+                (
+                    record.totalSales -
+                    record.totalPurchase
+                )
+            );
+
 
         const profitClass =
-            record.totalProfit >= 0
+            profit >= 0
                 ? "positive"
                 : "negative";
 
 
-        let categoryHTML = "";
+        let categoryHTML =
+            "";
 
 
-        record.categories.forEach(
+        record.categories?.forEach(
             category => {
 
-
                 if (
-                    category.sales === 0 &&
-                    category.purchase === 0
+                    Number(
+                        category.sales
+                    ) === 0 &&
+                    Number(
+                        category.purchase
+                    ) === 0
                 ) {
 
                     return;
@@ -2249,6 +2530,7 @@ function renderHistory() {
                     <div class="history-category">
 
                         <strong>
+                            📁
                             ${escapeHTML(
                                 category.groupName
                             )}
@@ -2283,60 +2565,47 @@ function renderHistory() {
         );
 
 
-        let expenseHTML = "";
+        let expensesHTML =
+            "";
 
 
-        if (
-            record.expenses &&
-            record.expenses.length > 0
-        ) {
+        record.expenses?.forEach(
+            expense => {
 
+                if (
+                    Number(
+                        expense.amount
+                    ) <= 0
+                ) {
 
-            expenseHTML = `
-
-                <div class="history-expenses">
-
-                    <strong>
-                        💸 Dépenses
-                    </strong>
-
-            `;
-
-
-            record.expenses.forEach(
-                expense => {
-
-                    expenseHTML += `
-
-                        <span>
-                            ${escapeHTML(
-                                expense.name
-                            )}
-                            :
-                            ${formatMoney(
-                                expense.amount
-                            )}
-                        </span>
-
-                    `;
+                    return;
 
                 }
-            );
 
 
-            expenseHTML += `
+                expensesHTML += `
 
-                </div>
+                    <span>
+                        <strong>
+                            ${escapeHTML(
+                                expense.categoryName
+                            )}
+                        </strong>
+                        :
+                        ${formatMoney(
+                            expense.amount
+                        )}
+                    </span>
 
-            `;
+                `;
 
-        }
+            }
+        );
 
 
         html += `
 
             <div class="history-card">
-
 
                 <div class="history-top">
 
@@ -2360,34 +2629,32 @@ function renderHistory() {
 
                     <div class="history-result">
 
-                        <span>
+                        <strong>
                             Ventes :
                             ${formatMoney(
                                 record.totalSales
                             )}
-                        </span>
+                        </strong>
 
-                        <span>
+                        <strong>
                             Achats :
                             ${formatMoney(
                                 record.totalPurchase
                             )}
-                        </span>
+                        </strong>
 
-                        <span>
+                        <strong>
                             Dépenses :
                             ${formatMoney(
-                                record.totalExpenses
+                                record.totalExpenses || 0
                             )}
-                        </span>
+                        </strong>
 
                         <strong class="${profitClass}">
-
                             Bénéfice net :
                             ${formatMoney(
-                                record.totalProfit
+                                profit
                             )}
-
                         </strong>
 
                     </div>
@@ -2399,36 +2666,45 @@ function renderHistory() {
 
                     ${
                         categoryHTML ||
-                        "<small>Aucune vente enregistrée.</small>"
+                        `
+                            <small>
+                                Aucune vente ou achat.
+                            </small>
+                        `
                     }
 
                 </div>
 
 
-                ${expenseHTML}
+                ${
+                    expensesHTML
+                        ? `
+                            <div class="history-expenses">
+                                💸
+                                ${expensesHTML}
+                            </div>
+                        `
+                        : ""
+                }
 
 
                 <div class="history-actions">
 
                     <button
                         type="button"
-                        onclick="editRecord(${record.id})">
-
+                        onclick="editRecord(${record.id})"
+                    >
                         ✏️ Modifier
-
                     </button>
-
 
                     <button
                         type="button"
-                        onclick="deleteRecord(${record.id})">
-
+                        onclick="deleteRecord(${record.id})"
+                    >
                         🗑️ Supprimer
-
                     </button>
 
                 </div>
-
 
             </div>
 
@@ -2444,19 +2720,21 @@ function renderHistory() {
 
 
 /* =========================================================
-   15. MODIFIER UNE JOURNÉE
-========================================================= */
+   30. MODIFIER ENREGISTREMENT
+   ========================================================= */
 
 function editRecord(id) {
 
     const record =
         dailyRecords.find(
-            r => r.id === id
+            r =>
+                r.id === id
         );
 
 
-    if (!record)
+    if (!record) {
         return;
+    }
 
 
     dailyForm.dataset.editingId =
@@ -2470,64 +2748,16 @@ function editRecord(id) {
     updateDay();
 
 
-    renderCategoryInputs();
-
-
-    /* -----------------------------------------
-       RESTAURER LES DÉPENSES
-    ----------------------------------------- */
-
-    if (dailyExpensesContainer) {
-
-        dailyExpensesContainer.innerHTML =
-            "";
-
-
-        const expenses =
-            record.expenses || [];
-
-
-        if (expenses.length === 0) {
-
-            addEmptyExpenseRow();
-
-        }
-
-        else {
-
-            expenses.forEach(
-                expense => {
-
-                    addExpenseRow(
-                        expense.name,
-                        expense.amount
-                    );
-
-                }
-            );
-
-        }
-
-
-        attachExpenseEvents();
-
-    }
-
-
-    if (calculatorStatus) {
-
-        calculatorStatus.textContent =
-            "Modification en cours";
-
-    }
-
-
-    calculateCurrentDay();
-
-
     openPage(
         "calculator"
     );
+
+
+    renderCategoryInputs();
+
+    renderExpenseCategories();
+
+    calculateCurrentDay();
 
 
     window.scrollTo({
@@ -2546,153 +2776,27 @@ function editRecord(id) {
 }
 
 
-function addExpenseRow(
-    selectedName = "",
-    amount = ""
-) {
-
-    if (!dailyExpensesContainer)
-        return;
-
-
-    const row =
-        document.createElement(
-            "div"
-        );
-
-
-    row.className =
-        "expense-input-row";
-
-
-    row.innerHTML = `
-
-        <div class="form-group">
-
-            <label>
-                Catégorie de dépense
-            </label>
-
-            <select class="expense-name">
-
-                <option value="">
-                    -- Choisir --
-                </option>
-
-                <option value="Transport">
-                    Transport
-                </option>
-
-                <option value="Salaire">
-                    Salaire
-                </option>
-
-                <option value="Electricité">
-                    Électricité
-                </option>
-
-                <option value="Loyer">
-                    Loyer
-                </option>
-
-                <option value="Communication">
-                    Communication
-                </option>
-
-                <option value="Carburant">
-                    Carburant
-                </option>
-
-                <option value="Autre">
-                    Autre
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Montant
-            </label>
-
-            <div class="money-input">
-
-                <input
-                    type="number"
-                    class="expense-amount"
-                    min="0"
-                    value="${amount}"
-                    placeholder="0">
-
-                <span>
-                    FC
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="btn-danger-small remove-expense">
-
-            ✕
-
-        </button>
-
-    `;
-
-
-    dailyExpensesContainer.appendChild(
-        row
-    );
-
-
-    const select =
-        row.querySelector(
-            ".expense-name"
-        );
-
-
-    select.value =
-        selectedName;
-
-}
-
-
-function addEmptyExpenseRow() {
-
-    addExpenseRow(
-        "",
-        ""
-    );
-
-}
-
-
 /* =========================================================
-   16. SUPPRIMER UNE JOURNÉE
-========================================================= */
+   31. SUPPRIMER ENREGISTREMENT
+   ========================================================= */
 
 function deleteRecord(id) {
 
     const record =
         dailyRecords.find(
-            r => r.id === id
+            r =>
+                r.id === id
         );
 
 
-    if (!record)
+    if (!record) {
         return;
+    }
 
 
     if (
         !confirm(
-            `Voulez-vous supprimer l'enregistrement du ${formatDate(record.date)} ?`
+            `Supprimer l'enregistrement du ${formatDate(record.date)} ?`
         )
     ) {
 
@@ -2703,7 +2807,8 @@ function deleteRecord(id) {
 
     dailyRecords =
         dailyRecords.filter(
-            r => r.id !== id
+            r =>
+                r.id !== id
         );
 
 
@@ -2725,836 +2830,27 @@ function deleteRecord(id) {
 
 
 /* =========================================================
-   17. ACCUEIL
-========================================================= */
+   32. ACCUEIL
+   ========================================================= */
 
 function updateHomeSummary() {
+
+    if (!dailySalesSummary) {
+        return;
+    }
+
 
     const today =
         todayISO();
 
 
-    if (homeTodayDate) {
-
-        homeTodayDate.textContent =
-            formatDate(today);
-
-    }
-
-
     const todayRecords =
         dailyRecords.filter(
             record =>
-                record.date === today
+                record.date ===
+                today
         );
 
-
-    const sales =
-        todayRecords.reduce(
-            (sum, record) =>
-                sum +
-                Number(
-                    record.totalSales || 0
-                ),
-            0
-        );
-
-
-    const purchases =
-        todayRecords.reduce(
-            (sum, record) =>
-                sum +
-                Number(
-                    record.totalPurchase || 0
-                ),
-            0
-        );
-
-
-    const expenses =
-        todayRecords.reduce(
-            (sum, record) =>
-                sum +
-                Number(
-                    record.totalExpenses || 0
-                ),
-            0
-        );
-
-
-    const profit =
-        sales -
-        purchases -
-        expenses;
-
-
-    if (dailySalesSummary) {
-
-        dailySalesSummary.textContent =
-            formatMoney(sales);
-
-    }
-
-
-    if (dailyPurchaseSummary) {
-
-        dailyPurchaseSummary.textContent =
-            formatMoney(purchases);
-
-    }
-
-
-    if (dailyExpenseSummary) {
-
-        dailyExpenseSummary.textContent =
-            formatMoney(expenses);
-
-    }
-
-
-    if (dailyBalanceSummary) {
-
-        dailyBalanceSummary.textContent =
-            formatMoney(profit);
-
-
-        dailyBalanceSummary.className =
-            profit >= 0
-                ? "positive"
-                : "negative";
-
-    }
-
-
-    if (totalRecordedDays) {
-
-        totalRecordedDays.textContent =
-            dailyRecords.length;
-
-    }
-
-
-    if (totalCategories) {
-
-        totalCategories.textContent =
-            groups.length;
-
-    }
-
-
-    if (totalArticles) {
-
-        totalArticles.textContent =
-            articles.length;
-
-    }
-
-
-    renderHomeCategorySummary(
-        todayRecords
-    );
-
-
-    calculateBestCategory();
-
-}
-
-
-/* =========================================================
-   18. VENTES PAR CATÉGORIE SUR ACCUEIL
-========================================================= */
-
-function renderHomeCategorySummary(
-    records
-) {
-
-    if (!homeCategorySummary)
-        return;
-
-
-    if (records.length === 0) {
-
-        homeCategorySummary.innerHTML = `
-
-            <div class="empty-state">
-
-                <div class="empty-icon">
-                    📊
-                </div>
-
-                <h4>
-                    Aucune donnée aujourd'hui
-                </h4>
-
-                <p>
-                    Les résultats par catégorie
-                    apparaîtront ici.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const categoryTotals = {};
-
-
-    records.forEach(record => {
-
-        record.categories.forEach(
-            category => {
-
-
-                if (
-                    !categoryTotals[
-                        category.groupId
-                    ]
-                ) {
-
-                    categoryTotals[
-                        category.groupId
-                    ] = {
-
-                        name:
-                            category.groupName,
-
-                        sales:
-                            0,
-
-                        purchases:
-                            0,
-
-                        profit:
-                            0
-
-                    };
-
-                }
-
-
-                categoryTotals[
-                    category.groupId
-                ].sales +=
-                    Number(
-                        category.sales || 0
-                    );
-
-
-                categoryTotals[
-                    category.groupId
-                ].purchases +=
-                    Number(
-                        category.purchase || 0
-                    );
-
-
-                categoryTotals[
-                    category.groupId
-                ].profit +=
-                    Number(
-                        category.profit || 0
-                    );
-
-            }
-        );
-
-    });
-
-
-    let html = "";
-
-
-    Object.values(
-        categoryTotals
-    ).forEach(category => {
-
-
-        const maxSales =
-            Math.max(
-                ...Object.values(
-                    categoryTotals
-                ).map(
-                    item =>
-                        item.sales
-                )
-            );
-
-
-        const percentage =
-            maxSales > 0
-                ? Math.round(
-                    category.sales /
-                    maxSales *
-                    100
-                )
-                : 0;
-
-
-        html += `
-
-            <div class="home-category-row">
-
-
-                <div class="home-category-top">
-
-                    <strong>
-                        📁
-                        ${escapeHTML(
-                            category.name
-                        )}
-                    </strong>
-
-                    <strong>
-                        ${formatMoney(
-                            category.sales
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div class="category-progress">
-
-                    <div
-                        class="category-progress-bar"
-                        style="width:${percentage}%">
-                    </div>
-
-                </div>
-
-
-                <div class="home-category-bottom">
-
-                    <span>
-                        Achats :
-                        ${formatMoney(
-                            category.purchases
-                        )}
-                    </span>
-
-
-                    <span class="${
-                        category.profit >= 0
-                            ? "positive"
-                            : "negative"
-                    }">
-
-                        Bénéfice :
-                        ${formatMoney(
-                            category.profit
-                        )}
-
-                    </span>
-
-                </div>
-
-            </div>
-
-        `;
-
-    });
-
-
-    homeCategorySummary.innerHTML =
-        html;
-
-}
-
-
-/* =========================================================
-   19. MEILLEURE CATÉGORIE
-========================================================= */
-
-function calculateBestCategory() {
-
-    if (!bestCategory)
-        return;
-
-
-    const totals = {};
-
-
-    dailyRecords.forEach(record => {
-
-        record.categories.forEach(
-            category => {
-
-
-                if (
-                    !totals[
-                        category.groupId
-                    ]
-                ) {
-
-                    totals[
-                        category.groupId
-                    ] = {
-
-                        name:
-                            category.groupName,
-
-                        profit:
-                            0
-
-                    };
-
-                }
-
-
-                totals[
-                    category.groupId
-                ].profit +=
-                    Number(
-                        category.profit || 0
-                    );
-
-            }
-        );
-
-    });
-
-
-    const list =
-        Object.values(
-            totals
-        );
-
-
-    if (list.length === 0) {
-
-        bestCategory.textContent =
-            "-";
-
-        return;
-
-    }
-
-
-    list.sort(
-        (a, b) =>
-            b.profit -
-            a.profit
-    );
-
-
-    bestCategory.textContent =
-        list[0].name;
-
-}
-
-
-/* =========================================================
-   20. RAPPORTS
-========================================================= */
-
-function getWeekStart(date) {
-
-    const result =
-        new Date(date);
-
-
-    const day =
-        result.getDay();
-
-
-    const difference =
-        day === 0
-            ? 6
-            : day - 1;
-
-
-    result.setDate(
-        result.getDate() -
-        difference
-    );
-
-
-    result.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-
-    return result;
-
-}
-
-
-function getWeekRecords() {
-
-    const today =
-        new Date();
-
-
-    const start =
-        getWeekStart(
-            today
-        );
-
-
-    return dailyRecords.filter(
-        record => {
-
-            const date =
-                new Date(
-                    record.date +
-                    "T12:00:00"
-                );
-
-
-            return date >= start;
-
-        }
-    );
-
-}
-
-
-function renderReports() {
-
-    const now =
-        new Date();
-
-
-    /* -----------------------------------------
-       SEMAINE
-    ----------------------------------------- */
-
-    const weekRecords =
-        getWeekRecords();
-
-
-    let weekSalesTotal = 0;
-
-    let weekPurchasesTotal = 0;
-
-    let weekExpensesTotal = 0;
-
-
-    weekRecords.forEach(
-        record => {
-
-            weekSalesTotal +=
-                Number(
-                    record.totalSales || 0
-                );
-
-
-            weekPurchasesTotal +=
-                Number(
-                    record.totalPurchase || 0
-                );
-
-
-            weekExpensesTotal +=
-                Number(
-                    record.totalExpenses || 0
-                );
-
-        }
-    );
-
-
-    const weekProfit =
-        weekSalesTotal -
-        weekPurchasesTotal -
-        weekExpensesTotal;
-
-
-    if (weeklySales) {
-
-        weeklySales.textContent =
-            formatMoney(
-                weekSalesTotal
-            );
-
-    }
-
-
-    if (weeklyReportSales) {
-
-        weeklyReportSales.textContent =
-            formatMoney(
-                weekSalesTotal
-            );
-
-    }
-
-
-    if (weeklyReportPurchases) {
-
-        weeklyReportPurchases.textContent =
-            formatMoney(
-                weekPurchasesTotal
-            );
-
-    }
-
-
-    if (weeklyReportExpenses) {
-
-        weeklyReportExpenses.textContent =
-            formatMoney(
-                weekExpensesTotal
-            );
-
-    }
-
-
-    if (weeklyReportProfit) {
-
-        weeklyReportProfit.textContent =
-            formatMoney(
-                weekProfit
-            );
-
-
-        weeklyReportProfit.className =
-            weekProfit >= 0
-                ? "positive"
-                : "negative";
-
-    }
-
-
-    renderWeekRange();
-
-    renderWeeklyDays(
-        weekRecords
-    );
-
-
-    /* -----------------------------------------
-       MOIS ACTUEL
-    ----------------------------------------- */
-
-    const year =
-        now.getFullYear();
-
-
-    const month =
-        now.getMonth();
-
-
-    const monthRecords =
-        dailyRecords.filter(
-            record => {
-
-                const date =
-                    new Date(
-                        record.date +
-                        "T12:00:00"
-                    );
-
-
-                return (
-                    date.getFullYear() ===
-                    year &&
-
-                    date.getMonth() ===
-                    month
-                );
-
-            }
-        );
-
-
-    renderMonthlyTotals(
-        monthRecords
-    );
-
-
-    renderCategoryReports(
-        monthRecords
-    );
-
-
-    renderDailySalesReport(
-        monthRecords
-    );
-
-
-    updateAccountingAlert(
-        monthRecords
-    );
-
-}
-
-
-/* =========================================================
-   21. PÉRIODE DE LA SEMAINE
-========================================================= */
-
-function renderWeekRange() {
-
-    if (!weekRange)
-        return;
-
-
-    const start =
-        getWeekStart(
-            new Date()
-        );
-
-
-    const end =
-        new Date(start);
-
-
-    end.setDate(
-        end.getDate() + 6
-    );
-
-
-    weekRange.textContent =
-        `${formatDate(
-            dateToISO(start)
-        )} → ${formatDate(
-            dateToISO(end)
-        )}`;
-
-}
-
-
-function dateToISO(date) {
-
-    const year =
-        date.getFullYear();
-
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-
-    return `${year}-${month}-${day}`;
-
-}
-
-
-/* =========================================================
-   22. JOURS DE LA SEMAINE
-========================================================= */
-
-function renderWeeklyDays(
-    records
-) {
-
-    if (!weeklyReportDays)
-        return;
-
-
-    if (records.length === 0) {
-
-        weeklyReportDays.innerHTML = `
-
-            <div class="empty-state">
-
-                <p>
-                    📅 Aucune journée enregistrée cette semaine.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const sorted =
-        [...records].sort(
-            (a, b) =>
-                a.date.localeCompare(
-                    b.date
-                )
-        );
-
-
-    let html = "";
-
-
-    sorted.forEach(record => {
-
-        html += `
-
-            <div class="weekly-day-row">
-
-                <div>
-
-                    <strong>
-                        ${formatDate(
-                            record.date
-                        )}
-                    </strong>
-
-                    <span>
-                        ${escapeHTML(
-                            record.day
-                        )}
-                    </span>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        Ventes :
-                        ${formatMoney(
-                            record.totalSales
-                        )}
-                    </span>
-
-                    <span>
-                        Bénéfice :
-                        ${formatMoney(
-                            record.totalProfit
-                        )}
-                    </span>
-
-                </div>
-
-            </div>
-
-        `;
-
-    });
-
-
-    weeklyReportDays.innerHTML =
-        html;
-
-}
-
-
-/* =========================================================
-   23. TOTAL MENSUEL
-========================================================= */
-
-function renderMonthlyTotals(
-    records
-) {
 
     let sales = 0;
 
@@ -3562,8 +2858,10 @@ function renderMonthlyTotals(
 
     let expenses = 0;
 
+    let profit = 0;
 
-    records.forEach(record => {
+
+    todayRecords.forEach(record => {
 
         sales +=
             Number(
@@ -3582,103 +2880,102 @@ function renderMonthlyTotals(
                 record.totalExpenses || 0
             );
 
+
+        profit +=
+            Number(
+                record.netProfit ??
+                (
+                    record.totalSales -
+                    record.totalPurchase -
+                    record.totalExpenses
+                )
+            );
+
     });
 
 
-    const profit =
-        sales -
-        purchases -
-        expenses;
+    dailySalesSummary.textContent =
+        formatMoney(
+            sales
+        );
 
 
-    if (monthlySales) {
-
-        monthlySales.textContent =
-            formatMoney(sales);
-
-    }
+    dailyPurchaseSummary.textContent =
+        formatMoney(
+            purchases
+        );
 
 
-    if (monthlyPurchases) {
+    if (dailyExpenseSummary) {
 
-        monthlyPurchases.textContent =
-            formatMoney(purchases);
-
-    }
-
-
-    if (monthlyExpenses) {
-
-        monthlyExpenses.textContent =
-            formatMoney(expenses);
+        dailyExpenseSummary.textContent =
+            formatMoney(
+                expenses
+            );
 
     }
 
 
-    if (monthlyTotal) {
-
-        monthlyTotal.textContent =
-            formatMoney(profit);
-
-
-        monthlyTotal.className =
-            profit >= 0
-                ? "positive"
-                : "negative";
-
-    }
+    dailyBalanceSummary.textContent =
+        formatMoney(
+            profit
+        );
 
 
-    if (finalMonthlySales) {
-
-        finalMonthlySales.textContent =
-            formatMoney(sales);
-
-    }
+    dailyBalanceSummary.className =
+        profit >= 0
+            ? "positive"
+            : "negative";
 
 
-    if (finalMonthlyPurchases) {
-
-        finalMonthlyPurchases.textContent =
-            formatMoney(purchases);
-
-    }
-
-
-    if (finalMonthlyExpenses) {
-
-        finalMonthlyExpenses.textContent =
-            formatMoney(expenses);
-
-    }
-
-
-    if (finalMonthlyProfit) {
-
-        finalMonthlyProfit.textContent =
-            formatMoney(profit);
-
-
-        finalMonthlyProfit.className =
-            profit >= 0
-                ? "positive"
-                : "negative";
-
-    }
+    renderHomeCategorySummary(
+        todayRecords
+    );
 
 }
 
 
 /* =========================================================
-   24. RAPPORT PAR CATÉGORIE
-========================================================= */
+   33. CATEGORIES SUR ACCUEIL
+   ========================================================= */
 
-function renderCategoryReports(
+function renderHomeCategorySummary(
     records
 ) {
 
-    if (!categoryReports)
+    if (!homeCategorySummary) {
         return;
+    }
+
+
+    if (
+        records.length === 0
+    ) {
+
+        homeCategorySummary.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    📊
+                </div>
+
+                <h4>
+                    Aucune vente aujourd'hui
+                </h4>
+
+                <p>
+                    Enregistrez votre journée
+                    pour voir les résultats.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
 
 
     const totals = {};
@@ -3686,9 +2983,8 @@ function renderCategoryReports(
 
     records.forEach(record => {
 
-        record.categories.forEach(
+        record.categories?.forEach(
             category => {
-
 
                 if (
                     !totals[
@@ -3752,14 +3048,555 @@ function renderCategoryReports(
         );
 
 
-    if (categories.length === 0) {
+    const maximumSales =
+        Math.max(
+            ...categories.map(
+                category =>
+                    category.sales
+            ),
+            1
+        );
+
+
+    let html = "";
+
+
+    categories.forEach(
+        category => {
+
+            const percentage =
+                Math.min(
+                    100,
+                    (
+                        category.sales /
+                        maximumSales
+                    ) * 100
+                );
+
+
+            html += `
+
+                <div class="home-category-row">
+
+                    <div class="home-category-top">
+
+                        <strong>
+                            📁
+                            ${escapeHTML(
+                                category.name
+                            )}
+                        </strong>
+
+                        <strong>
+                            ${formatMoney(
+                                category.sales
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="category-progress">
+
+                        <div
+                            class="category-progress-bar"
+                            style="
+                                width:${percentage}%;
+                            "
+                        ></div>
+
+                    </div>
+
+
+                    <div class="home-category-bottom">
+
+                        <span>
+                            Achats :
+                            ${formatMoney(
+                                category.purchases
+                            )}
+                        </span>
+
+                        <span class="${
+                            category.profit >= 0
+                                ? "positive"
+                                : "negative"
+                        }">
+
+                            Bénéfice :
+                            ${formatMoney(
+                                category.profit
+                            )}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    homeCategorySummary.innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   34. RAPPORTS
+   ========================================================= */
+
+function getCurrentWeekStart() {
+
+    const now =
+        new Date();
+
+
+    const start =
+        new Date(
+            now
+        );
+
+
+    const day =
+        start.getDay();
+
+
+    const difference =
+        day === 0
+            ? 6
+            : day - 1;
+
+
+    start.setDate(
+        start.getDate() -
+        difference
+    );
+
+
+    start.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    return start;
+
+}
+
+
+/* =========================================================
+   35. RAPPORT GENERAL
+   ========================================================= */
+
+function renderReports() {
+
+    const now =
+        new Date();
+
+
+    const startOfWeek =
+        getCurrentWeekStart();
+
+
+    let weekSales = 0;
+
+    let weekPurchases = 0;
+
+    let weekExpenses = 0;
+
+
+    dailyRecords.forEach(
+        record => {
+
+            const date =
+                new Date(
+                    record.date +
+                    "T12:00:00"
+                );
+
+
+            if (
+                date >=
+                startOfWeek
+            ) {
+
+                weekSales +=
+                    Number(
+                        record.totalSales || 0
+                    );
+
+
+                weekPurchases +=
+                    Number(
+                        record.totalPurchase || 0
+                    );
+
+
+                weekExpenses +=
+                    Number(
+                        record.totalExpenses || 0
+                    );
+
+            }
+
+        }
+    );
+
+
+    const weekGrossProfit =
+        weekSales -
+        weekPurchases;
+
+
+    const weekNetProfit =
+        weekSales -
+        weekPurchases -
+        weekExpenses;
+
+
+    updateElementMoney(
+        "weeklySales",
+        weekSales
+    );
+
+
+    updateElementMoney(
+        "weeklyPurchases",
+        weekPurchases
+    );
+
+
+    updateElementMoney(
+        "weeklyExpenses",
+        weekExpenses
+    );
+
+
+    updateElementMoney(
+        "weeklyNetProfit",
+        weekNetProfit
+    );
+
+
+    /* MOIS ACTUEL */
+
+    const year =
+        now.getFullYear();
+
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const selectedMonth =
+        `${year}-${month}`;
+
+
+    if (
+        reportMonth &&
+        !reportMonth.value
+    ) {
+
+        reportMonth.value =
+            selectedMonth;
+
+    }
+
+
+    renderSelectedMonth(
+        reportMonth?.value ||
+        selectedMonth
+    );
+
+}
+
+
+/* =========================================================
+   36. ELEMENT MONEY
+   ========================================================= */
+
+function updateElementMoney(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        formatMoney(
+            value
+        );
+
+
+    if (
+        id.includes(
+            "Profit"
+        )
+    ) {
+
+        element.className =
+            value >= 0
+                ? "positive"
+                : "negative";
+
+    }
+
+}
+
+
+/* =========================================================
+   37. RAPPORT MOIS SELECTIONNE
+   ========================================================= */
+
+function renderSelectedMonth(
+    selectedMonth
+) {
+
+    if (!selectedMonth) {
+        return;
+    }
+
+
+    const records =
+        dailyRecords.filter(
+            record =>
+                record.date.startsWith(
+                    selectedMonth
+                )
+        );
+
+
+    let sales = 0;
+
+    let purchases = 0;
+
+    let expenses = 0;
+
+
+    records.forEach(record => {
+
+        sales +=
+            Number(
+                record.totalSales || 0
+            );
+
+
+        purchases +=
+            Number(
+                record.totalPurchase || 0
+            );
+
+
+        expenses +=
+            Number(
+                record.totalExpenses || 0
+            );
+
+    });
+
+
+    const grossProfit =
+        sales -
+        purchases;
+
+
+    const netProfit =
+        sales -
+        purchases -
+        expenses;
+
+
+    /* AFFICHAGE */
+
+    updateElementMoney(
+        "monthlySales",
+        sales
+    );
+
+
+    updateElementMoney(
+        "monthlyPurchases",
+        purchases
+    );
+
+
+    updateElementMoney(
+        "monthlyExpenses",
+        expenses
+    );
+
+
+    updateElementMoney(
+        "monthlyGrossProfit",
+        grossProfit
+    );
+
+
+    updateElementMoney(
+        "monthlyNetProfit",
+        netProfit
+    );
+
+
+    updateElementMoney(
+        "finalMonthlySales",
+        sales
+    );
+
+
+    updateElementMoney(
+        "finalMonthlyPurchases",
+        purchases
+    );
+
+
+    updateElementMoney(
+        "finalMonthlyExpenses",
+        expenses
+    );
+
+
+    updateElementMoney(
+        "finalMonthlyProfit",
+        netProfit
+    );
+
+
+    renderCategoryReports(
+        records
+    );
+
+
+    renderExpenseReports(
+        records
+    );
+
+
+    renderDailySalesReport(
+        records
+    );
+
+}
+
+
+/* =========================================================
+   38. RAPPORT PAR CATEGORIE
+   ========================================================= */
+
+function renderCategoryReports(
+    records
+) {
+
+    if (!categoryReports) {
+        return;
+    }
+
+
+    const totals = {};
+
+
+    records.forEach(record => {
+
+        record.categories?.forEach(
+            category => {
+
+                if (
+                    !totals[
+                        category.groupId
+                    ]
+                ) {
+
+                    totals[
+                        category.groupId
+                    ] = {
+
+                        name:
+                            category.groupName,
+
+                        sales:
+                            0,
+
+                        purchases:
+                            0,
+
+                        profit:
+                            0
+
+                    };
+
+                }
+
+
+                totals[
+                    category.groupId
+                ].sales +=
+                    Number(
+                        category.sales || 0
+                    );
+
+
+                totals[
+                    category.groupId
+                ].purchases +=
+                    Number(
+                        category.purchase || 0
+                    );
+
+
+                totals[
+                    category.groupId
+                ].profit +=
+                    Number(
+                        category.profit || 0
+                    );
+
+            }
+        );
+
+    });
+
+
+    const categories =
+        Object.values(
+            totals
+        );
+
+
+    if (
+        categories.length === 0
+    ) {
 
         categoryReports.innerHTML = `
 
             <div class="empty-state">
 
+                <div class="empty-icon">
+                    📦
+                </div>
+
                 <p>
-                    📊 Aucun résultat disponible.
+                    Aucun résultat disponible.
                 </p>
 
             </div>
@@ -3854,9 +3691,7 @@ function renderCategoryReports(
 
 
                 <tbody>
-
                     ${rows}
-
                 </tbody>
 
             </table>
@@ -3869,25 +3704,190 @@ function renderCategoryReports(
 
 
 /* =========================================================
-   25. RAPPORT JOUR PAR JOUR
-========================================================= */
+   39. RAPPORT DES DEPENSES
+   ========================================================= */
+
+function renderExpenseReports(
+    records
+) {
+
+    if (!expenseReports) {
+        return;
+    }
+
+
+    const totals = {};
+
+
+    records.forEach(record => {
+
+        record.expenses?.forEach(
+            expense => {
+
+                if (
+                    !totals[
+                        expense.categoryId
+                    ]
+                ) {
+
+                    totals[
+                        expense.categoryId
+                    ] = {
+
+                        name:
+                            expense.categoryName,
+
+                        amount:
+                            0
+
+                    };
+
+                }
+
+
+                totals[
+                    expense.categoryId
+                ].amount +=
+                    Number(
+                        expense.amount || 0
+                    );
+
+            }
+        );
+
+    });
+
+
+    const expenses =
+        Object.values(
+            totals
+        );
+
+
+    if (
+        expenses.length === 0
+    ) {
+
+        expenseReports.innerHTML = `
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    💸
+                </div>
+
+                <p>
+                    Aucune dépense enregistrée
+                    pour cette période.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const maximum =
+        Math.max(
+            ...expenses.map(
+                expense =>
+                    expense.amount
+            ),
+            1
+        );
+
+
+    let html = "";
+
+
+    expenses.forEach(
+        expense => {
+
+            const percentage =
+                (
+                    expense.amount /
+                    maximum
+                ) * 100;
+
+
+            html += `
+
+                <div class="home-category-row">
+
+                    <div class="home-category-top">
+
+                        <strong>
+                            💸
+                            ${escapeHTML(
+                                expense.name
+                            )}
+                        </strong>
+
+                        <strong>
+                            ${formatMoney(
+                                expense.amount
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="category-progress">
+
+                        <div
+                            class="category-progress-bar"
+                            style="
+                                width:${percentage}%;
+                            "
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    expenseReports.innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   40. RAPPORT JOUR PAR JOUR
+   ========================================================= */
 
 function renderDailySalesReport(
     records
 ) {
 
-    if (!dailySalesReport)
+    if (!dailySalesReport) {
         return;
+    }
 
 
-    if (records.length === 0) {
+    if (
+        records.length === 0
+    ) {
 
         dailySalesReport.innerHTML = `
 
             <div class="empty-state">
 
+                <div class="empty-icon">
+                    📅
+                </div>
+
                 <p>
-                    📅 Aucun jour enregistré pour ce mois.
+                    Aucun jour enregistré
+                    pour ce mois.
                 </p>
 
             </div>
@@ -3913,6 +3913,17 @@ function renderDailySalesReport(
 
     sortedRecords.forEach(
         record => {
+
+            const netProfit =
+                Number(
+                    record.netProfit ??
+                    (
+                        record.totalSales -
+                        record.totalPurchase -
+                        record.totalExpenses
+                    )
+                );
+
 
             rows += `
 
@@ -3944,19 +3955,19 @@ function renderDailySalesReport(
 
                     <td>
                         ${formatMoney(
-                            record.totalExpenses
+                            record.totalExpenses || 0
                         )}
                     </td>
 
                     <td class="${
-                        record.totalProfit >= 0
+                        netProfit >= 0
                             ? "positive"
                             : "negative"
                     }">
 
                         <strong>
                             ${formatMoney(
-                                record.totalProfit
+                                netProfit
                             )}
                         </strong>
 
@@ -4010,9 +4021,7 @@ function renderDailySalesReport(
 
 
                 <tbody>
-
                     ${rows}
-
                 </tbody>
 
             </table>
@@ -4025,8 +4034,8 @@ function renderDailySalesReport(
 
 
 /* =========================================================
-   26. FILTRE DU MOIS
-========================================================= */
+   41. CHANGEMENT DE MOIS
+   ========================================================= */
 
 if (reportMonth) {
 
@@ -4065,6 +4074,10 @@ if (reportMonth) {
 }
 
 
+/* =========================================================
+   42. ACTUALISER RAPPORTS
+   ========================================================= */
+
 if (refreshReports) {
 
     refreshReports.addEventListener(
@@ -4080,9 +4093,7 @@ if (refreshReports) {
                     reportMonth.value
                 );
 
-            }
-
-            else {
+            } else {
 
                 renderReports();
 
@@ -4099,196 +4110,153 @@ if (refreshReports) {
 }
 
 
-function renderSelectedMonth(
-    selectedMonth
-) {
+/* =========================================================
+   43. INSTALLATION APPLICATION
+   ========================================================= */
 
-    if (!selectedMonth)
-        return;
+let deferredInstallPrompt =
+    null;
 
 
-    const records =
-        dailyRecords.filter(
-            record =>
-                record.date.startsWith(
-                    selectedMonth
-                )
+const installAppButton =
+    document.getElementById(
+        "installAppButton"
+    );
+
+
+const installHelp =
+    document.getElementById(
+        "installHelp"
+    );
+
+
+const closeInstallHelp =
+    document.getElementById(
+        "closeInstallHelp"
+    );
+
+
+window.addEventListener(
+    "beforeinstallprompt",
+    function (event) {
+
+        event.preventDefault();
+
+        deferredInstallPrompt =
+            event;
+
+    }
+);
+
+
+/* BOUTON INSTALLER */
+
+if (installAppButton) {
+
+    installAppButton.addEventListener(
+        "click",
+        async function () {
+
+            /*
+              Si le navigateur autorise
+              directement l'installation
+            */
+
+            if (
+                deferredInstallPrompt
+            ) {
+
+                deferredInstallPrompt.prompt();
+
+
+                const result =
+                    await deferredInstallPrompt.userChoice;
+
+
+                if (
+                    result.outcome ===
+                    "accepted"
+                ) {
+
+                    showNotification(
+                        "JOSSELL est en cours d'installation."
+                    );
+
+                }
+
+
+                deferredInstallPrompt =
+                    null;
+
+
+                return;
+
+            }
+
+
+            /*
+              Sinon on affiche les instructions
+            */
+
+            if (installHelp) {
+
+                installHelp.style.display =
+                    "block";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* FERMER AIDE */
+
+if (closeInstallHelp) {
+
+    closeInstallHelp.addEventListener(
+        "click",
+        function () {
+
+            if (installHelp) {
+
+                installHelp.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* INSTALLATION TERMINEE */
+
+window.addEventListener(
+    "appinstalled",
+    function () {
+
+        showNotification(
+            "JOSSELL a été installé avec succès."
         );
 
 
-    renderMonthlyTotals(
-        records
-    );
+        if (installAppButton) {
 
+            installAppButton.style.display =
+                "none";
 
-    renderCategoryReports(
-        records
-    );
+        }
 
-
-    renderDailySalesReport(
-        records
-    );
-
-
-    updateAccountingAlert(
-        records
-    );
-
-}
+    }
+);
 
 
 /* =========================================================
-   27. CONTRÔLE COMPTABLE
-========================================================= */
-
-function updateAccountingAlert(
-    records
-) {
-
-    if (!accountingAlert)
-        return;
-
-
-    let sales = 0;
-
-    let purchases = 0;
-
-    let expenses = 0;
-
-
-    records.forEach(record => {
-
-        sales +=
-            Number(
-                record.totalSales || 0
-            );
-
-
-        purchases +=
-            Number(
-                record.totalPurchase || 0
-            );
-
-
-        expenses +=
-            Number(
-                record.totalExpenses || 0
-            );
-
-    });
-
-
-    const profit =
-        sales -
-        purchases -
-        expenses;
-
-
-    if (records.length === 0) {
-
-        accountingAlert.innerHTML = `
-
-            <strong>
-                ℹ️ Aucune donnée
-            </strong>
-
-            <p>
-                Enregistrez vos journées pour
-                obtenir une analyse comptable.
-            </p>
-
-        `;
-
-        return;
-
-    }
-
-
-    if (profit > 0) {
-
-        accountingAlert.innerHTML = `
-
-            <strong>
-                ✅ Situation positive
-            </strong>
-
-            <p>
-                Votre résultat net est de
-                <strong>
-                    ${formatMoney(profit)}
-                </strong>.
-            </p>
-
-        `;
-
-        accountingAlert.className =
-            "accounting-alert success";
-
-    }
-
-    else if (profit === 0) {
-
-        accountingAlert.innerHTML = `
-
-            <strong>
-                ⚖️ Équilibre
-            </strong>
-
-            <p>
-                Les ventes couvrent exactement
-                les achats et les dépenses.
-            </p>
-
-        `;
-
-        accountingAlert.className =
-            "accounting-alert warning";
-
-    }
-
-    else {
-
-        accountingAlert.innerHTML = `
-
-            <strong>
-                ⚠️ Attention : résultat négatif
-            </strong>
-
-            <p>
-                Vous avez enregistré une perte de
-                <strong>
-                    ${formatMoney(
-                        Math.abs(profit)
-                    )}
-                </strong>.
-            </p>
-
-        `;
-
-        accountingAlert.className =
-            "accounting-alert danger";
-
-    }
-
-}
-
-
-/* =========================================================
-   28. ANNÉE AUTOMATIQUE
-========================================================= */
-
-if (currentYear) {
-
-    currentYear.textContent =
-        new Date().getFullYear();
-
-}
-
-
-/* =========================================================
-   29. INITIALISATION
-========================================================= */
+   44. INITIALISATION COMPLETE
+   ========================================================= */
 
 function initializeApp() {
 
@@ -4300,6 +4268,8 @@ function initializeApp() {
 
     renderCategoryInputs();
 
+    renderExpenseCategories();
+
     renderHistory();
 
     updateHomeSummary();
@@ -4307,20 +4277,21 @@ function initializeApp() {
     renderReports();
 
 
+    /*
+      Cacher l'écran de chargement
+    */
+
     setTimeout(
-        () => {
+        function () {
 
             if (loadingScreen) {
 
                 loadingScreen.style.opacity =
                     "0";
 
-                loadingScreen.style.transition =
-                    "0.4s";
-
 
                 setTimeout(
-                    () => {
+                    function () {
 
                         loadingScreen.style.display =
                             "none";
@@ -4332,11 +4303,15 @@ function initializeApp() {
             }
 
         },
-        500
+        600
     );
 
 }
 
+
+/* =========================================================
+   45. DEMARRAGE
+   ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",

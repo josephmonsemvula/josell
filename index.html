@@ -2,7 +2,6 @@
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -13,52 +12,40 @@
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
 
-    <meta name="apple-mobile-web-app-capable"
-          content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Jossell">
 
-    <meta name="apple-mobile-web-app-status-bar-style"
-          content="default">
+    <link rel="apple-touch-icon" href="logo.png">
 
-    <meta name="apple-mobile-web-app-title"
-          content="Jossell">
-
-    <link rel="apple-touch-icon"
-          href="logo.png">
-
-    <meta name="theme-color"
-          content="#2563eb">
+    <meta name="theme-color" content="#2563eb">
 
     <!-- CSS -->
-    <link rel="stylesheet"
-          href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
 <div class="app-container">
 
-
     <!-- =====================================================
-         ÉCRAN DE CHARGEMENT
-    ====================================================== -->
+         ECRAN DE CHARGEMENT
+         ===================================================== -->
 
     <div id="loadingScreen">
 
         <div class="spinner"></div>
 
         <span>
-            Chargement de JOSSELL...
+            Chargement de Jossell...
         </span>
 
     </div>
 
 
-
     <!-- =====================================================
-         EN-TÊTE
-    ====================================================== -->
+         EN-TETE
+         ===================================================== -->
 
     <header class="header">
 
@@ -71,11 +58,11 @@
             <div>
 
                 <h1>
-                    JOSSELL
+                    JOSSELL - MA GESTION
                 </h1>
 
                 <span>
-                    MA GESTION
+                    GESTION INTELLIGENTE
                 </span>
 
             </div>
@@ -83,46 +70,44 @@
         </div>
 
 
-        <nav class="main-nav"
-             id="mainNavigation">
+        <nav
+            class="main-nav"
+            id="mainNavigation"
+        >
 
-            <button class="nav-item active"
-                    data-page="home">
-
+            <button
+                class="nav-item active"
+                data-page="home"
+            >
                 🏠 Accueil
-
             </button>
 
-
-            <button class="nav-item"
-                    data-page="calculator">
-
+            <button
+                class="nav-item"
+                data-page="calculator"
+            >
                 🧮 Calculateur
-
             </button>
 
-
-            <button class="nav-item"
-                    data-page="groups">
-
+            <button
+                class="nav-item"
+                data-page="groups"
+            >
                 📦 Groupes & Articles
-
             </button>
 
-
-            <button class="nav-item"
-                    data-page="reports">
-
+            <button
+                class="nav-item"
+                data-page="reports"
+            >
                 📊 Rapports
-
             </button>
 
-
-            <button class="nav-item"
-                    data-page="help">
-
+            <button
+                class="nav-item"
+                data-page="help"
+            >
                 ❓ Aide
-
             </button>
 
         </nav>
@@ -130,22 +115,29 @@
     </header>
 
 
-
     <!-- =====================================================
          NOTIFICATIONS
-    ====================================================== -->
+         ===================================================== -->
 
-    <div id="notificationContainer"></div>
-
+    <div
+        id="notificationContainer"
+        style="
+            position:fixed;
+            top:20px;
+            right:20px;
+            z-index:10000;
+        "
+    ></div>
 
 
     <!-- =====================================================
-         PAGE ACCUEIL
-    ====================================================== -->
+         ACCUEIL
+         ===================================================== -->
 
-    <section id="page-home"
-             class="page active-page">
-
+    <section
+        id="page-home"
+        class="page active-page"
+    >
 
         <!-- HERO -->
 
@@ -154,26 +146,109 @@
             <div class="hero-content">
 
                 <span class="hero-badge">
-                    📊 GESTION INTELLIGENTE
+                    JOSSELL • GESTION
                 </span>
 
                 <h2>
-                    Bienvenue sur JOSSELL
+                    Bienvenue sur Jossell
                 </h2>
 
                 <p>
-                    Gérez vos ventes, achats, dépenses
-                    et bénéfices facilement.
+                    Gérez facilement vos ventes,
+                    achats, dépenses et bénéfices
+                    jour après jour.
                 </p>
 
 
-                <button type="button"
-                        class="btn-primary hero-button"
-                        data-page="calculator">
-
-                    🚀 Commencer
-
+                <button
+                    type="button"
+                    class="btn-primary hero-button"
+                    data-page="calculator"
+                >
+                    Commencer 🚀
                 </button>
+
+
+                <!-- INSTALLATION -->
+
+                <button
+                    type="button"
+                    id="installAppButton"
+                    class="install-app-button"
+                >
+                    📲 Installer l'application
+                </button>
+
+
+                <!-- AIDE INSTALLATION -->
+
+                <div
+                    id="installHelp"
+                    class="install-help"
+                >
+
+                    <h4>
+                        📲 Installer JOSSELL
+                    </h4>
+
+                    <p>
+                        Vous pouvez utiliser JOSSELL
+                        comme une application sur votre
+                        ordinateur ou votre téléphone.
+                    </p>
+
+                    <ol>
+
+                        <li>
+                            Ouvrez JOSSELL avec
+                            Google Chrome ou Microsoft Edge.
+                        </li>
+
+                        <li>
+                            Cliquez sur
+                            <strong>
+                                Installer l'application
+                            </strong>.
+                        </li>
+
+                        <li>
+                            Si le navigateur affiche
+                            <strong>
+                                Installer
+                            </strong>,
+                            confirmez.
+                        </li>
+
+                        <li>
+                            Si aucune fenêtre
+                            d'installation n'apparaît,
+                            ouvrez le menu
+                            <strong>⋮</strong>
+                            du navigateur.
+                        </li>
+
+                        <li>
+                            Choisissez
+                            <strong>
+                                Installer JOSSELL
+                            </strong>
+                            ou
+                            <strong>
+                                Ajouter à l'écran d'accueil
+                            </strong>.
+                        </li>
+
+                    </ol>
+
+                    <button
+                        type="button"
+                        id="closeInstallHelp"
+                        class="btn-secondary"
+                    >
+                        Fermer
+                    </button>
+
+                </div>
 
             </div>
 
@@ -181,11 +256,11 @@
             <div class="hero-stat">
 
                 <span>
-                    Aujourd'hui
+                    Gestion
                 </span>
 
-                <strong id="homeTodayDate">
-                    --/--/----
+                <strong>
+                    Simple & Rapide
                 </strong>
 
             </div>
@@ -193,10 +268,7 @@
         </div>
 
 
-
-        <!-- =================================================
-             INDICATEURS DU JOUR
-        ================================================== -->
+        <!-- DATE -->
 
         <div class="card">
 
@@ -209,17 +281,22 @@
                     </span>
 
                     <h3 class="card-title">
-                        📅 Résumé d'aujourd'hui
+                        📅 Aujourd'hui :
+                        <span id="currentDate">
+                            --/--/----
+                        </span>
                     </h3>
 
                 </div>
 
                 <span class="live-indicator">
-                    ● EN DIRECT
+                    ● En direct
                 </span>
 
             </div>
 
+
+            <!-- RESUME JOURNALIER -->
 
             <div class="summary-grid">
 
@@ -231,19 +308,14 @@
                     </div>
 
                     <span>
-                        Ventes
+                        Ventes du jour
                     </span>
 
                     <strong id="dailySalesSummary">
                         0 FC
                     </strong>
 
-                    <small id="dailySalesChange">
-                        Aujourd'hui
-                    </small>
-
                 </div>
-
 
 
                 <div class="summary-card purchase-card">
@@ -253,19 +325,14 @@
                     </div>
 
                     <span>
-                        Achats
+                        Achats du jour
                     </span>
 
                     <strong id="dailyPurchaseSummary">
                         0 FC
                     </strong>
 
-                    <small>
-                        Marchandises
-                    </small>
-
                 </div>
-
 
 
                 <div class="summary-card expense-card">
@@ -275,19 +342,14 @@
                     </div>
 
                     <span>
-                        Dépenses
+                        Dépenses du jour
                     </span>
 
                     <strong id="dailyExpenseSummary">
                         0 FC
                     </strong>
 
-                    <small>
-                        Charges
-                    </small>
-
                 </div>
-
 
 
                 <div class="summary-card profit-card">
@@ -300,16 +362,12 @@
                         Bénéfice net
                     </span>
 
-                    <strong id="dailyBalanceSummary"
-                            class="positive">
-
+                    <strong
+                        id="dailyBalanceSummary"
+                        class="positive"
+                    >
                         0 FC
-
                     </strong>
-
-                    <small>
-                        Résultat réel
-                    </small>
 
                 </div>
 
@@ -318,10 +376,7 @@
         </div>
 
 
-
-        <!-- =================================================
-             VENTES PAR CATÉGORIE
-        ================================================== -->
+        <!-- VENTES PAR CATEGORIE -->
 
         <div class="card">
 
@@ -330,7 +385,7 @@
                 <div>
 
                     <span class="section-label">
-                        PERFORMANCE
+                        ACTIVITÉ DU JOUR
                     </span>
 
                     <h3 class="card-title">
@@ -339,12 +394,7 @@
 
                 </div>
 
-                <span class="dynamic-badge">
-                    Dynamique
-                </span>
-
             </div>
-
 
             <div id="homeCategorySummary">
 
@@ -355,7 +405,7 @@
                     </div>
 
                     <h4>
-                        Aucune donnée aujourd'hui
+                        Aucune donnée
                     </h4>
 
                     <p>
@@ -369,102 +419,20 @@
 
         </div>
 
-
-
-        <!-- =================================================
-             APERÇU RAPIDE
-        ================================================== -->
-
-        <div class="card">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label">
-                        ACTIVITÉ
-                    </span>
-
-                    <h3 class="card-title">
-                        ⚡ Aperçu rapide
-                    </h3>
-
-                </div>
-
-            </div>
-
-
-            <div class="quick-stats">
-
-
-                <div class="quick-stat">
-
-                    <span>
-                        📅 Jours enregistrés
-                    </span>
-
-                    <strong id="totalRecordedDays">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="quick-stat">
-
-                    <span>
-                        📦 Catégories
-                    </span>
-
-                    <strong id="totalCategories">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="quick-stat">
-
-                    <span>
-                        🛒 Articles
-                    </span>
-
-                    <strong id="totalArticles">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="quick-stat">
-
-                    <span>
-                        🏆 Meilleure catégorie
-                    </span>
-
-                    <strong id="bestCategory">
-                        -
-                    </strong>
-
-                </div>
-
-            </div>
-
-        </div>
-
     </section>
 
 
 
     <!-- =====================================================
-         PAGE CALCULATEUR
-    ====================================================== -->
+         CALCULATEUR
+         ===================================================== -->
 
-    <section id="page-calculator"
-             class="page">
+    <section
+        id="page-calculator"
+        class="page"
+    >
 
-
-        <!-- ENREGISTREMENT -->
+        <!-- ENREGISTRER LA JOURNEE -->
 
         <div class="card">
 
@@ -482,13 +450,6 @@
 
                 </div>
 
-                <span id="calculatorStatus"
-                      class="status-badge">
-
-                    Nouvelle journée
-
-                </span>
-
             </div>
 
 
@@ -505,9 +466,11 @@
                             📅 Date
                         </label>
 
-                        <input type="date"
-                               id="saleDate"
-                               required>
+                        <input
+                            type="date"
+                            id="saleDate"
+                            required
+                        >
 
                     </div>
 
@@ -518,10 +481,12 @@
                             📆 Jour
                         </label>
 
-                        <input type="text"
-                               id="saleDay"
-                               readonly
-                               placeholder="Jour de la semaine">
+                        <input
+                            type="text"
+                            id="saleDay"
+                            readonly
+                            placeholder="Jour de la semaine"
+                        >
 
                     </div>
 
@@ -547,18 +512,15 @@
 
                         </div>
 
-                        <span class="subsection-icon">
+                        <div class="subsection-icon">
                             💰
-                        </span>
+                        </div>
 
                     </div>
 
-
                     <p class="form-help">
-
-                        Entrez les ventes réalisées
-                        dans chaque catégorie.
-
+                        Les ventes sont réparties
+                        automatiquement selon vos catégories.
                     </p>
 
 
@@ -570,11 +532,13 @@
 
                         <div class="money-input">
 
-                            <input type="number"
-                                   id="dailySales"
-                                   min="0"
-                                   placeholder="0"
-                                   readonly>
+                            <input
+                                type="number"
+                                id="dailySales"
+                                min="0"
+                                placeholder="0"
+                                readonly
+                            >
 
                             <span>
                                 FC
@@ -588,7 +552,7 @@
 
 
 
-                <!-- CATÉGORIES -->
+                <!-- CATEGORIES -->
 
                 <div class="card-subsection">
 
@@ -606,17 +570,17 @@
 
                         </div>
 
+                        <span class="dynamic-badge">
+                            Dynamique
+                        </span>
+
                     </div>
 
-
                     <p class="form-help">
-
                         Pour chaque catégorie,
                         indiquez les ventes et les achats.
-
-                        JOSSELL calculera automatiquement
+                        Jossell calcule automatiquement
                         le bénéfice.
-
                     </p>
 
 
@@ -626,26 +590,28 @@
 
 
 
-                <!-- DÉPENSES -->
+                <!-- DEPENSES -->
 
-                <div class="card-subsection expenses-section">
+                <div
+                    class="card-subsection expenses-section"
+                >
 
                     <div class="subsection-header">
 
                         <div>
 
                             <span class="mini-label">
-                                CHARGES
+                                CHARGES DE FONCTIONNEMENT
                             </span>
 
                             <h4>
-                                💸 Dépenses du jour
+                                💸 Dépenses
                             </h4>
 
                         </div>
 
-                        <span class="subsection-icon">
-                            💸
+                        <span class="dynamic-badge">
+                            Personnalisable
                         </span>
 
                     </div>
@@ -653,113 +619,62 @@
 
                     <p class="form-help">
 
-                        Les dépenses sont différentes
-                        des achats de marchandises.
+                        Ajoutez les catégories de dépenses
+                        propres à votre activité.
 
-                        Exemple : transport, salaire,
-                        électricité, communication, etc.
+                        <br>
+
+                        <strong>
+                            Loyer
+                        </strong>
+                        et
+                        <strong>
+                            Transport
+                        </strong>
+                        sont ajoutés par défaut.
 
                     </p>
 
 
-                    <div id="dailyExpensesContainer">
+                    <div
+                        id="expenseCategories"
+                    ></div>
 
 
-                        <div class="expense-input-row">
-
-                            <div class="form-group">
-
-                                <label>
-                                    Catégorie de dépense
-                                </label>
-
-                                <select class="expense-name">
-
-                                    <option value="">
-                                        -- Choisir --
-                                    </option>
-
-                                    <option value="Transport">
-                                        Transport
-                                    </option>
-
-                                    <option value="Salaire">
-                                        Salaire
-                                    </option>
-
-                                    <option value="Electricité">
-                                        Électricité
-                                    </option>
-
-                                    <option value="Loyer">
-                                        Loyer
-                                    </option>
-
-                                    <option value="Communication">
-                                        Communication
-                                    </option>
-
-                                    <option value="Carburant">
-                                        Carburant
-                                    </option>
-
-                                    <option value="Autre">
-                                        Autre
-                                    </option>
-
-                                </select>
-
-                            </div>
+                    <button
+                        type="button"
+                        id="addExpenseCategory"
+                        class="btn-secondary"
+                    >
+                        ➕ Ajouter une catégorie
+                    </button>
 
 
-                            <div class="form-group">
+                    <div
+                        class="daily-financial-summary expense-summary"
+                    >
 
-                                <label>
-                                    Montant
-                                </label>
+                        <div class="financial-line">
 
-                                <div class="money-input">
+                            <span>
+                                💸 Total des dépenses
+                            </span>
 
-                                    <input type="number"
-                                           class="expense-amount"
-                                           min="0"
-                                           placeholder="0">
-
-                                    <span>
-                                        FC
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            <button type="button"
-                                    class="btn-danger-small remove-expense">
-
-                                ✕
-
-                            </button>
+                            <strong
+                                id="dailyExpensesTotal"
+                            >
+                                0 FC
+                            </strong>
 
                         </div>
 
                     </div>
 
-
-                    <button type="button"
-                            id="addExpenseButton"
-                            class="btn-secondary">
-
-                        ➕ Ajouter une dépense
-
-                    </button>
-
-
                 </div>
 
 
 
-                <!-- RÉSUMÉ FINANCIER -->
+                <!-- RESUME FINANCIER -->
 
                 <div class="daily-financial-summary">
 
@@ -770,7 +685,9 @@
                             💵 Total ventes
                         </span>
 
-                        <strong id="totalDailySales">
+                        <strong
+                            id="totalDailySales"
+                        >
                             0 FC
                         </strong>
 
@@ -783,7 +700,9 @@
                             🛒 Total achats
                         </span>
 
-                        <strong id="totalPurchases">
+                        <strong
+                            id="totalPurchases"
+                        >
                             0 FC
                         </strong>
 
@@ -796,20 +715,42 @@
                             💸 Total dépenses
                         </span>
 
-                        <strong id="totalDailyExpenses">
+                        <strong
+                            id="dailyExpensesTotal"
+                        >
                             0 FC
                         </strong>
 
                     </div>
 
 
-                    <div class="financial-line highlight">
+                    <div class="financial-line">
+
+                        <span>
+                            📊 Bénéfice brut
+                        </span>
+
+                        <strong
+                            id="calculatedGrossProfit"
+                        >
+                            0 FC
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        class="financial-line highlight"
+                    >
 
                         <span>
                             📈 Bénéfice net
                         </span>
 
-                        <strong id="calculatedBalance">
+                        <strong
+                            id="calculatedBalance"
+                            class="positive"
+                        >
                             0 FC
                         </strong>
 
@@ -819,13 +760,13 @@
 
 
 
-                <!-- BOUTON -->
+                <!-- ENREGISTRER -->
 
-                <button type="submit"
-                        class="btn-primary btn-large">
-
+                <button
+                    type="submit"
+                    class="btn-primary btn-large"
+                >
                     💾 Enregistrer la journée
-
                 </button>
 
             </form>
@@ -852,36 +793,9 @@
 
                 </div>
 
-                <span id="historyCount"
-                      class="count-badge">
-
-                    0
-
-                </span>
-
             </div>
 
-
-            <div id="dailyHistory">
-
-                <div class="empty-state">
-
-                    <div class="empty-icon">
-                        📜
-                    </div>
-
-                    <h4>
-                        Aucun enregistrement
-                    </h4>
-
-                    <p>
-                        Vos journées enregistrées
-                        apparaîtront ici.
-                    </p>
-
-                </div>
-
-            </div>
+            <div id="dailyHistory"></div>
 
         </div>
 
@@ -890,17 +804,18 @@
 
 
     <!-- =====================================================
-         PAGE GROUPES & ARTICLES
-    ====================================================== -->
+         GROUPES & ARTICLES
+         ===================================================== -->
 
-    <section id="page-groups"
-             class="page">
-
+    <section
+        id="page-groups"
+        class="page"
+    >
 
         <div class="form-grid">
 
 
-            <!-- GROUPE -->
+            <!-- GROUPES -->
 
             <div class="card">
 
@@ -921,8 +836,9 @@
                 </div>
 
 
-                <form id="articleGroupForm">
-
+                <form
+                    id="articleGroupForm"
+                >
 
                     <div class="form-group">
 
@@ -930,10 +846,12 @@
                             Nom du groupe
                         </label>
 
-                        <input type="text"
-                               id="groupName"
-                               placeholder="Ex : Boissons, Riz, Vêtements..."
-                               required>
+                        <input
+                            type="text"
+                            id="groupName"
+                            placeholder="Ex: Boissons, Riz, Vêtements..."
+                            required
+                        >
 
                     </div>
 
@@ -944,18 +862,20 @@
                             Description
                         </label>
 
-                        <input type="text"
-                               id="groupDescription"
-                               placeholder="Description du groupe">
+                        <input
+                            type="text"
+                            id="groupDescription"
+                            placeholder="Description du groupe"
+                        >
 
                     </div>
 
 
-                    <button type="submit"
-                            class="btn-primary">
-
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
                         ➕ Ajouter le groupe
-
                     </button>
 
                 </form>
@@ -964,7 +884,7 @@
 
 
 
-            <!-- ARTICLE -->
+            <!-- ARTICLES -->
 
             <div class="card">
 
@@ -985,8 +905,9 @@
                 </div>
 
 
-                <form id="articleForm">
-
+                <form
+                    id="articleForm"
+                >
 
                     <div class="form-group">
 
@@ -994,8 +915,10 @@
                             Groupe parent
                         </label>
 
-                        <select id="articleGroupSelect"
-                                required>
+                        <select
+                            id="articleGroupSelect"
+                            required
+                        >
 
                             <option value="">
                                 -- Sélectionner un groupe --
@@ -1012,10 +935,12 @@
                             Nom de l'article
                         </label>
 
-                        <input type="text"
-                               id="articleName"
-                               placeholder="Ex : Sac de riz"
-                               required>
+                        <input
+                            type="text"
+                            id="articleName"
+                            placeholder="Ex: Sac de riz"
+                            required
+                        >
 
                     </div>
 
@@ -1028,10 +953,12 @@
                                 Quantité
                             </label>
 
-                            <input type="number"
-                                   id="articleQuantity"
-                                   min="0"
-                                   placeholder="0">
+                            <input
+                                type="number"
+                                id="articleQuantity"
+                                min="0"
+                                placeholder="0"
+                            >
 
                         </div>
 
@@ -1044,10 +971,12 @@
 
                             <div class="money-input">
 
-                                <input type="number"
-                                       id="articlePrice"
-                                       min="0"
-                                       placeholder="0">
+                                <input
+                                    type="number"
+                                    id="articlePrice"
+                                    min="0"
+                                    placeholder="0"
+                                >
 
                                 <span>
                                     FC
@@ -1060,11 +989,11 @@
                     </div>
 
 
-                    <button type="submit"
-                            class="btn-primary">
-
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                    >
                         ➕ Ajouter l'article
-
                     </button>
 
                 </form>
@@ -1084,45 +1013,18 @@
                 <div>
 
                     <span class="section-label">
-                        INVENTAIRE
+                        VOTRE STOCK
                     </span>
 
                     <h3 class="card-title">
-                        📦 Groupes et articles
+                        📦 Groupes et Articles
                     </h3>
 
                 </div>
 
-                <span id="inventoryCount"
-                      class="count-badge">
-
-                    0
-
-                </span>
-
             </div>
 
-
-            <div id="articlesList">
-
-                <div class="empty-state">
-
-                    <div class="empty-icon">
-                        📦
-                    </div>
-
-                    <h4>
-                        Aucun article
-                    </h4>
-
-                    <p>
-                        Créez votre première catégorie
-                        et ajoutez vos articles.
-                    </p>
-
-                </div>
-
-            </div>
+            <div id="articlesList"></div>
 
         </div>
 
@@ -1131,14 +1033,16 @@
 
 
     <!-- =====================================================
-         PAGE RAPPORTS
-    ====================================================== -->
+         RAPPORTS
+         ===================================================== -->
 
-    <section id="page-reports"
-             class="page">
+    <section
+        id="page-reports"
+        class="page"
+    >
 
 
-        <!-- RÉSUMÉ -->
+        <!-- RESULTATS -->
 
         <div class="card">
 
@@ -1147,109 +1051,192 @@
                 <div>
 
                     <span class="section-label">
-                        ANALYSE FINANCIÈRE
+                        RAPPORTS AUTOMATIQUES
                     </span>
 
                     <h3 class="card-title">
-                        📊 Résumé général
+                        📊 Résultats
                     </h3>
 
                 </div>
 
-                <span class="dynamic-badge">
-                    Automatique
+                <span class="live-indicator">
+                    ● Actualisé automatiquement
                 </span>
 
             </div>
 
 
-            <div class="summary-grid">
+            <!-- SEMAINE -->
 
+            <div
+                class="report-period-card weekly-report-card"
+            >
 
-                <div class="summary-card">
+                <div class="report-period-title">
 
-                    <div class="summary-icon">
-                        📅
-                    </div>
-
-                    <span>
-                        Ventes semaine
+                    <span class="mini-label">
+                        CETTE SEMAINE
                     </span>
 
-                    <strong id="weeklySales">
-                        0 FC
-                    </strong>
+                    <h3>
+                        🗓️ Résultat hebdomadaire
+                    </h3>
 
                 </div>
 
 
-                <div class="summary-card">
+                <div class="report-highlight-grid">
 
-                    <div class="summary-icon">
-                        💵
+
+                    <div>
+
+                        <span>
+                            💵 Ventes
+                        </span>
+
+                        <strong id="weeklySales">
+                            0 FC
+                        </strong>
+
                     </div>
 
-                    <span>
-                        Ventes mois
+
+                    <div>
+
+                        <span>
+                            🛒 Achats
+                        </span>
+
+                        <strong id="weeklyPurchases">
+                            0 FC
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            💸 Dépenses
+                        </span>
+
+                        <strong id="weeklyExpenses">
+                            0 FC
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            📈 Bénéfice net
+                        </span>
+
+                        <strong
+                            id="weeklyNetProfit"
+                            class="positive"
+                        >
+                            0 FC
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- MOIS -->
+
+            <div
+                class="report-period-card monthly-report-card"
+            >
+
+                <div class="report-period-title">
+
+                    <span class="mini-label">
+                        CE MOIS
                     </span>
 
-                    <strong id="monthlySales">
-                        0 FC
-                    </strong>
+                    <h3>
+                        📅 Résultat mensuel
+                    </h3>
 
                 </div>
 
 
-                <div class="summary-card">
+                <div class="report-highlight-grid">
 
-                    <div class="summary-icon">
-                        🛒
+
+                    <div>
+
+                        <span>
+                            💵 Ventes du mois
+                        </span>
+
+                        <strong id="monthlySales">
+                            0 FC
+                        </strong>
+
                     </div>
 
-                    <span>
-                        Achats mois
-                    </span>
 
-                    <strong id="monthlyPurchases">
-                        0 FC
-                    </strong>
+                    <div>
 
-                </div>
+                        <span>
+                            🛒 Achats du mois
+                        </span>
 
+                        <strong id="monthlyPurchases">
+                            0 FC
+                        </strong>
 
-                <div class="summary-card">
-
-                    <div class="summary-icon">
-                        💸
                     </div>
 
-                    <span>
-                        Dépenses mois
-                    </span>
 
-                    <strong id="monthlyExpenses">
-                        0 FC
-                    </strong>
+                    <div>
 
-                </div>
+                        <span>
+                            💸 Dépenses du mois
+                        </span>
 
+                        <strong id="monthlyExpenses">
+                            0 FC
+                        </strong>
 
-                <div class="summary-card profit-card">
-
-                    <div class="summary-icon">
-                        📈
                     </div>
 
-                    <span>
-                        Bénéfice net mois
-                    </span>
 
-                    <strong id="monthlyTotal"
-                            class="positive">
+                    <div>
 
-                        0 FC
+                        <span>
+                            📊 Bénéfice brut
+                        </span>
 
-                    </strong>
+                        <strong id="monthlyGrossProfit">
+                            0 FC
+                        </strong>
+
+                    </div>
+
+
+                    <div class="monthly-main-result">
+
+                        <span>
+                            📈 BÉNÉFICE NET DU MOIS
+                        </span>
+
+                        <strong
+                            id="monthlyNetProfit"
+                            class="positive"
+                        >
+                            0 FC
+                        </strong>
+
+                    </div>
 
                 </div>
 
@@ -1259,95 +1246,7 @@
 
 
 
-        <!-- RAPPORT SEMAINE -->
-
-        <div class="card weekly-report-card">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-label">
-                        RAPPORT HEBDOMADAIRE
-                    </span>
-
-                    <h3 class="card-title">
-                        📅 Résultat de la semaine
-                    </h3>
-
-                </div>
-
-                <span id="weekRange">
-                    Cette semaine
-                </span>
-
-            </div>
-
-
-            <div class="report-highlight-grid">
-
-
-                <div>
-
-                    <span>
-                        Total ventes
-                    </span>
-
-                    <strong id="weeklyReportSales">
-                        0 FC
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        Total achats
-                    </span>
-
-                    <strong id="weeklyReportPurchases">
-                        0 FC
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        Dépenses
-                    </span>
-
-                    <strong id="weeklyReportExpenses">
-                        0 FC
-                    </strong>
-
-                </div>
-
-
-                <div>
-
-                    <span>
-                        Bénéfice net
-                    </span>
-
-                    <strong id="weeklyReportProfit">
-                        0 FC
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div id="weeklyReportDays"></div>
-
-        </div>
-
-
-
-        <!-- CATÉGORIES -->
+        <!-- RESULTATS PAR CATEGORIE -->
 
         <div class="card">
 
@@ -1356,7 +1255,7 @@
                 <div>
 
                     <span class="section-label">
-                        PERFORMANCE
+                        ACTIVITÉ
                     </span>
 
                     <h3 class="card-title">
@@ -1367,24 +1266,13 @@
 
             </div>
 
-
-            <div id="categoryReports">
-
-                <div class="empty-state">
-
-                    <p>
-                        📊 Aucun résultat disponible.
-                    </p>
-
-                </div>
-
-            </div>
+            <div id="categoryReports"></div>
 
         </div>
 
 
 
-        <!-- FILTRE MOIS -->
+        <!-- DEPENSES PAR CATEGORIE -->
 
         <div class="card">
 
@@ -1393,11 +1281,37 @@
                 <div>
 
                     <span class="section-label">
-                        ANALYSE MENSUELLE
+                        CHARGES
                     </span>
 
                     <h3 class="card-title">
-                        📆 Ventes jour par jour
+                        💸 Dépenses par catégorie
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <div id="expenseReports"></div>
+
+        </div>
+
+
+
+        <!-- RAPPORT JOURNALIER -->
+
+        <div class="card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        ANALYSE
+                    </span>
+
+                    <h3 class="card-title">
+                        📅 Ventes jour par jour
                     </h3>
 
                 </div>
@@ -1410,21 +1324,23 @@
                 <div class="form-group">
 
                     <label for="reportMonth">
-                        Choisir le mois
+                        Mois
                     </label>
 
-                    <input type="month"
-                           id="reportMonth">
+                    <input
+                        type="month"
+                        id="reportMonth"
+                    >
 
                 </div>
 
 
-                <button type="button"
-                        id="refreshReports"
-                        class="btn-primary">
-
+                <button
+                    type="button"
+                    id="refreshReports"
+                    class="btn-primary"
+                >
                     🔄 Actualiser
-
                 </button>
 
             </div>
@@ -1445,11 +1361,11 @@
                 <div>
 
                     <span class="section-label">
-                        CLÔTURE DU MOIS
+                        SYNTHÈSE
                     </span>
 
                     <h3 class="card-title">
-                        🧾 Résultat final
+                        🧾 Total du mois
                     </h3>
 
                 </div>
@@ -1460,7 +1376,7 @@
             <div class="summary-grid">
 
 
-                <div class="summary-card">
+                <div class="summary-card sales-card">
 
                     <span>
                         Total ventes
@@ -1473,7 +1389,7 @@
                 </div>
 
 
-                <div class="summary-card">
+                <div class="summary-card purchase-card">
 
                     <span>
                         Total achats
@@ -1486,7 +1402,7 @@
                 </div>
 
 
-                <div class="summary-card">
+                <div class="summary-card expense-card">
 
                     <span>
                         Total dépenses
@@ -1505,11 +1421,11 @@
                         Bénéfice net
                     </span>
 
-                    <strong id="finalMonthlyProfit"
-                            class="positive">
-
+                    <strong
+                        id="finalMonthlyProfit"
+                        class="positive"
+                    >
                         0 FC
-
                     </strong>
 
                 </div>
@@ -1520,7 +1436,7 @@
 
 
 
-        <!-- CONTRÔLE -->
+        <!-- CONTROLE COMPTABLE -->
 
         <div class="card">
 
@@ -1578,7 +1494,7 @@
                         </h4>
 
                         <p>
-                            Argent dépensé pour acheter
+                            Argent utilisé pour acheter
                             les marchandises.
                         </p>
 
@@ -1600,9 +1516,8 @@
                         </h4>
 
                         <p>
-                            Charges comme transport,
-                            salaire, loyer, électricité,
-                            communication, etc.
+                            Loyer, transport, électricité,
+                            salaire et autres charges.
                         </p>
 
                     </div>
@@ -1624,7 +1539,7 @@
 
                         <p>
                             <strong>
-                                Ventes − Achats − Dépenses
+                                Ventes - Achats - Dépenses
                             </strong>
                         </p>
 
@@ -1633,8 +1548,17 @@
                 </div>
 
 
-                <div id="accountingAlert"
-                     class="accounting-alert">
+                <div class="accounting-alert">
+
+                    <strong>
+                        💡 Formule utilisée
+                    </strong>
+
+                    <p>
+                        Bénéfice brut = Ventes - Achats
+                        <br>
+                        Bénéfice net = Ventes - Achats - Dépenses
+                    </p>
 
                 </div>
 
@@ -1647,12 +1571,13 @@
 
 
     <!-- =====================================================
-         PAGE AIDE
-    ====================================================== -->
+         AIDE
+         ===================================================== -->
 
-    <section id="page-help"
-             class="page">
-
+    <section
+        id="page-help"
+        class="page"
+    >
 
         <div class="card">
 
@@ -1690,8 +1615,11 @@
 
                         <p>
                             Cliquez sur
-                            <strong>Commencer</strong>
-                            ou ouvrez le Calculateur.
+                            <strong>
+                                Commencer
+                            </strong>
+                            depuis l'accueil
+                            pour enregistrer votre journée.
                         </p>
 
                     </div>
@@ -1712,9 +1640,11 @@
                         </h4>
 
                         <p>
-                            Dans Groupes & Articles,
-                            créez vos catégories
-                            de produits.
+                            Allez dans
+                            <strong>
+                                Groupes & Articles
+                            </strong>
+                            pour créer vos catégories.
                         </p>
 
                     </div>
@@ -1735,8 +1665,8 @@
                         </h4>
 
                         <p>
-                            Indiquez combien vous avez
-                            vendu dans chaque catégorie.
+                            Indiquez les montants vendus
+                            dans chaque catégorie.
                         </p>
 
                     </div>
@@ -1757,9 +1687,8 @@
                         </h4>
 
                         <p>
-                            Indiquez combien vous avez
-                            dépensé pour acheter vos
-                            marchandises.
+                            Indiquez les montants dépensés
+                            pour acheter vos marchandises.
                         </p>
 
                     </div>
@@ -1780,33 +1709,9 @@
                         </h4>
 
                         <p>
-                            Ajoutez les dépenses comme
-                            transport, salaire, loyer,
-                            électricité, etc.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="help-item">
-
-                    <div class="help-icon">
-                        📈
-                    </div>
-
-                    <div>
-
-                        <h4>
-                            Calcul du bénéfice
-                        </h4>
-
-                        <p>
-                            <strong>
-                                Bénéfice net =
-                                Ventes − Achats − Dépenses
-                            </strong>
+                            Ajoutez vos propres catégories :
+                            loyer, transport, électricité,
+                            salaire, etc.
                         </p>
 
                     </div>
@@ -1823,13 +1728,12 @@
                     <div>
 
                         <h4>
-                            Rapport hebdomadaire
+                            Résultat hebdomadaire
                         </h4>
 
                         <p>
-                            JOSSELL rassemble les journées
-                            de la semaine pour calculer
-                            automatiquement le résultat.
+                            Jossell additionne automatiquement
+                            les opérations de la semaine.
                         </p>
 
                     </div>
@@ -1840,19 +1744,18 @@
                 <div class="help-item">
 
                     <div class="help-icon">
-                        📆
+                        📅
                     </div>
 
                     <div>
 
                         <h4>
-                            Rapport mensuel
+                            Résultat mensuel
                         </h4>
 
                         <p>
-                            Toutes les journées du mois
-                            sont regroupées pour produire
-                            le résultat mensuel.
+                            Jossell regroupe les résultats
+                            de tout le mois.
                         </p>
 
                     </div>
@@ -1873,33 +1776,8 @@
                         </h4>
 
                         <p>
-                            Vos données restent enregistrées
-                            dans le navigateur grâce au
-                            stockage local.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="help-item">
-
-                    <div class="help-icon">
-                        🔐
-                    </div>
-
-                    <div>
-
-                        <h4>
-                            Vos informations
-                        </h4>
-
-                        <p>
-                            JOSSELL utilise vos données
-                            uniquement pour effectuer
-                            les calculs et produire
-                            les rapports.
+                            Vos données sont conservées
+                            localement dans le navigateur.
                         </p>
 
                     </div>
@@ -1912,7 +1790,76 @@
 
 
 
-        <!-- SIGNATURE -->
+        <!-- FORMULE -->
+
+        <div class="card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        CALCUL
+                    </span>
+
+                    <h3 class="card-title">
+                        🧮 Comment Jossell calcule ?
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="accounting-check">
+
+
+                <div class="accounting-alert">
+
+                    <strong>
+                        📊 Bénéfice brut
+                    </strong>
+
+                    <p>
+                        Ventes - Achats
+                    </p>
+
+                </div>
+
+
+                <div class="accounting-alert">
+
+                    <strong>
+                        📈 Bénéfice net
+                    </strong>
+
+                    <p>
+                        Ventes - Achats - Dépenses
+                    </p>
+
+                </div>
+
+
+                <div class="accounting-alert warning">
+
+                    <strong>
+                        ⚠️ Important
+                    </strong>
+
+                    <p>
+                        Pour obtenir des résultats fiables,
+                        enregistrez vos opérations chaque jour.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- DEVELOPPEUR -->
 
         <div class="developer-card">
 
@@ -1920,35 +1867,27 @@
                 JM
             </div>
 
-
             <div>
 
                 <span>
-                    APPLICATION CONÇUE AVEC PROFESSIONNALISME
+                    APPLICATION CONÇUE PAR
                 </span>
 
                 <h3>
-                    JOSSELL - MA GESTION
+                    Joseph Monsemvula
                 </h3>
 
                 <p>
-                    Conçu par
-                    <strong>
-                        Joseph Monsemvula
-                    </strong>
+                    +243897997253
                 </p>
 
                 <p>
-                    📞
-                    <strong>
-                        +243 897 997 253
-                    </strong>
+                    JOSSELL - MA GESTION
                 </p>
 
             </div>
 
         </div>
-
 
     </section>
 
@@ -1956,7 +1895,7 @@
 
     <!-- =====================================================
          PIED DE PAGE
-    ====================================================== -->
+         ===================================================== -->
 
     <footer class="app-footer">
 
@@ -1967,13 +1906,11 @@
         </p>
 
         <span>
-            Conçu par Joseph Monsemvula
-            · +243 897 997 253
+            Conçue par Joseph Monsemvula
         </span>
 
         <small>
-            © <span id="currentYear"></span>
-            Tous droits réservés.
+            +243897997253
         </small>
 
     </footer>
@@ -1982,13 +1919,11 @@
 </div>
 
 
-
 <!-- =====================================================
      JAVASCRIPT
-====================================================== -->
+     ===================================================== -->
 
 <script src="script.js"></script>
 
 </body>
-
 </html>
