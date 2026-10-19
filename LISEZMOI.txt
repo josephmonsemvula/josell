@@ -1,6 +1,6 @@
 JOSSELL – MA GESTION  |  Conçu par Joseph Monsemvula
 
-1) VOIR L'APPLICATION : double-cliquez sur index.html puis "Aperçu développeur".
+1) VOIR L'APPLICATION : double-cliquez sur index.html (Commencer pour tester).
 
 2) INSTALLATION (bouton Télécharger) : le dossier doit être EN LIGNE en HTTPS.
    Netlify : app.netlify.com/drop > glissez le dossier JOSSELL-MA-GESTION > envoyez le lien.
