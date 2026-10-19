@@ -1,16 +1,2 @@
-{
-  "name": "JOSSELL - MA GESTION",
-  "short_name": "Jossell",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
-  "icons": [
-    {
-      "src": "logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
-}
+{"id":"./index.html","name":"JOSSELL – MA GESTION","short_name":"JOSSELL","description":"Gestion des ventes, achats, dépenses et bénéfices.","lang":"fr","start_url":"./index.html","scope":"./","display":"standalone","orientation":"portrait","background_color":"#0b1f4d","theme_color":"#0b1f4d","categories":["business","finance"],
+ "icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}
