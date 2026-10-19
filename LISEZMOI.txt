@@ -8,4 +8,4 @@ JOSSELL – MA GESTION  |  Conçu par Joseph Monsemvula
 
 3) ADMINISTRATION (dans l'application) : Plus > 10 appuis rapides sur le logo JM > code secret.
    Générez le code d'activation du client (son téléphone + durée) et envoyez-le par WhatsApp.
-   Changez "JOSSELL-CHANGE-MOI-2026" dans app.js avant la mise en ligne.
+   Changez "JOSSELL-CHANGE-MOI-2026" dans index.html avant la mise en ligne.

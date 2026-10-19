@@ -3,7 +3,74 @@
 <meta name="theme-color" content="#0b1f4d"><title>JOSSELL – MA GESTION</title>
 <link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
-<link rel="stylesheet" href="style.css"></head><body>
+<style>
+:root{--p:#2563eb;--g:#f5b301;--bg:#eef3fb;--c:#fff;--t:#0f172a;--m:#64748b;--ok:#16a34a;--no:#dc2626}
+body.dark{--bg:#0b1220;--c:#15233b;--t:#e8eefc;--m:#9fb0cf}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#0b1f4d;color:var(--t);display:flex;justify-content:center}
+.scr{display:none;width:100%;max-width:480px;min-height:100vh;min-height:100dvh;background:var(--bg);flex-direction:column;animation:in .45s ease}
+.scr.show{display:flex}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pu{0%,100%{box-shadow:0 0 0 0 #f5b30088}50%{box-shadow:0 0 0 14px #f5b30000}}
+.hero{background:linear-gradient(160deg,#0b1f4d,#1d4ed8 70%,#3b82f6);color:#fff;align-items:center;justify-content:center;text-align:center;padding:32px 24px;gap:16px}
+.hero p{opacity:.88}.hero h1{font-size:26px;line-height:1.2}
+.logo{width:84px;height:84px;border-radius:24px;background:linear-gradient(135deg,var(--g),#ff9d00);color:#0b1f4d;font:800 34px system-ui;display:grid;place-items:center;box-shadow:0 10px 30px #0006}
+.logo.sm{width:64px;height:64px;font-size:26px;border-radius:18px;margin:0 auto}
+.badge{background:#ffffff22;border:1px solid #ffffff44;padding:6px 12px;border-radius:99px;font-size:13px;font-weight:600}
+header .badge{background:#ffffff22;color:#fff}
+.feats{list-style:none;display:grid;gap:8px;text-align:left;background:#ffffff14;padding:14px 18px;border-radius:16px}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:14px;background:var(--p);color:#fff;font:700 16px inherit;text-align:center;text-decoration:none;cursor:pointer;transition:transform .15s}
+.btn:active{transform:scale(.97)}.btn.gold{background:linear-gradient(135deg,var(--g),#ff9d00);color:#0b1f4d}
+.btn.wa{background:#16a34a}.btn.sm{width:auto;padding:10px 14px}.pulse{animation:pu 1.8s infinite}
+small{color:inherit;opacity:.75}.hero a,.by{color:#fff;font-size:12px}.err{color:var(--no);font-weight:600}
+.form{padding:28px 22px;gap:12px;justify-content:center;color:var(--t)}.form h2,.form p{text-align:center}.form p{color:var(--m)}
+input,select{width:100%;padding:13px;border:1.5px solid #cbd5e1;border-radius:12px;font:15px inherit;background:var(--c);color:var(--t)}
+input:focus,select:focus{outline:0;border-color:var(--p)}
+.chk{display:flex;gap:10px;font-size:13px;color:var(--m)}.chk input{width:auto}
+.link{background:0;border:0;color:var(--p);font:600 14px inherit;cursor:pointer}.form a:not(.btn){text-align:center;color:var(--p)}
+header{background:linear-gradient(135deg,#0b1f4d,#1d4ed8);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 18px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+header b{display:block;font-size:17px}header small{opacity:.7;font-size:11px}
+main{flex:1;padding:14px 14px 96px;display:grid;gap:14px;align-content:start}
+.card{background:var(--c);border-radius:18px;padding:16px;display:grid;gap:10px;box-shadow:0 4px 18px #0b1f4d14;animation:in .35s}
+h3{font-size:16px}h4{margin-top:6px;color:var(--m);font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+.hi{font-size:20px}.hi small{display:block;color:var(--m);font-size:13px;text-transform:capitalize}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.k{border-radius:16px;padding:14px;color:#fff;display:grid;gap:4px}.k span{font-size:12px;opacity:.9}.k b{font-size:17px}
+.k.a{background:linear-gradient(135deg,#16a34a,#22c55e)}.k.b{background:linear-gradient(135deg,#ea580c,#fb923c)}.k.c{background:linear-gradient(135deg,#dc2626,#f87171)}.k.d{background:linear-gradient(135deg,#1d4ed8,#60a5fa)}
+.row{display:flex;gap:8px;align-items:center}.row b{flex:1;font-weight:600;min-width:0}.row input{width:104px;padding:10px}.row span{font-weight:700}
+.tots{background:var(--bg);border-radius:14px;padding:10px;display:grid;gap:6px}.tl{display:flex;justify-content:space-between}.tl.b{font-weight:800;border-top:1px dashed #94a3b8;padding-top:6px}
+.neg{color:var(--no)}.pos{color:var(--ok)}.empty{color:var(--m);text-align:center;padding:10px}.sub{color:var(--m);text-transform:capitalize}
+.ic{border:0;background:var(--bg);border-radius:10px;padding:8px;cursor:pointer}
+.ch{width:100%;color:var(--m)}.lg{display:flex;gap:14px;font-size:12px;color:var(--m)}
+.hb{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:13px}.hb i{grid-column:1/3;height:8px;border-radius:9px;background:linear-gradient(90deg,var(--p),#60a5fa)}
+.ins{background:var(--bg);border-radius:12px;padding:10px;font-size:14px}
+.sw{display:flex;justify-content:space-between;align-items:center;gap:10px}.sw input{width:22px;height:22px}.sw select{width:100px}
+details{background:var(--bg);border-radius:12px;padding:10px}summary{font-weight:600;cursor:pointer}details p{margin-top:6px;color:var(--m)}
+.sign{background:linear-gradient(135deg,#0b1f4d,#1d4ed8);color:#fff;border-radius:18px;padding:16px;text-align:center}
+nav{position:fixed;bottom:0;width:100%;max-width:480px;display:flex;background:var(--c);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 22px #0b1f4d22;z-index:6}
+nav button{flex:1;border:0;background:0;color:var(--m);font:600 11px inherit;padding:6px 0;display:grid;gap:2px;cursor:pointer}
+nav button i{font-style:normal;font-size:20px}nav button.on{color:var(--p)}
+#toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,30px);background:#0f172a;color:#fff;padding:12px 18px;border-radius:14px;opacity:0;transition:.3s;z-index:20;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media print{header,nav,#toast,.noprint{display:none!important}body{background:#fff}.scr{max-width:100%}}
+/* ---- Design v2 : plus de blancs ---- */
+body{background:linear-gradient(160deg,#0b1f4d,#1d4ed8)}
+.scr{background:linear-gradient(180deg,#dfe9fb,#f4f8ff 45%,#dfe9fb)}
+body.dark .scr{background:linear-gradient(180deg,#0b1220,#101b30)}
+#app,nav{max-width:1000px}
+main{grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr))}
+main>.hi,main>.kp,main>.sign,main>.btn,main>.full{grid-column:1/-1}
+.card{border-top:4px solid var(--p)}
+main>.card:nth-child(3n+2){border-top-color:#16a34a}main>.card:nth-child(3n){border-top-color:var(--g)}
+label{font-size:13px;font-weight:600;color:var(--m)}
+.f{flex:1;display:grid;gap:4px}.row .f input{width:100%}
+.grp{background:linear-gradient(135deg,#2563eb18,#60a5fa18);border-radius:14px;padding:10px;display:grid;gap:8px}
+.empty{border:2px dashed #94a3b8aa;border-radius:14px}
+.form{background:linear-gradient(160deg,#0b1f4d,#1d4ed8 70%,#3b82f6);color:#fff}
+.form p,.form .chk{color:#dbeafe}.form .err{color:#fecaca}.form a:not(.btn),.form .link{color:#fff}
+#dlmsg{display:block;font-size:14px;background:#ffffff22;border-radius:12px;padding:10px 12px;opacity:1}
+
+</style></head><body>
 
 <div id="landing" class="scr hero show">
  <div class="logo">JM</div>
@@ -46,4 +113,142 @@
  <nav id="nav"></nav>
 </div>
 <div id="toast"></div>
-<script src="app.js"></script></body></html>
+<script>
+'use strict';
+const $=s=>document.querySelector(s),LS='jm_v1',WA='243897997253';
+const H=(s,seed=7)=>{let a=0xdeadbeef^seed,b=0x41c6ce57^seed;for(let i=0,c;i<s.length;i++){c=s.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^a>>>16,2246822507)^Math.imul(b^b>>>13,3266489909);b=Math.imul(b^b>>>16,2246822507)^Math.imul(a^a>>>13,3266489909);return 4294967296*(2097151&b)+(a>>>0)};
+const CODE=(ph,pl,ym)=>'JM-'+pl+ym+'-'+H('JOSSELL-CHANGE-MOI-2026|'+ph.slice(-9)+'|'+pl+ym).toString(36).toUpperCase().slice(-8).padStart(8,'0');
+const E=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';'),pad=n=>String(n).padStart(2,'0'),sum=o=>Object.values(o||{}).reduce((a,b)=>a+(+b||0),0),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const fd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),today=()=>fd(new Date());
+let db=JSON.parse(localStorage.getItem(LS)||'null'),page='home',un=0,hid=0,day=today(),per='m',dp;
+const sv=()=>localStorage.setItem(LS,JSON.stringify(db)),now=()=>Math.max(Date.now(),db?db.u.seen:0);
+const M=n=>db.set.priv?'••••':Math.round(n).toLocaleString('fr-FR')+' '+db.set.cur;
+const show=id=>document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('show',e.id===id));
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2800)};
+const wa=()=>'https://wa.me/'+WA+'?text='+encodeURIComponent('Bonjour Joseph, je souhaite activer JOSSELL – MA GESTION.'+(db?` Nom : ${db.u.name}, Entreprise : ${db.u.co}, Tél : ${db.u.ph}`:''));
+const dates=n=>Array.from({length:n},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(n-1-i));return fd(d)});
+const tot=d=>{const x=db.d[d]||{},s=sum(x.s),p=sum(x.p),e=sum(x.e);return{s,p,e,g:s-p,n:s-p-e}};
+
+/* ---------- Installation obligatoire ---------- */
+const std=matchMedia('(display-mode: standalone)').matches||navigator.standalone||/preview/.test(location.search);
+if(['localhost','127.0.0.1',''].includes(location.hostname))$('#dev').hidden=false;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+const okInst=()=>{$('#dlmsg').innerHTML='✅ Installation réussie ! Ouvrez <b>JOSSELL</b> depuis votre bureau ou votre écran d’accueil.';$('#dl').hidden=true};
+addEventListener('appinstalled',okInst);
+$('#dl').onclick=async()=>{if(dp){dp.prompt();const r=await dp.userChoice;dp=null;if(r.outcome==='accepted')okInst();return}
+ const ua=navigator.userAgent;let m;
+ if(location.protocol==='file:')m='⚠️ Ce fichier est ouvert depuis l’ordinateur. Mettez le dossier en ligne (lien HTTPS), puis ouvrez ce lien : le téléchargement fonctionnera.';
+ else if(/FBAN|FBAV|Instagram|WhatsApp|Snapchat|TikTok|; wv\)/i.test(ua))m='Ce lien est ouvert dans une application. Touchez <b>⋮</b> puis <b>« Ouvrir dans Chrome »</b>, puis touchez de nouveau Télécharger.';
+ else if(/iphone|ipad|ipod/i.test(ua))m='Sur iPhone (Safari) : touchez <b>Partager ⬆️</b> puis <b>« Sur l’écran d’accueil »</b>.';
+ else m='Patientez 3 secondes puis réessayez. Sinon touchez <b>⋮</b> (ou l’icône 📥 de la barre d’adresse) puis <b>« Installer l’application »</b>.';
+ $('#dlmsg').innerHTML=m};
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+/* ---------- Compte, essai, licence ---------- */
+const left=()=>Math.ceil((Math.max(db.u.created+3*864e5,db.u.until||0)-now())/864e5);
+function boot(){if(db)document.body.classList.toggle('dark',!!db.set.dark);if(!std)return show('landing');if(!db)return show('setup');if(!un)return show('login');gate()}
+function gate(){db.u.seen=now();sv();if(left()<=0){$('#lwa').href=wa();return show('lock')}
+ show('app');render();if(db.set.notif&&!db.d[today()]){setTimeout(()=>toast('🔔 Pensez à enregistrer la journée'),900);if('Notification'in window&&Notification.permission=='granted')new Notification('JOSSELL',{body:'Pensez à enregistrer la journée.'})}}
+$('#sgo').onclick=()=>{const n=$('#sn').value.trim(),c=$('#sc').value.trim(),p=$('#sp').value.replace(/\D/g,''),a=$('#s1').value,er=m=>$('#serr').textContent=m;
+ if(!n||!c)return er('Nom et entreprise obligatoires.');if(p.length<8)return er('Numéro de téléphone invalide.');if(a.length<4)return er('Mot de passe trop court.');if(a!==$('#s2').value)return er('Les mots de passe ne correspondent pas.');if(!$('#st').checked)return er('Veuillez accepter les conditions.');
+ db={u:{name:n,co:c,ph:p,pw:H(a+p),created:Date.now(),seen:Date.now(),until:0,used:[]},g:[],d:{},xc:[],set:{cur:'FC',dark:0,priv:0,notif:0,alert:1,lock:1}};sv();un=1;gate()};
+$('#lgo').onclick=()=>{if(H($('#lp').value+db.u.ph)===db.u.pw){un=1;$('#lp').value='';gate()}else $('#lerr').textContent='Mot de passe incorrect.'};
+$('#lp').onkeydown=e=>e.key=='Enter'&&$('#lgo').click();
+$('#lfor').onclick=e=>{e.preventDefault();open(wa(),'_blank')};
+function activate(v,el){const m=v.trim().toUpperCase().match(/^JM-([ABCD])(\d{4})-([0-9A-Z]{8})$/),c=m&&CODE(db.u.ph,m[1],m[2]);
+ if(!m||c!==m[0]||db.u.used.includes(c)){el.textContent='Code invalide ou déjà utilisé.';return}
+ db.u.until=Math.max(now(),db.u.created+3*864e5,db.u.until)+{A:30,B:90,C:180,D:365}[m[1]]*864e5;db.u.used.push(c);sv();toast('✅ Activation réussie');gate()}
+$('#lac').onclick=()=>activate($('#lc').value,$('#lerr2'));
+const backup=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db)],{type:'application/json'}));a.download='jossell-sauvegarde-'+today()+'.json';a.click()};
+$('#lexp').onclick=backup;
+document.addEventListener('visibilitychange',()=>{if(document.hidden)hid=Date.now();else if(un&&db.set.lock&&Date.now()-hid>18e4){un=0;boot()}});
+
+/* ---------- Graphiques ---------- */
+function chart(L,A,B){const w=320,h=120,mx=Math.max(1,...A,...B),bw=w/L.length;let s=`<svg viewBox="0 0 ${w} ${h+16}" class="ch">`;
+ L.forEach((l,i)=>{const a=A[i]/mx*h,b=B[i]/mx*h,x=i*bw+bw*.14,k=bw*.34;s+=`<rect x="${x}" y="${h-a}" width="${k}" height="${a}" rx="3" fill="#22c55e"/><rect x="${x+k+1}" y="${h-b}" width="${k}" height="${b}" rx="3" fill="#f97316"/><text x="${i*bw+bw/2}" y="${h+12}" text-anchor="middle" font-size="8" fill="currentColor">${l}</text>`});
+ return s+'</svg><div class="lg"><span>🟩 Ventes</span><span>🟧 Achats + dépenses</span></div>'}
+const hb=r=>r.filter(x=>x[1]>0).map(x=>`<div class="hb"><span>${E(x[0])}</span><b>${M(x[1])}</b><i style="width:${x[1]/Math.max(...r.map(y=>y[1]))*100}%"></i></div>`).join('')||'<div class="empty">Aucune donnée.</div>';
+const gname=id=>(db.g.find(g=>g.id==id)||{n:'(supprimé)'}).n;
+const kpi=(l,v,c)=>`<div class="k ${c}"><span>${l}</span><b>${M(v)}</b></div>`;
+
+/* ---------- Pages ---------- */
+const DX=['Loyer','Transport','Électricité','Salaires','Communication','Divers'];
+const P={
+home(){const T=tot(today()),L=dates(7),t=L.map(tot),h=new Date().getHours();
+ const low=db.set.alert?db.g.flatMap(g=>g.it.filter(i=>i.q<=3).map(i=>`${E(i.n)} (${i.q})`)):[];
+ return `<div class="hi">${h<18?'Bonjour':'Bonsoir'}, <b>${E(db.u.name.split(' ')[0])}</b> 👋<small>${E(db.u.co)} • ${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</small></div>
+ <div class="kp">${kpi('💰 Ventes du jour',T.s,'a')}${kpi('🛒 Achats du jour',T.p,'b')}${kpi('💸 Dépenses du jour',T.e,'c')}${kpi('💎 Bénéfice net',T.n,'d')}</div>
+ <div class="card"><h3>📊 7 derniers jours</h3>${chart(L.map(d=>d.slice(8)),t.map(x=>x.s),t.map(x=>x.p+x.e))}</div>
+ <div class="card"><h3>📊 Résumé par catégorie</h3>${hb(Object.entries((db.d[today()]||{}).s||{}).map(([k,v])=>[gname(k),v]))}</div>
+ ${low.length?`<div class="card"><h3>⚠️ Stock faible</h3><div class="ins">${low.join(' • ')}</div></div>`:''}
+ <button class="btn" data-a="go" data-k="day">＋ Enregistrer la journée</button>
+ <div class="sign">Conçu par <b>Joseph Monsemvula</b></div>`},
+day(){const x=db.d[day]||{s:{},p:{},e:{}},xs=[...DX,...db.xc],inp=(t,k,v,ph)=>`<input class="n" type="number" min="0" inputmode="numeric" placeholder="${ph}" data-t="${t}" data-k="${E(k)}" value="${v||''}">`;
+ const hist=Object.keys(db.d).sort().reverse().slice(0,10).map(d=>{const t=tot(d);return `<div class="row"><b>${d.split('-').reverse().join('/')}</b><span class="${t.n<0?'neg':'pos'}">${M(t.n)}</span><button class="ic" data-a="ld" data-k="${d}">✏️</button><button class="ic" data-a="dd" data-k="${d}">🗑</button></div>`}).join('')||'<div class="empty">Aucun enregistrement.</div>';
+ return `<div class="card"><h3>📝 Enregistrer la journée</h3><input type="date" id="dd" value="${day}" max="${today()}"><div class="sub">${new Date(day+'T12:00').toLocaleDateString('fr-FR',{weekday:'long'})}</div>
+ <h4>📦 Ventes et achats par groupe</h4>${db.g.length?db.g.map(g=>`<div class="row"><b>${E(g.n)}</b>${inp('s',g.id,x.s[g.id],'Ventes')}${inp('p',g.id,x.p[g.id],'Achats')}</div>`).join(''):'<div class="empty">Créez d’abord un groupe dans l’onglet Stock.</div>'}
+ <h4>💸 Dépenses</h4>${xs.map(c=>`<div class="row"><b>${E(c)}</b>${inp('e',c,x.e[c],'0')}</div>`).join('')}
+ <div class="row"><input id="nxc" placeholder="Ma propre catégorie" style="width:auto;flex:1"><button class="btn sm" data-a="addxc">＋</button></div>
+ <div class="tots" id="tots"></div><button class="btn" data-a="save">💾 Enregistrer la journée</button></div>
+ <div class="card"><h3>📜 Historique</h3>${hist}</div>`},
+stock(){return `<div class="card"><h3>📁 Créer un groupe</h3><label>Nom du groupe</label><input id="gn" placeholder="Ex : Boissons"><label>Description</label><input id="gd" placeholder="Description du groupe"><button class="btn" data-a="addg">＋ Ajouter le groupe</button></div>
+ <div class="card"><h3>🛒 Ajouter un article</h3><label>Groupe parent</label><select id="ig"><option value="">-- Sélectionner un groupe --</option>${db.g.map(g=>`<option value="${g.id}">${E(g.n)}</option>`).join('')}</select><label>Nom de l’article</label><input id="in" placeholder="Ex : Sac de riz">
+ <div class="row"><div class="f"><label>Quantité</label><input id="iq" type="number" min="0" value="0"></div><div class="f"><label>Prix unitaire</label><input id="ip" type="number" min="0" value="0"></div></div><button class="btn" data-a="addi">＋ Ajouter l’article</button></div>
+ <div class="card full"><h3>📦 Vos groupes et articles</h3>${db.g.map(g=>`<div class="grp"><div class="row"><b>📁 ${E(g.n)}${g.d?`<small style="display:block;font-weight:400">${E(g.d)}</small>`:''}</b><button class="ic" data-a="delg" data-k="${g.id}">🗑</button></div>${g.it.map(i=>`<div class="row"><span style="font-weight:500;flex:1">${E(i.n)}</span><span style="font-weight:500">${i.q} × ${M(i.p)}</span><button class="ic" data-a="deli" data-k="${g.id}|${i.id}">✖</button></div>`).join('')}</div>`).join('')||'<div class="empty">Aucun groupe ou article enregistré.</div>'}</div>`},
+rep(){const n=new Date(),y=n.getFullYear();
+ const bk=per=='y'?Array.from({length:12},(_,i)=>({l:'JFMAMJJASOND'[i],k:Object.keys(db.d).filter(k=>k.startsWith(y+'-'+pad(i+1)))})):per=='7'?dates(7).map(d=>({l:d.slice(8),k:[d]})):Array.from({length:n.getDate()},(_,i)=>({l:i+1,k:[y+'-'+pad(n.getMonth()+1)+'-'+pad(i+1)]}));
+ const gs={},es={},B=bk.map(b=>{const t={s:0,p:0,e:0};b.k.forEach(k=>{const x=db.d[k];if(!x)return;t.s+=sum(x.s);t.p+=sum(x.p);t.e+=sum(x.e);for(const i in x.s)gs[i]=(gs[i]||0)+x.s[i];for(const i in x.e)es[i]=(es[i]||0)+x.e[i]});return{...b,...t,n:t.s-t.p-t.e}});
+ const T=B.reduce((a,b)=>({s:a.s+b.s,p:a.p+b.p,e:a.e+b.e}),{s:0,p:0,e:0});T.n=T.s-T.p-T.e;
+ const best=[...B].sort((a,b)=>b.n-a.n)[0],tg=Object.entries(gs).sort((a,b)=>b[1]-a[1])[0],ins=[];
+ if(T.s){ins.push(`📌 Marge nette : <b>${Math.round(T.n/T.s*100)} %</b>`);if(best.n>0)ins.push(`🏆 Meilleure période : <b>${best.l}</b> (${M(best.n)})`);if(tg)ins.push(`⭐ Groupe le plus vendeur : <b>${E(gname(tg[0]))}</b>`);if(T.e>T.s*.4)ins.push('⚠️ Vos dépenses dépassent 40 % de vos ventes.');if(T.n<0)ins.push('🔴 Cette période est en perte.')}
+ return `<div class="card"><h3>📊 Rapports</h3><select id="rp"><option value="7" ${per=='7'?'selected':''}>7 derniers jours</option><option value="m" ${per=='m'?'selected':''}>Ce mois</option><option value="y" ${per=='y'?'selected':''}>Cette année</option></select></div>
+ <div class="kp">${kpi('💰 Ventes',T.s,'a')}${kpi('🛒 Achats',T.p,'b')}${kpi('💸 Dépenses',T.e,'c')}${kpi('💎 Bénéfice net',T.n,'d')}</div>
+ <div class="card full"><h3>📈 Évolution</h3>${chart(B.map(b=>b.l),B.map(b=>b.s),B.map(b=>b.p+b.e))}</div>
+ <div class="card"><h3>🧠 Analyse</h3>${ins.map(i=>`<div class="ins">${i}</div>`).join('')||'<div class="empty">Enregistrez des journées pour voir l’analyse.</div>'}</div>
+ <div class="card"><h3>📦 Ventes par groupe</h3>${hb(Object.entries(gs).map(([k,v])=>[gname(k),v]))}</div>
+ <div class="card"><h3>💸 Dépenses par catégorie</h3>${hb(Object.entries(es))}</div>
+ <div class="card full"><h3>📋 Détail des journées</h3>${B.filter(b=>b.s||b.p||b.e).map(b=>`<div class="row"><b>${b.l}</b><span>${M(b.s)}</span><span class="${b.n<0?'neg':'pos'}">${M(b.n)}</span></div>`).join('')||'<div class="empty">Aucun enregistrement.</div>'}</div>
+ <button class="btn noprint" onclick="print()">🖨️ Imprimer / PDF</button>`},
+more(){const sw=(k,l)=>`<label class="sw"><span>${l}</span><input type="checkbox" data-s="${k}" ${db.set[k]?'checked':''}></label>`,u=db.u,lic=u.until>u.created+3*864e5&&u.until>now(),g=[['Comment commencer ?','Créez vos groupes dans Stock, puis enregistrez chaque jour dans Journée.'],['Ventes et achats','Pour chaque groupe, saisissez le montant vendu et le montant acheté.'],['Dépenses','Loyer, transport, etc. Ajoutez vos propres catégories avec ＋.'],['Bénéfices','Brut = Ventes − Achats. Net = Ventes − Achats − Dépenses.'],['Rapports','Choisissez 7 jours, mois ou année pour voir graphiques et analyse.'],['Sauvegarde','Vos données sont sur votre téléphone : sauvegardez-les régulièrement.']];
+ return `<div class="logo sm" id="lg" style="user-select:none">JM</div><div class="card"><h3>👤 Mon compte</h3><div class="ins"><b>${E(u.name)}</b><br>${E(u.co)}<br>📞 ${E(u.ph)}</div></div>
+ <div class="card"><h3>🔑 Licence</h3><div class="ins">${lic?`✅ Active • ${left()} jour(s) restant(s)`:`🎁 Essai gratuit • ${left()} jour(s) restant(s)`}</div>
+ <a class="btn wa" href="${wa()}" target="_blank" rel="noopener">💬 Payer / renouveler sur WhatsApp</a><a class="btn" href="tel:+243897997253">📞 +243 897 997 253</a>
+ <input id="mc" placeholder="Code d’activation"><button class="btn gold" data-a="act">Activer</button><small id="me" class="err"></small></div>
+ <div class="card"><h3>⚙️ Paramètres</h3><label class="sw"><span>Devise</span><select data-s="cur">${['FC','USD','EUR'].map(c=>`<option ${db.set.cur==c?'selected':''}>${c}</option>`).join('')}</select></label>
+ ${sw('dark','🌙 Mode sombre')}${sw('priv','🙈 Masquer les montants')}${sw('notif','🔔 Accepter les rappels quotidiens')}${sw('alert','⚠️ Accepter les alertes de stock faible')}${sw('lock','🔒 Verrouillage automatique (3 min)')}
+ <button class="btn" data-a="bk">💾 Sauvegarder mes données</button><button class="btn" style="background:#64748b" data-a="out">🚪 Se déconnecter</button></div>
+ <div class="card"><h3>❓ Guide d’utilisation</h3>${g.map(([a,b])=>`<details><summary>${a}</summary><p>${b}</p></details>`).join('')}</div>
+ <div class="card"><h3>📜 Conditions</h3><div class="ins">Vos données sont stockées uniquement sur cet appareil et ne sont envoyées à personne. L’application est fournie avec un essai gratuit de 3 jours puis une licence payante.</div></div>
+ <div class="sign">JOSSELL – MA GESTION • v1.0<br>Conçu par <b>Joseph Monsemvula</b></div>`}};
+P.adm=()=>{const L=db.adm||[],w=p=>'https://wa.me/'+(p[0]=='0'?'243'+p.slice(1):p);
+ return `<div class="card"><h3>🛠️ Administration</h3><small>Mode réservé à Joseph Monsemvula</small><input id="ap" type="tel" placeholder="Téléphone du client (celui de son compte)"><select id="apl"><option value="A">1 mois</option><option value="B">3 mois</option><option value="C">6 mois</option><option value="D">12 mois</option></select><button class="btn gold" data-a="gen">🔑 Générer le code d’activation</button></div>
+ ${L[0]?`<div class="card"><h3>Dernier code généré</h3><div class="ins" style="font-size:20px;font-weight:800;word-break:break-all">${L[0].c}</div><a class="btn wa" target="_blank" rel="noopener" href="${w(L[0].p)}?text=${encodeURIComponent('Votre code d’activation JOSSELL – MA GESTION : '+L[0].c)}">💬 Envoyer au client sur WhatsApp</a></div>`:''}
+ <div class="card"><h3>📜 Historique des codes</h3>${L.map(x=>`<div class="row"><b>${E(x.p)}</b><span style="font-size:12px">${x.c}</span></div>`).join('')||'<div class="empty">Aucun code généré.</div>'}</div>
+ <button class="btn" data-a="go" data-k="more">← Quitter l’administration</button>`};
+const TABS=[['home','🏠','Accueil'],['day','🧮','Journée'],['stock','📦','Groupes'],['rep','📊','Rapports'],['more','⚙️','Plus']];
+function render(){document.body.classList.toggle('dark',!!db.set.dark);$('#hc').textContent=db.u.co;const l=left();$('#trial').textContent=db.u.until>db.u.created+3*864e5?`✅ ${l} j`:`🎁 Essai : ${l} j`;
+ $('#nav').innerHTML=TABS.map(t=>`<button class="${page==t[0]?'on':''}" data-a="go" data-k="${t[0]}"><i>${t[1]}</i>${t[2]}</button>`).join('');$('#main').innerHTML=P[page]();if(page=='day')calc()}
+function calc(){const v={s:0,p:0,e:0};$('#main').querySelectorAll('.n').forEach(i=>v[i.dataset.t]+=+i.value||0);
+ $('#tots').innerHTML=[['💰 Ventes',v.s],['🛒 Achats',v.p],['💸 Dépenses',v.e],['📈 Bénéfice brut',v.s-v.p],['💎 Bénéfice net',v.s-v.p-v.e]].map(([a,b],i)=>`<div class="tl${i>2?' b':''}"><span>${a}</span><b class="${b<0?'neg':''}">${M(b)}</b></div>`).join('')}
+function collect(){const o={s:{},p:{},e:{}};$('#main').querySelectorAll('.n').forEach(i=>{if(+i.value>0)o[i.dataset.t][i.dataset.k]=+i.value});return o}
+$('#main').oninput=e=>{if(e.target.classList.contains('n'))calc()};
+$('#main').onchange=e=>{const t=e.target;if(t.id=='dd'){day=t.value||today();render()}else if(t.id=='rp'){per=t.value;render()}else if(t.dataset.s){db.set[t.dataset.s]=t.type=='checkbox'?+t.checked:t.value;sv();if(t.dataset.s=='notif'&&t.checked&&'Notification'in window)Notification.requestPermission();render()}};
+const ADM=1310300749055835;let tp=0,tl=0;
+$('#app').onclick=e=>{if(e.target.closest('#lg')){const t=Date.now();tp=t-tl>1500?1:tp+1;tl=t;if(tp>=10){tp=0;const x=prompt('🔐 Code secret administrateur');if(x!==null){if(H(x.trim()+'|adm')===ADM){page='adm';render();scrollTo(0,0);toast('🛠️ Mode administration')}else toast('Code incorrect')}}return}
+ const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,k=b.dataset.k,v=id=>($('#'+id).value||'').trim();
+ if(a=='go'){page=k;render();scrollTo(0,0)}
+ else if(a=='save'){const o=collect();if(sum(o.s)+sum(o.p)+sum(o.e)>0)db.d[day]=o;else delete db.d[day];sv();toast('✅ Journée enregistrée');render()}
+ else if(a=='ld'){day=k;render();scrollTo(0,0)}
+ else if(a=='dd'){if(confirm('Supprimer cette journée ?')){delete db.d[k];sv();render()}}
+ else if(a=='addxc'){const n=v('nxc').replace(/[<>"']/g,'');if(!n)return;const o=collect();if(sum(o.s)+sum(o.p)+sum(o.e)>0)db.d[day]=o;if(![...DX,...db.xc].includes(n))db.xc.push(n);sv();render()}
+ else if(a=='addg'){const n=v('gn');if(!n)return;db.g.push({id:uid(),n,d:v('gd'),it:[]});sv();render();toast('✅ Groupe ajouté')}
+ else if(a=='addi'){const g=db.g.find(x=>x.id==v('ig')),n=v('in');if(!g||!n)return toast('Choisissez un groupe et un nom');g.it.push({id:uid(),n,q:+v('iq')||0,p:+v('ip')||0});sv();render();toast('✅ Article ajouté')}
+ else if(a=='delg'){if(confirm('Supprimer ce groupe et ses articles ?')){db.g=db.g.filter(x=>x.id!=k);sv();render()}}
+ else if(a=='deli'){const[gi,ii]=k.split('|'),g=db.g.find(x=>x.id==gi);g.it=g.it.filter(x=>x.id!=ii);sv();render()}
+ else if(a=='act')activate(v('mc'),$('#me'));
+ else if(a=='gen'){const q=v('ap').replace(/\D/g,'');if(q.length<8)return toast('Numéro invalide');const d=new Date(),c=CODE(q,v('apl'),String(d.getFullYear()).slice(2)+pad(d.getMonth()+1));db.adm=[{p:q,c,t:Date.now()},...(db.adm||[])].slice(0,30);sv();render();toast('✅ Code généré')}
+ else if(a=='bk')backup();
+ else if(a=='out'){un=0;boot()}};
+boot();
+
+</script></body></html>
