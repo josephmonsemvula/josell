@@ -73,6 +73,12 @@ label{font-size:13px;font-weight:600;color:var(--m)}
 .scr.hero,.scr.form{background:linear-gradient(160deg,#0b1f4d,#1d4ed8 70%,#3b82f6)}
 img.logo{object-fit:cover;width:96px;height:96px;border-radius:24px}
 .btn.ghost{background:#ffffff22;border:1.5px solid #ffffff88;color:#fff}
+textarea{width:100%;padding:13px;border:1.5px solid #cbd5e1;border-radius:12px;font:15px system-ui;background:var(--c);color:var(--t)}
+.mt{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;font-size:18px;font-weight:800}
+a.ic{text-decoration:none}nav button{font-size:10px}
+#pdf{display:none}
+@media print{body>*:not(#pdf){display:none!important}body{display:block!important;background:#fff!important}#pdf{display:block!important;color:#000;background:#fff;font:13px system-ui;padding:18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#pdf .ph{display:flex;gap:14px;align-items:center;border-bottom:3px solid #1d4ed8;padding-bottom:10px;margin-bottom:12px}#pdf img{width:64px;height:64px;border-radius:14px}#pdf h1{font-size:20px;color:#0b1f4d}#pdf h2{font-size:15px;margin:16px 0 6px;color:#1d4ed8}#pdf table{width:100%;border-collapse:collapse}#pdf th{background:#0b1f4d;color:#fff;text-align:left}#pdf th,#pdf td{padding:6px 8px;border:1px solid #cbd5e1}#pdf .pf{margin-top:22px;text-align:center;color:#64748b}}
 </style></head><body>
 
 <div id="landing" class="scr hero show">
@@ -91,7 +97,7 @@ img.logo{object-fit:cover;width:96px;height:96px;border-radius:24px}
  <div class="logo sm">JM</div><h2>Configuration de votre compte</h2><p>Renseignez ces informations avant de commencer.</p>
  <input id="sn" placeholder="Votre nom complet"><input id="sc" placeholder="Nom de votre entreprise / commerce">
  <input id="sp" type="tel" placeholder="Numéro de téléphone"><input id="s1" type="password" placeholder="Créer un mot de passe (4 caractères min.)"><input id="s2" type="password" placeholder="Confirmer le mot de passe">
- <label class="chk"><input id="st" type="checkbox"> J’accepte les conditions d’utilisation : mes données restent enregistrées sur mon appareil et je dois les sauvegarder régulièrement.</label>
+ <label class="chk"><input id="st" type="checkbox"> J’accepte les conditions d’utilisation et j’autorise l’envoi de mes coordonnées (nom, entreprise, téléphone) à Joseph Monsemvula pour gérer mon compte et mon abonnement. Mes données de gestion restent sur mon appareil.</label>
  <button id="sgo" class="btn">Créer mon compte et démarrer l’essai</button><small id="serr" class="err"></small>
 </div>
 
@@ -106,7 +112,7 @@ img.logo{object-fit:cover;width:96px;height:96px;border-radius:24px}
  <p>Pour continuer, contactez Joseph Monsemvula pour le paiement, puis saisissez votre code d’activation.</p>
  <a id="lwa" class="btn wa" target="_blank" rel="noopener">💬 WhatsApp +243 897 997 253</a>
  <a class="btn" href="tel:+243897997253">📞 Appeler +243 897 997 253</a>
- <input id="lc" placeholder="Code d’activation (JM-X0000-XXXXXXXX)"><button id="lac" class="btn gold">Activer</button><small id="lerr2" class="err"></small>
+ <input id="lc" placeholder="Code d’activation (JM-A0000-XXXXX-XXXXXXXX)"><button id="lac" class="btn gold">Activer</button><small id="lerr2" class="err"></small>
  <button id="lexp" class="link">💾 Sauvegarder mes données</button>
 </div>
 
@@ -115,12 +121,14 @@ img.logo{object-fit:cover;width:96px;height:96px;border-radius:24px}
  <main id="main"></main>
  <nav id="nav"></nav>
 </div>
-<div id="toast"></div>
+<div id="toast"></div><div id="pdf"></div>
 <script>
 'use strict';
 const $=s=>document.querySelector(s),LS='jm_v1',WA='243897997253';
 const H=(s,seed=7)=>{let a=0xdeadbeef^seed,b=0x41c6ce57^seed;for(let i=0,c;i<s.length;i++){c=s.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^a>>>16,2246822507)^Math.imul(b^b>>>13,3266489909);b=Math.imul(b^b>>>16,2246822507)^Math.imul(a^a>>>13,3266489909);return 4294967296*(2097151&b)+(a>>>0)};
-const CODE=(ph,pl,ym)=>'JM-'+pl+ym+'-'+H('JOSSELL-CHANGE-MOI-2026|'+ph.slice(-9)+'|'+pl+ym).toString(36).toUpperCase().slice(-8).padStart(8,'0');
+const CODE=(ph,pl,n,t)=>'JM-'+pl+n+'-'+t+'-'+H('JOSSELL-CHANGE-MOI-2026|'+ph.slice(-9)+'|'+pl+n+t).toString(36).toUpperCase().slice(-8).padStart(8,'0');
+const wp=p=>p.length==10&&p[0]=='0'?'243'+p.slice(1):p,F=n=>Math.round(n).toLocaleString('fr-FR')+' '+db.set.cur;let LR;
+const regWa=()=>'https://wa.me/'+WA+'?text='+encodeURIComponent('INSCRIPTION JOSSELL\nNom : '+db.u.name+'\nEntreprise : '+db.u.co+'\nTél : '+db.u.ph);
 const E=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';'),pad=n=>String(n).padStart(2,'0'),sum=o=>Object.values(o||{}).reduce((a,b)=>a+(+b||0),0),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const fd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),today=()=>fd(new Date());
 let db=JSON.parse(localStorage.getItem(LS)||'null'),page='home',un=0,hid=0,day=today(),per='m',dp;
@@ -149,19 +157,19 @@ $('#dl').onclick=async()=>{if(dp){dp.prompt();const r=await dp.userChoice;dp=nul
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 /* ---------- Compte, essai, licence ---------- */
-const left=()=>Math.ceil((Math.max(db.u.created+3*864e5,db.u.until||0)-now())/864e5);
-function boot(){if(db)document.body.classList.toggle('dark',!!db.set.dark);if(!db)return show(std?'setup':'landing');if(!un)return show('login');gate()}
+const life=()=>db.u.until>=4e12,left=()=>Math.ceil((Math.max(db.u.created+3*864e5,db.u.until||0)-now())/864e5);
+function boot(){if(db){db.cl=db.cl||[];db.dt=db.dt||[];db.xc=db.xc||[]}if(db)document.body.classList.toggle('dark',!!db.set.dark);if(!db)return show(std?'setup':'landing');if(!un)return show('login');gate()}
 function gate(){db.u.seen=now();sv();if(left()<=0){$('#lwa').href=wa();return show('lock')}
  show('app');render();if(db.set.notif&&!db.d[today()]){setTimeout(()=>toast('🔔 Pensez à enregistrer la journée'),900);if('Notification'in window&&Notification.permission=='granted')new Notification('JOSSELL',{body:'Pensez à enregistrer la journée.'})}}
 $('#sgo').onclick=()=>{const n=$('#sn').value.trim(),c=$('#sc').value.trim(),p=$('#sp').value.replace(/\D/g,''),a=$('#s1').value,er=m=>$('#serr').textContent=m;
  if(!n||!c)return er('Nom et entreprise obligatoires.');if(p.length<8)return er('Numéro de téléphone invalide.');if(a.length<4)return er('Mot de passe trop court.');if(a!==$('#s2').value)return er('Les mots de passe ne correspondent pas.');if(!$('#st').checked)return er('Veuillez accepter les conditions.');
- db={u:{name:n,co:c,ph:p,pw:H(a+p),created:Date.now(),seen:Date.now(),until:0,used:[]},g:[],d:{},xc:[],set:{cur:'FC',dark:0,priv:0,notif:0,alert:1,lock:1}};sv();un=1;gate()};
+ db={u:{name:n,co:c,ph:p,pw:H(a+p),created:Date.now(),seen:Date.now(),until:0,used:[]},g:[],d:{},xc:[],set:{cur:'FC',dark:0,priv:0,notif:0,alert:1,lock:1},cl:[],dt:[]};sv();un=1;gate();setTimeout(()=>{if(confirm('Envoyer vos informations d’inscription à Joseph Monsemvula sur WhatsApp ?'))open(regWa(),'_blank')},700)};
 $('#lgo').onclick=()=>{if(H($('#lp').value+db.u.ph)===db.u.pw){un=1;$('#lp').value='';gate()}else $('#lerr').textContent='Mot de passe incorrect.'};
 $('#lp').onkeydown=e=>e.key=='Enter'&&$('#lgo').click();
 $('#lfor').onclick=e=>{e.preventDefault();open(wa(),'_blank')};
-function activate(v,el){const m=v.trim().toUpperCase().match(/^JM-([ABCD])(\d{4})-([0-9A-Z]{8})$/),c=m&&CODE(db.u.ph,m[1],m[2]);
+function activate(v,el){const m=v.trim().toUpperCase().match(/^JM-([ABCDLJ])(\d{4})-([0-9A-Z]{4,6})-([0-9A-Z]{8})$/),c=m&&CODE(db.u.ph,m[1],m[2],m[3]);
  if(!m||c!==m[0]||db.u.used.includes(c)){el.textContent='Code invalide ou déjà utilisé.';return}
- db.u.until=Math.max(now(),db.u.created+3*864e5,db.u.until)+{A:30,B:90,C:180,D:365}[m[1]]*864e5;db.u.used.push(c);sv();toast('✅ Activation réussie');gate()}
+ const d={A:30,B:90,C:180,D:365,J:+m[2]}[m[1]];db.u.until=m[1]=='L'||life()?4102444800000:Math.max(now(),db.u.created+3*864e5,db.u.until)+d*864e5;db.u.used.push(c);sv();toast('✅ Activation réussie');gate()}
 $('#lac').onclick=()=>activate($('#lc').value,$('#lerr2'));
 const backup=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db)],{type:'application/json'}));a.download='jossell-sauvegarde-'+today()+'.json';a.click()};
 $('#lexp').onclick=backup;
@@ -176,7 +184,6 @@ const gname=id=>(db.g.find(g=>g.id==id)||{n:'(supprimé)'}).n;
 const kpi=(l,v,c)=>`<div class="k ${c}"><span>${l}</span><b>${M(v)}</b></div>`;
 
 /* ---------- Pages ---------- */
-const DX=['Loyer','Transport','Électricité','Salaires','Communication','Divers'];
 const P={
 home(){const T=tot(today()),L=dates(7),t=L.map(tot),h=new Date().getHours();
  const low=db.set.alert?db.g.flatMap(g=>g.it.filter(i=>i.q<=3).map(i=>`${E(i.n)} (${i.q})`)):[];
@@ -185,72 +192,102 @@ home(){const T=tot(today()),L=dates(7),t=L.map(tot),h=new Date().getHours();
  <div class="card"><h3>📊 7 derniers jours</h3>${chart(L.map(d=>d.slice(8)),t.map(x=>x.s),t.map(x=>x.p+x.e))}</div>
  <div class="card"><h3>📊 Résumé par catégorie</h3>${hb(Object.entries((db.d[today()]||{}).s||{}).map(([k,v])=>[gname(k),v]))}</div>
  ${low.length?`<div class="card"><h3>⚠️ Stock faible</h3><div class="ins">${low.join(' • ')}</div></div>`:''}
+ ${db.dt.some(d=>d.a>d.pd)?`<div class="card"><h3>💳 Dettes en cours</h3><div class="ins">👥 On me doit : <b>${M(db.dt.filter(d=>d.t=='c').reduce((a,d)=>a+d.a-d.pd,0))}</b><br>🏦 Je dois : <b>${M(db.dt.filter(d=>d.t=='f').reduce((a,d)=>a+d.a-d.pd,0))}</b></div></div>`:''}
  <button class="btn" data-a="go" data-k="day">＋ Enregistrer la journée</button>
  <div class="sign">Conçu par <b>Joseph Monsemvula</b></div>`},
-day(){const x=db.d[day]||{s:{},p:{},e:{}},xs=[...DX,...db.xc],inp=(t,k,v,ph)=>`<input class="n" type="number" min="0" inputmode="numeric" placeholder="${ph}" data-t="${t}" data-k="${E(k)}" value="${v||''}">`;
+day(){const x=db.d[day]||{s:{},p:{},e:{}},ex=Object.keys(x.e||{}),inp=(t,k,v,ph)=>`<input class="n" type="number" min="0" inputmode="numeric" placeholder="${ph}" data-t="${t}" data-k="${E(k)}" value="${v||''}">`;
  const hist=Object.keys(db.d).sort().reverse().slice(0,10).map(d=>{const t=tot(d);return `<div class="row"><b>${d.split('-').reverse().join('/')}</b><span class="${t.n<0?'neg':'pos'}">${M(t.n)}</span><button class="ic" data-a="ld" data-k="${d}">✏️</button><button class="ic" data-a="dd" data-k="${d}">🗑</button></div>`}).join('')||'<div class="empty">Aucun enregistrement.</div>';
  return `<div class="card"><h3>📝 Enregistrer la journée</h3><input type="date" id="dd" value="${day}" max="${today()}"><div class="sub">${new Date(day+'T12:00').toLocaleDateString('fr-FR',{weekday:'long'})}</div>
- <h4>📦 Ventes et achats par groupe</h4>${db.g.length?db.g.map(g=>`<div class="row"><b>${E(g.n)}</b>${inp('s',g.id,x.s[g.id],'Ventes')}${inp('p',g.id,x.p[g.id],'Achats')}</div>`).join(''):'<div class="empty">Créez d’abord un groupe dans l’onglet Stock.</div>'}
- <h4>💸 Dépenses</h4>${xs.map(c=>`<div class="row"><b>${E(c)}</b>${inp('e',c,x.e[c],'0')}</div>`).join('')}
- <div class="row"><input id="nxc" placeholder="Ma propre catégorie" style="width:auto;flex:1"><button class="btn sm" data-a="addxc">＋</button></div>
+ <div class="mt"><span>💰 Total vendu</span><b id="tv">0</b></div>
+ <h4>📦 Ventes et achats par groupe</h4>${db.g.length?db.g.map(g=>`<div class="row"><b>${E(g.n)}</b>${inp('s',g.id,x.s[g.id],'Ventes')}${inp('p',g.id,x.p[g.id],'Achats')}</div>`).join(''):'<div class="empty">Créez d’abord un groupe dans l’onglet Groupes.</div>'}
+ <h4>💸 Mes dépenses</h4>${ex.map(c=>`<div class="row"><b>${E(c)}</b>${inp('e',c,x.e[c],'0')}<button class="ic" data-a="dex" data-k="${E(c)}">✖</button></div>`).join('')||'<div class="empty">Aucune dépense. Ajoutez les vôtres ci-dessous.</div>'}
+ <div class="row"><input id="nxc" list="xcl" placeholder="Nom de la dépense" style="width:auto;flex:1;min-width:0"><input id="nxa" type="number" min="0" inputmode="numeric" placeholder="Montant" style="width:96px"><button class="btn sm" data-a="addxc">＋</button></div><datalist id="xcl">${db.xc.map(c=>`<option value="${E(c)}">`).join('')}</datalist>
  <div class="tots" id="tots"></div><button class="btn" data-a="save">💾 Enregistrer la journée</button></div>
  <div class="card"><h3>📜 Historique</h3>${hist}</div>`},
 stock(){return `<div class="card"><h3>📁 Créer un groupe</h3><label>Nom du groupe</label><input id="gn" placeholder="Ex : Boissons"><label>Description</label><input id="gd" placeholder="Description du groupe"><button class="btn" data-a="addg">＋ Ajouter le groupe</button></div>
  <div class="card"><h3>🛒 Ajouter un article</h3><label>Groupe parent</label><select id="ig"><option value="">-- Sélectionner un groupe --</option>${db.g.map(g=>`<option value="${g.id}">${E(g.n)}</option>`).join('')}</select><label>Nom de l’article</label><input id="in" placeholder="Ex : Sac de riz">
  <div class="row"><div class="f"><label>Quantité</label><input id="iq" type="number" min="0" value="0"></div><div class="f"><label>Prix unitaire</label><input id="ip" type="number" min="0" value="0"></div></div><button class="btn" data-a="addi">＋ Ajouter l’article</button></div>
  <div class="card full"><h3>📦 Vos groupes et articles</h3>${db.g.map(g=>`<div class="grp"><div class="row"><b>📁 ${E(g.n)}${g.d?`<small style="display:block;font-weight:400">${E(g.d)}</small>`:''}</b><button class="ic" data-a="delg" data-k="${g.id}">🗑</button></div>${g.it.map(i=>`<div class="row"><span style="font-weight:500;flex:1">${E(i.n)}</span><span style="font-weight:500">${i.q} × ${M(i.p)}</span><button class="ic" data-a="deli" data-k="${g.id}|${i.id}">✖</button></div>`).join('')}</div>`).join('')||'<div class="empty">Aucun groupe ou article enregistré.</div>'}</div>`},
+debt(){const D=db.dt,r=d=>d.a-d.pd,oc=D.filter(d=>d.t=='c').reduce((a,d)=>a+r(d),0),jd=D.filter(d=>d.t=='f').reduce((a,d)=>a+r(d),0);
+ return `<div class="kp"><div class="k a"><span>👥 On me doit</span><b>${M(oc)}</b></div><div class="k c"><span>🏦 Je dois</span><b>${M(jd)}</b></div></div>
+ <div class="card"><h3>💳 Nouvelle dette</h3><label>Type</label><select id="dt"><option value="c">Un client me doit</option><option value="f">Je dois à un fournisseur</option></select><label>Nom de la personne</label><input id="dn" placeholder="Nom"><label>Montant</label><input id="da" type="number" min="0" inputmode="numeric" placeholder="0"><label>Note (facultatif)</label><input id="dm" placeholder="Ex : marchandises du 12"><button class="btn" data-a="adddt">＋ Enregistrer la dette</button></div>
+ <div class="card"><h3>📋 Liste des dettes</h3>${D.map(d=>`<div class="grp"><div class="row"><b>${d.t=='c'?'👥':'🏦'} ${E(d.n)}<small style="display:block;font-weight:400">${d.d.split('-').reverse().join('/')}${d.m?' • '+E(d.m):''}</small></b><span class="${r(d)>0?'neg':'pos'}">${r(d)>0?M(r(d)):'Soldée ✅'}</span></div><div class="row"><small style="flex:1">Total ${M(d.a)} • Payé ${M(d.pd)}</small>${r(d)>0?`<button class="btn sm" data-a="dpay" data-k="${d.id}">Paiement</button>`:''}<button class="ic" data-a="ddel" data-k="${d.id}">🗑</button></div></div>`).join('')||'<div class="empty">Aucune dette enregistrée.</div>'}</div>`},
 rep(){const n=new Date(),y=n.getFullYear();
  const bk=per=='y'?Array.from({length:12},(_,i)=>({l:'JFMAMJJASOND'[i],k:Object.keys(db.d).filter(k=>k.startsWith(y+'-'+pad(i+1)))})):per=='7'?dates(7).map(d=>({l:d.slice(8),k:[d]})):Array.from({length:n.getDate()},(_,i)=>({l:i+1,k:[y+'-'+pad(n.getMonth()+1)+'-'+pad(i+1)]}));
  const gs={},es={},B=bk.map(b=>{const t={s:0,p:0,e:0};b.k.forEach(k=>{const x=db.d[k];if(!x)return;t.s+=sum(x.s);t.p+=sum(x.p);t.e+=sum(x.e);for(const i in x.s)gs[i]=(gs[i]||0)+x.s[i];for(const i in x.e)es[i]=(es[i]||0)+x.e[i]});return{...b,...t,n:t.s-t.p-t.e}});
  const T=B.reduce((a,b)=>({s:a.s+b.s,p:a.p+b.p,e:a.e+b.e}),{s:0,p:0,e:0});T.n=T.s-T.p-T.e;
  const best=[...B].sort((a,b)=>b.n-a.n)[0],tg=Object.entries(gs).sort((a,b)=>b[1]-a[1])[0],ins=[];
  if(T.s){ins.push(`📌 Marge nette : <b>${Math.round(T.n/T.s*100)} %</b>`);if(best.n>0)ins.push(`🏆 Meilleure période : <b>${best.l}</b> (${M(best.n)})`);if(tg)ins.push(`⭐ Groupe le plus vendeur : <b>${E(gname(tg[0]))}</b>`);if(T.e>T.s*.4)ins.push('⚠️ Vos dépenses dépassent 40 % de vos ventes.');if(T.n<0)ins.push('🔴 Cette période est en perte.')}
- return `<div class="card"><h3>📊 Rapports</h3><select id="rp"><option value="7" ${per=='7'?'selected':''}>7 derniers jours</option><option value="m" ${per=='m'?'selected':''}>Ce mois</option><option value="y" ${per=='y'?'selected':''}>Cette année</option></select></div>
+ LR={B,T,gs,es,lbl:per=='7'?'7 derniers jours':per=='m'?'Mois de '+n.toLocaleDateString('fr-FR',{month:'long',year:'numeric'}):'Année '+y};return `<div class="card"><h3>📊 Rapports</h3><select id="rp"><option value="7" ${per=='7'?'selected':''}>7 derniers jours</option><option value="m" ${per=='m'?'selected':''}>Ce mois</option><option value="y" ${per=='y'?'selected':''}>Cette année</option></select></div>
  <div class="kp">${kpi('💰 Ventes',T.s,'a')}${kpi('🛒 Achats',T.p,'b')}${kpi('💸 Dépenses',T.e,'c')}${kpi('💎 Bénéfice net',T.n,'d')}</div>
  <div class="card full"><h3>📈 Évolution</h3>${chart(B.map(b=>b.l),B.map(b=>b.s),B.map(b=>b.p+b.e))}</div>
  <div class="card"><h3>🧠 Analyse</h3>${ins.map(i=>`<div class="ins">${i}</div>`).join('')||'<div class="empty">Enregistrez des journées pour voir l’analyse.</div>'}</div>
  <div class="card"><h3>📦 Ventes par groupe</h3>${hb(Object.entries(gs).map(([k,v])=>[gname(k),v]))}</div>
  <div class="card"><h3>💸 Dépenses par catégorie</h3>${hb(Object.entries(es))}</div>
  <div class="card full"><h3>📋 Détail des journées</h3>${B.filter(b=>b.s||b.p||b.e).map(b=>`<div class="row"><b>${b.l}</b><span>${M(b.s)}</span><span class="${b.n<0?'neg':'pos'}">${M(b.n)}</span></div>`).join('')||'<div class="empty">Aucun enregistrement.</div>'}</div>
- <button class="btn noprint" onclick="print()">🖨️ Imprimer / PDF</button>`},
+ <button class="btn noprint" data-a="pdf">📄 Télécharger le rapport en PDF</button>`},
 more(){const sw=(k,l)=>`<label class="sw"><span>${l}</span><input type="checkbox" data-s="${k}" ${db.set[k]?'checked':''}></label>`,u=db.u,lic=u.until>u.created+3*864e5&&u.until>now(),g=[['Comment commencer ?','Créez vos groupes dans Stock, puis enregistrez chaque jour dans Journée.'],['Ventes et achats','Pour chaque groupe, saisissez le montant vendu et le montant acheté.'],['Dépenses','Loyer, transport, etc. Ajoutez vos propres catégories avec ＋.'],['Bénéfices','Brut = Ventes − Achats. Net = Ventes − Achats − Dépenses.'],['Rapports','Choisissez 7 jours, mois ou année pour voir graphiques et analyse.'],['Sauvegarde','Vos données sont sur votre téléphone : sauvegardez-les régulièrement.']];
  return `<div class="logo sm" id="lg" style="user-select:none">JM</div><div class="card"><h3>👤 Mon compte</h3><div class="ins"><b>${E(u.name)}</b><br>${E(u.co)}<br>📞 ${E(u.ph)}</div></div>
- <div class="card"><h3>🔑 Licence</h3><div class="ins">${lic?`✅ Active • ${left()} jour(s) restant(s)`:`🎁 Essai gratuit • ${left()} jour(s) restant(s)`}</div>
+ <div class="card"><h3>🔑 Licence</h3><div class="ins">${lic?(life()?'✅ Licence à vie ♾️':`✅ Active • ${left()} jour(s) restant(s)`):`🎁 Essai gratuit • ${left()} jour(s) restant(s)`}</div>
  <a class="btn wa" href="${wa()}" target="_blank" rel="noopener">💬 Payer / renouveler sur WhatsApp</a><a class="btn" href="tel:+243897997253">📞 +243 897 997 253</a>
  <input id="mc" placeholder="Code d’activation"><button class="btn gold" data-a="act">Activer</button><small id="me" class="err"></small></div>
  <div class="card"><h3>⚙️ Paramètres</h3><label class="sw"><span>Devise</span><select data-s="cur">${['FC','USD','EUR'].map(c=>`<option ${db.set.cur==c?'selected':''}>${c}</option>`).join('')}</select></label>
  ${sw('dark','🌙 Mode sombre')}${sw('priv','🙈 Masquer les montants')}${sw('notif','🔔 Accepter les rappels quotidiens')}${sw('alert','⚠️ Accepter les alertes de stock faible')}${sw('lock','🔒 Verrouillage automatique (3 min)')}
  <button class="btn" data-a="bk">💾 Sauvegarder mes données</button><button class="btn" style="background:#64748b" data-a="out">🚪 Se déconnecter</button></div>
  <div class="card"><h3>❓ Guide d’utilisation</h3>${g.map(([a,b])=>`<details><summary>${a}</summary><p>${b}</p></details>`).join('')}</div>
- <div class="card"><h3>📜 Conditions</h3><div class="ins">Vos données sont stockées uniquement sur cet appareil et ne sont envoyées à personne. L’application est fournie avec un essai gratuit de 3 jours puis une licence payante.</div></div>
+ <div class="card"><h3>📜 Conditions</h3><div class="ins">Vos données de gestion sont stockées uniquement sur cet appareil. Seules vos coordonnées d’inscription (nom, entreprise, téléphone) sont communiquées à Joseph Monsemvula, avec votre accord. L’application est fournie avec un essai gratuit de 3 jours puis une licence payante.</div></div>
  <div class="sign">JOSSELL – MA GESTION • v1.0<br>Conçu par <b>Joseph Monsemvula</b></div>`}};
-P.adm=()=>{const L=db.adm||[],w=p=>'https://wa.me/'+(p[0]=='0'?'243'+p.slice(1):p);
- return `<div class="card"><h3>🛠️ Administration</h3><small>Mode réservé à Joseph Monsemvula</small><input id="ap" type="tel" placeholder="Téléphone du client (celui de son compte)"><select id="apl"><option value="A">1 mois</option><option value="B">3 mois</option><option value="C">6 mois</option><option value="D">12 mois</option></select><button class="btn gold" data-a="gen">🔑 Générer le code d’activation</button></div>
- ${L[0]?`<div class="card"><h3>Dernier code généré</h3><div class="ins" style="font-size:20px;font-weight:800;word-break:break-all">${L[0].c}</div><a class="btn wa" target="_blank" rel="noopener" href="${w(L[0].p)}?text=${encodeURIComponent('Votre code d’activation JOSSELL – MA GESTION : '+L[0].c)}">💬 Envoyer au client sur WhatsApp</a></div>`:''}
- <div class="card"><h3>📜 Historique des codes</h3>${L.map(x=>`<div class="row"><b>${E(x.p)}</b><span style="font-size:12px">${x.c}</span></div>`).join('')||'<div class="empty">Aucun code généré.</div>'}</div>
+P.adm=()=>{const L=db.cl,la=db.last;
+ return `<div class="card"><h3>🛠️ Administration</h3><small>Réservé à Joseph Monsemvula • ${L.length} client(s) enregistré(s)</small>
+ <label>Téléphone du client</label><input id="ap" type="tel" placeholder="Ex : 0897997253"><label>Nom</label><input id="an" placeholder="Nom du client"><label>Entreprise</label><input id="aco" placeholder="Entreprise"><label>Durée de la licence</label>
+ <select id="apl"><option value="A">1 mois (30 jours)</option><option value="B">3 mois</option><option value="C">6 mois</option><option value="D">12 mois</option><option value="L">À vie ♾️</option><option value="J">Nombre de jours…</option></select>
+ <div id="adw" hidden><input id="ad" type="number" min="1" max="9999" inputmode="numeric" placeholder="Nombre de jours (ex : 45)"></div><button class="btn gold" data-a="gen">🔑 Générer le code</button></div>
+ ${la?`<div class="card"><h3>Dernier code généré</h3><div class="ins" style="font-size:20px;font-weight:800;word-break:break-all">${la.c}</div><small>${E(la.l)} • ${E(la.p)}</small><a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${wp(la.p)}?text=${encodeURIComponent('Votre code d’activation JOSSELL – MA GESTION ('+la.l+') : '+la.c)}">💬 Envoyer au client sur WhatsApp</a></div>`:''}
+ <div class="card"><h3>📥 Enregistrer une inscription</h3><textarea id="apaste" rows="4" placeholder="Collez ici le message d’inscription reçu sur WhatsApp"></textarea><button class="btn" data-a="imp">＋ Ajouter ce client</button></div>
+ <div class="card full"><h3>👥 Mes clients (${L.length})</h3><input id="aq" placeholder="🔍 Rechercher un client">${L.map(c=>`<div class="grp" data-q="${E((c.n+' '+c.co+' '+c.p).toLowerCase())}"><div class="row"><b>${E(c.n||'(sans nom)')}<small style="display:block;font-weight:400">${E(c.co||'')} • ${E(c.p)}</small></b><button class="ic" data-a="cpf" data-k="${c.id}">🔑</button><a class="ic" href="https://wa.me/${wp(c.p)}" target="_blank" rel="noopener">💬</a><a class="ic" href="tel:+${wp(c.p)}">📞</a><button class="ic" data-a="cdel" data-k="${c.id}">🗑</button></div><small>${c.h.length?'Dernier code : '+E(c.h[0].l)+' • '+new Date(c.h[0].t).toLocaleDateString('fr-FR'):'Aucun code émis'}</small></div>`).join('')||'<div class="empty">Aucun client enregistré.</div>'}</div>
  <button class="btn" data-a="go" data-k="more">← Quitter l’administration</button>`};
-const TABS=[['home','🏠','Accueil'],['day','🧮','Journée'],['stock','📦','Groupes'],['rep','📊','Rapports'],['more','⚙️','Plus']];
-function render(){document.body.classList.toggle('dark',!!db.set.dark);$('#hc').textContent=db.u.co;const l=left();$('#trial').textContent=db.u.until>db.u.created+3*864e5?`✅ ${l} j`:`🎁 Essai : ${l} j`;
+const TABS=[['home','🏠','Accueil'],['day','🧮','Journée'],['stock','📦','Groupes'],['debt','💳','Dettes'],['rep','📊','Rapports'],['more','⚙️','Plus']];
+function pdfHtml(){const R=LR,u=db.u,T=R.T,t=(a,b)=>`<table><tr>${a.map(x=>`<th>${x}</th>`).join('')}</tr>${b.map(x=>`<tr>${x.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>`,dd=q=>db.dt.filter(d=>d.t==q).reduce((a,d)=>a+d.a-d.pd,0);
+ return `<div class="ph"><img src="${document.querySelector('img.logo').src}"><div><h1>JOSSELL – MA GESTION</h1><p>Rapport de gestion • ${R.lbl}</p></div></div>
+ <p><b>${E(u.co)}</b> — ${E(u.name)} • Tél : ${E(u.ph)}<br>Établi le ${new Date().toLocaleDateString('fr-FR')}</p>
+ <h2>Résumé</h2>${t(['Indicateur','Montant'],[['Total vendu',F(T.s)],['Achats',F(T.p)],['Dépenses',F(T.e)],['Bénéfice brut',F(T.s-T.p)],['Bénéfice net',F(T.n)]])}
+ <h2>Ventes par groupe</h2>${t(['Groupe','Ventes'],Object.entries(R.gs).map(([k,v])=>[E(gname(k)),F(v)]))}
+ <h2>Dépenses</h2>${t(['Dépense','Montant'],Object.entries(R.es).map(([k,v])=>[E(k),F(v)]))}
+ <h2>Détail</h2>${t(['Période','Ventes','Achats','Dépenses','Bénéfice net'],R.B.filter(b=>b.s||b.p||b.e).map(b=>[b.l,F(b.s),F(b.p),F(b.e),F(b.n)]))}
+ <h2>Dettes en cours</h2>${t(['On me doit','Je dois'],[[F(dd('c')),F(dd('f'))]])}
+ <p class="pf">Conçu par Joseph Monsemvula</p>`}
+function render(){document.body.classList.toggle('dark',!!db.set.dark);$('#hc').textContent=db.u.co;const l=left();$('#trial').textContent=db.u.until>db.u.created+3*864e5?(life()?'✅ À vie':`✅ ${l} j`):`🎁 Essai : ${l} j`;
  $('#nav').innerHTML=TABS.map(t=>`<button class="${page==t[0]?'on':''}" data-a="go" data-k="${t[0]}"><i>${t[1]}</i>${t[2]}</button>`).join('');$('#main').innerHTML=P[page]();if(page=='day')calc()}
-function calc(){const v={s:0,p:0,e:0};$('#main').querySelectorAll('.n').forEach(i=>v[i.dataset.t]+=+i.value||0);
- $('#tots').innerHTML=[['💰 Ventes',v.s],['🛒 Achats',v.p],['💸 Dépenses',v.e],['📈 Bénéfice brut',v.s-v.p],['💎 Bénéfice net',v.s-v.p-v.e]].map(([a,b],i)=>`<div class="tl${i>2?' b':''}"><span>${a}</span><b class="${b<0?'neg':''}">${M(b)}</b></div>`).join('')}
+function calc(){const v={s:0,p:0,e:0};$('#main').querySelectorAll('.n').forEach(i=>v[i.dataset.t]+=+i.value||0);$('#tv').textContent=M(v.s);
+ $('#tots').innerHTML=[['💰 Total vendu',v.s],['🛒 Achats',v.p],['💸 Dépenses',v.e],['📈 Bénéfice brut',v.s-v.p],['💎 Bénéfice net',v.s-v.p-v.e]].map(([a,b],i)=>`<div class="tl${i>2?' b':''}"><span>${a}</span><b class="${b<0?'neg':''}">${M(b)}</b></div>`).join('')}
 function collect(){const o={s:{},p:{},e:{}};$('#main').querySelectorAll('.n').forEach(i=>{if(+i.value>0)o[i.dataset.t][i.dataset.k]=+i.value});return o}
-$('#main').oninput=e=>{if(e.target.classList.contains('n'))calc()};
-$('#main').onchange=e=>{const t=e.target;if(t.id=='dd'){day=t.value||today();render()}else if(t.id=='rp'){per=t.value;render()}else if(t.dataset.s){db.set[t.dataset.s]=t.type=='checkbox'?+t.checked:t.value;sv();if(t.dataset.s=='notif'&&t.checked&&'Notification'in window)Notification.requestPermission();render()}};
+$('#main').oninput=e=>{if(e.target.classList.contains('n'))calc();if(e.target.id=='aq'){const q=e.target.value.toLowerCase();$('#main').querySelectorAll('[data-q]').forEach(r=>r.style.display=r.dataset.q.includes(q)?'':'none')}};
+$('#main').onchange=e=>{const t=e.target;if(t.id=='apl'){$('#adw').hidden=t.value!='J'}else if(t.id=='dd'){day=t.value||today();render()}else if(t.id=='rp'){per=t.value;render()}else if(t.dataset.s){db.set[t.dataset.s]=t.type=='checkbox'?+t.checked:t.value;sv();if(t.dataset.s=='notif'&&t.checked&&'Notification'in window)Notification.requestPermission();render()}};
 const ADM=1310300749055835;let tp=0,tl=0;
-$('#app').onclick=e=>{if(e.target.closest('#lg')){const t=Date.now();tp=t-tl>1500?1:tp+1;tl=t;if(tp>=10){tp=0;const x=prompt('🔐 Code secret administrateur');if(x!==null){if(H(x.trim()+'|adm')===ADM){page='adm';render();scrollTo(0,0);toast('🛠️ Mode administration')}else toast('Code incorrect')}}return}
+$('#app').onclick=e=>{if(e.target.closest('#lg')){const t=Date.now();tp=t-tl>1500?1:tp+1;tl=t;if(tp>=10){tp=0;const x=prompt('🔐 Code secret administrateur');if(x!==null){if(H(x.trim()+'|adm')===ADM){db.u.until=4102444800000;sv();page='adm';render();scrollTo(0,0);toast('🛠️ Mode administration')}else toast('Code incorrect')}}return}
  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,k=b.dataset.k,v=id=>($('#'+id).value||'').trim();
  if(a=='go'){page=k;render();scrollTo(0,0)}
  else if(a=='save'){const o=collect();if(sum(o.s)+sum(o.p)+sum(o.e)>0)db.d[day]=o;else delete db.d[day];sv();toast('✅ Journée enregistrée');render()}
  else if(a=='ld'){day=k;render();scrollTo(0,0)}
  else if(a=='dd'){if(confirm('Supprimer cette journée ?')){delete db.d[k];sv();render()}}
- else if(a=='addxc'){const n=v('nxc').replace(/[<>"']/g,'');if(!n)return;const o=collect();if(sum(o.s)+sum(o.p)+sum(o.e)>0)db.d[day]=o;if(![...DX,...db.xc].includes(n))db.xc.push(n);sv();render()}
+ else if(a=='addxc'){const n=v('nxc').replace(/[<>"']/g,''),m=+v('nxa')||0;if(!n||m<=0)return toast('Entrez le nom et le montant');const o=collect();o.e[n]=m;db.d[day]=o;if(!db.xc.includes(n))db.xc.push(n);sv();render()}
+ else if(a=='dex'){const o=collect();delete o.e[k];if(sum(o.s)+sum(o.p)+sum(o.e)>0)db.d[day]=o;else delete db.d[day];sv();render()}
+ else if(a=='adddt'){const n=v('dn'),m=+v('da');if(!n||!(m>0))return toast('Nom et montant obligatoires');db.dt.unshift({id:uid(),t:v('dt'),n,a:m,pd:0,m:v('dm'),d:today()});sv();render();toast('✅ Dette enregistrée')}
+ else if(a=='dpay'){const d=db.dt.find(x=>x.id==k),x=Math.min(+prompt('Montant payé ('+db.set.cur+') — reste '+(d.a-d.pd))||0,d.a-d.pd);if(x>0){d.pd+=x;sv();render();toast('✅ Paiement enregistré')}}
+ else if(a=='ddel'){if(confirm('Supprimer cette dette ?')){db.dt=db.dt.filter(x=>x.id!=k);sv();render()}}
+ else if(a=='pdf'){$('#pdf').innerHTML=pdfHtml();toast('Choisissez « Enregistrer en PDF »');setTimeout(print,600)}
+ else if(a=='cpf'){const c=db.cl.find(x=>x.id==k);$('#ap').value=c.p;$('#an').value=c.n;$('#aco').value=c.co;scrollTo(0,0)}
+ else if(a=='cdel'){if(confirm('Supprimer ce client de l’administration ?')){db.cl=db.cl.filter(x=>x.id!=k);sv();render()}}
+ else if(a=='imp'){const t=$('#apaste').value,g=r=>(t.match(r)||[])[1]||'',p=g(/T[ée]l[^:\n]*:\s*([+\d\s()-]+)/i).replace(/\D/g,'');if(p.length<8)return toast('Téléphone introuvable dans le message');if(!db.cl.find(x=>x.p.slice(-9)==p.slice(-9)))db.cl.unshift({id:uid(),n:g(/Nom\s*:\s*(.+)/i).trim(),co:g(/Entreprise\s*:\s*(.+)/i).trim(),p,h:[]});sv();render();toast('✅ Client enregistré')}
  else if(a=='addg'){const n=v('gn');if(!n)return;db.g.push({id:uid(),n,d:v('gd'),it:[]});sv();render();toast('✅ Groupe ajouté')}
  else if(a=='addi'){const g=db.g.find(x=>x.id==v('ig')),n=v('in');if(!g||!n)return toast('Choisissez un groupe et un nom');g.it.push({id:uid(),n,q:+v('iq')||0,p:+v('ip')||0});sv();render();toast('✅ Article ajouté')}
  else if(a=='delg'){if(confirm('Supprimer ce groupe et ses articles ?')){db.g=db.g.filter(x=>x.id!=k);sv();render()}}
  else if(a=='deli'){const[gi,ii]=k.split('|'),g=db.g.find(x=>x.id==gi);g.it=g.it.filter(x=>x.id!=ii);sv();render()}
  else if(a=='act')activate(v('mc'),$('#me'));
- else if(a=='gen'){const q=v('ap').replace(/\D/g,'');if(q.length<8)return toast('Numéro invalide');const d=new Date(),c=CODE(q,v('apl'),String(d.getFullYear()).slice(2)+pad(d.getMonth()+1));db.adm=[{p:q,c,t:Date.now()},...(db.adm||[])].slice(0,30);sv();render();toast('✅ Code généré')}
+ else if(a=='gen'){const q=v('ap').replace(/\D/g,''),pl=v('apl'),nd=Math.floor(+v('ad'));if(q.length<8)return toast('Numéro invalide');if(pl=='J'&&!(nd>=1&&nd<=9999))return toast('Entrez le nombre de jours');
+  const c=CODE(q,pl,pl=='J'?String(nd).padStart(4,'0'):'0000',Math.floor(Date.now()/6e4).toString(36).toUpperCase()),l={A:'1 mois',B:'3 mois',C:'6 mois',D:'12 mois',L:'À vie',J:nd+' jour(s)'}[pl];
+  let cl=db.cl.find(x=>x.p.slice(-9)==q.slice(-9));if(!cl){cl={id:uid(),n:'',co:'',p:q,h:[]};db.cl.unshift(cl)}
+  if(v('an'))cl.n=v('an');if(v('aco'))cl.co=v('aco');cl.h.unshift({c,l,t:Date.now()});db.last={c,l,p:q};sv();render();toast('✅ Code généré')}
  else if(a=='bk')backup();
  else if(a=='out'){un=0;boot()}};
 boot();
